@@ -14,19 +14,30 @@ ex) Web browser/server, email client/server
    
 __1. Connection-oriented service   
 TCP(Transmission Control Protocol)__   
+- 소켓 1:1 연결   
 - 신뢰성있고 순서대로 데이터 전달   
+- 데이터의 경계 존재 X   
 - 흐름 제어 - 수신자의 수신 속도에 맞춰 송신자가 데이터 전달   
 - 혼잡 제어 - 네트워크 혼잡 시 송신자의 데이터 전송률을 줄임    
+- 3-way handshaking   
    
 __2. Connectionless service   
 UDP(User Datagram Protocol)__   
+- 소켓 1:N 방식, 연결 X   
 - no 신뢰성, 순서, 흐름 제어, 혼잡 제어   
+- 데이터의 경계 존재 O, 한번의 전송할 수 있는 데이터 크기 제한   
    
 - 대부분 TCP를 사용하며 처리해야 할 작업이 많기 때문에 비용이 더 비싸지만 UDP보다 속도가 느리다.   
    
 __Packet__: 인터넷에서의 데이터 전송 단위, 비트들의 집합   
    
-__Protocol__: 컴퓨터와 컴퓨터 사이, 또는 한 장치와 다른 장치 사이에서 데이터를 원활히 주고받기 위하여 약속한 여러 가지 규약   
+__Protocol__: 컴퓨터와 컴퓨터 사이, 또는 한 장치와 다른 장치 사이에서 데이터를 원활히 주고받기 위하여 약속한 통신 규약   
+__Protocol Family__: 프로토콜 체계   
+   - PF_INET: IPv4 인터넷 프로토콜 체계    
+   - PF_INET6: IPv6 인터넷 프로토콜 체계   
+   - PF_LOCAL: 로컬 통신을 위한 UNIX 프로토콜 체계   
+   - PF_PACKET: Low Level 소켓을 위한 프로토콜 체계   
+   - PF_IPX: IPX 노벨 프로토콜 체계   
    
 #### Network Core   
 __데이터 전송 방식__   
@@ -86,6 +97,12 @@ ex) skype, bittorrent, kazaa
    - 동적 IP 주소   
    - 직접적으로 통신하지 않음   
 - __Socket__   
+   - 어플리케이션 계층과 네트워크 계층 사이에 인터페이스   
+       - 어플리케이션은 소켓을 생성   
+       - 소켓 type을 지정   
+         - TCP 또는 UDP   
+            reliable vs best effort   
+            connection-oriented vs connecttionless
    - Server와 Client가 통신할 수 있게 이어주는 것   
    - IP 주소(어떤 컴퓨터인지 나타냄), Port 번호(해당 컴퓨터의 어느 프로세스인지 나타냄)를 가짐   
    
@@ -143,9 +160,142 @@ __HTTP(Hypertext Transfer Protocol)__
       - Pipelining 기법: 다수의 객체를 요청할 경우 요청할 수 만큼 연속적으로 request를 하고 연속적으로 response 받는 방식을 사용하여 client와 server간 요청과 응답의 효율성을 높인다.   
       
    __일반 web은 persistent HTTP pipelining 기법을 사용한다__   
-
-
+      
+### TCP 과정   
+__TCP Server__
+   1. __socket()__ - socket 생성   
+      - domain: PF_INEF for IPv4, type: Sock_STREAM(TCP), Sock_DGRAM(UDP), protocol: 0 or IPPROTO_TCP   
+      __첫 번째, 두 번째 인자로 전달된 정보를 통해서 소켓의 프로토콜이 결정되기 때문에 0을 전달해도 된다.__   
+   2. __bind()__ - IP 주소와 port와 socket 연결   
+      - sockfd: socket fd, *myaddr: INADDR_ANY(IP 주소, Port번호 포함), addrlen: sizeof(struct sockaddr_in) 주소 구조 길이   
+   3. __listen()__ - socket을 listen용으로 사용, non-blocking   
+      - sockfd: socket fd, backlog: listen하기 위해 연결 큐에 최대 담을 수 있는 수   
+   4. __accept()__ - Client가 연결 요청 받을 때까지 block   
+      - sockfd: socket fd, *cliaddr: Client의 IP주소, Port번호, addrlen: sizeof(struct sockaddr_in) 주소 구조 길이   
+   5. __read(),write()__ - Client와 연결 후 사용   
+      - write() - blocking, data가 보내진 후에만 return   
+         - sockfd: socket fd, *buf: data 버퍼, nbytes: write할 byte의 수   
+      - read() - blocking, data가 받아진 후에만 return    
+         - sockfd: socket fd, *buf: data 버퍼, nbytes: read할 byte의 수   
+   6. __close()__ - socket 종료, Port를 해방하고 TCP 연결 종료   
    
+__TCP Client__   
+   1. __socket()__ - socket 생성   
+      - domain: PF_INEF for IPv4, type: Sock_STREAM(TCP), Sock_DGRAM(UDP), protocol: 0 or IPPROTO_UDP   
+      __첫 번째, 두 번째 인자로 전달된 정보를 통해서 소켓의 프로토콜이 결정되기 때문에 0을 전달해도 된다.__   
+   2. __connect()__ - TCP 3-way handshaking 과정을 통해 Server와 연결, blocking      
+      - sockfd: socket fd, *servaddr: Server의 IP주소, Port번호, addrlen: sizeof(struct sockaddr_in) 주소 구조 길이   
+   3. __write(),read()__ - Server와 연결 후 사용   
+   4. __close()__ - socket 종료, Port를 해방하고 TCP 연결 종료   
+   __Client가 bind()를 사용하지 않는 이유는 자신의 IP와 Port번호를 미리 알 필요가 없기 때문이다.   
+   따라서 대부분 Client는 시스템이 자동적으로 배정하는 Port 번호를 사용한다.   
+   (원한다면 사용할 수 있으나 Client 프로그램이 하나의 컴퓨터에서 두 개 이상 실행될 시 포트 번호 중복 에러가 발생할 가능성이 있다.)__   
+   
+### UDP 과정   
+__UDP Server__
+   1. __socket()__ - socket 생성   
+      - domain: PF_INEF for IPv4, type: Sock_STREAM(TCP), Sock_DGRAM(UDP), protocol: 0   
+   2. __bind()__ - IP 주소와 port와 socket 연결   
+      - sockfd: socket fd, *myaddr: INADDR_ANY(IP 주소, Port번호 포함), addrlen: sizeof(struct sockaddr_in) 주소 구조 길이   
+   3. __sendto,recvfrom()__ - 데이터 송수신   
+      - sendto()   
+         - sockfd: socket fd, *buf: 전송할 data 버퍼의 주소 값, nbytes: write할 byte의 수, flags: 옵션 지정에 사용되는 매개변수, 지정할 옵션이 없다면 0 전달, *to: 목적지 주소정보를 담고 있는 sockaddr 구조체 변수의 주소 값, addrlen: to로 전달된 주소 값의 구조체 변수 크기   
+         __UDP 소켓은 연결의 개념이 있지 않으므로 데이터를 전송할 때마다 목적지에 대한 정보를 전달해야 한다.__   
+      - recvfrom()   
+         - sockfd: socket fd, *buf: 전송할 data 버퍼의 주소 값 전달, nbytes: read할 byte의 수, flags: 옵션 지정에 사용되는 매개변수, 지정할 옵션이 없다면 0 전달, *from: 발신지 주소정보를 담고 있는 sockaddr 구조체 변수의 주소 값, addrlen: from로 전달된 주소 값의 구조체 변수 크기   
+         __UDP 소켓은 연결의 개념이 있지 않으므로, 데이터의 전송지가 둘 이상이 될 수 있다. 따라서 데이터 수신 후 전송지가 어디인지 확인할 필요가 있다.__   
+         
+__UDP Client__   
+   1. __socket()__ - socket 생성   
+   2. __sendto,recvfrom()__ - 데이터 송수신   
+      - sockfd: socket fd, backlog: listen하기 위해 연결 큐에 최대 담을 수 있는 수  
+   3. __close()__ - socket 종료   
+   __UDP는 데이터의 경계가 존재하기 때문에 한번의 recvfrom 함수 호출을 통해서 하나의 메시지를 완전히 읽어 들인다.   
+   sendto 함수호출 시 IP와 PORT 번호가 자동으로 할당되고 recvfrom을 통해 발신자의 IP와 Port번호를 알 수 있기 때문에 일반적으로 UDP의 프로그램에서는 주소정보를 할당하는 별도의 과정이 불필요하다.__   
+
+__unconnected UDP 소켓의 sendto 함수 호출과정__   
+1. UDP 소켓에 목적지의 IP와 Port번호 등록   
+2. 데이터 전송   
+3. UPD 소켓에 등록된 목적지 정보 삭제   
+__1~3단계를 매번 거친다.__   
+
+__connected UDP 소켓의 sendto 함수 호출과정__   
+1. Connect   
+2. 데이터 전송    
+__connected UDP 소켓은 TCP와 같이 상대 소켓과의 연결을 의미하지는 않는다. 그러나 소켓에 목적지에 대한 정보는 등록이 된다.   
+그리고 connected UDP 소켓을 대상으로는 read, write 함수의 호출이 가능하다. 이를 통해 성능을 향상 시킬 수 있다.__   
+
+__NAT은 UDP의 특징을 이용하여 작동중인 네트워크의 내부 호스트에게 데이터를 전달하는 방법으로 UDP 홀펀칭을 사용한다.__   
+[https://nenunena.tistory.com/61]
+1. 외부에 있는 중계자에게 NAT 네트워크 내부 호스트A가 UDP 패킷을 전송한다.   
+2. 패킷을 받은 중계자는 NAT를 통해 바뀐 공인 IP와 포트 번호를 알게 된다.   
+3. 다른 호스트B가 중계자에게 접속하여(TCP or UDP) 중계자가 가지고 있는 NAT내부 호스트A의 바뀐 IP와 포트번호를 전달 받는다.   
+4. 호스트B는 알아낸 IP와 포트번호로 UDP 패킷을 전송하면 공유기가 NAT 매핑정보를 보고 호스트A의 내부 IP와 포트번호로 패킷을 전달한다.   
+   
+   
+## 3. 전송 계층   
+### Multiplexing/Demultiplexing   
+어플리케이션 계층 - Message   
+__전송 계층 - Segment(32bit) = head(출발지 port, 목적지 port 필드 등) + data(Message)__   
+네트워크 계층 - Packet = head(IP) + data(Segment)   
+데이터 링크 계층 - Frame = head + data(Packet)   
+물리적 계층 - Router = head + data(Frame)   
+   
+__Multiplexing__   
+   - 출발지 호스트에서 소켓으로부터 데이터를 전달받아 데이터를 모으고, 이를 세그먼트 단위로 묶어 생성하기 위해서 세그먼트 앞에 헤더를 붙여 캡슐화하고 세그먼트를 네트워크 계층으로 전달하는 작업   
+   - TCP or UDP Multiplexing   
+      - 전송 계층은 어플리케이션 데이터, 출발지 Port번호, 도착지 Port번호, 그리고 기타값을 포함하는 전송 계층 세그먼트를 생성하고 네트워크 계층으로 전달한다.   
+      네트워크 계층은 세그먼트를 IP 데이터그램으로 캡슐화하고 ‘최선형’ 전달 서비스로 세그먼트를 수신 호스트로 전달   
+         
+__Demultiplexing__   
+   - 목적지 호스트에서 전송 계층은 네트워크 계층으로부터 세그먼트를 수신하고 세그먼트의 데이터를 헤더 정보를 사용해서 여러 소켓 중 올바른 소켓(어플리케이션 계층에 있는 프로세스)으로 전달하는 작업   
+      1. TCP Demultiplexing   
+         - 수신 호스트는 세그먼트 안의 목적지 IP/Port번호을 검사하고, 해당 세그먼트를 IP/Port번호로 식별되는 소켓에 전달   
+         __출발지 IP/Port번호, 목적지 IP/Port번호 4개의 요소로 소켓 결정하므로 동일한 출발지 IP/Port번호, 목적지 IP/Port번호를 가지면 여러 개의 세그먼트라할지라도 같은 목적지 소켓을 통해 동일한 프로세스로 전달된다.__  
+      2. UDP Demultiplexing   
+         - 수신 호스트는 세그먼트 안의 목적지 Port번호을 검사하고, 해당 세그먼트를 Port번호로 식별되는 소켓에 전달   
+         __목적지 IP/Port번호 2개의 요소로 소켓 결정하므로 동일한 목적지 IP/Port번호를 가지면 여러 개의 세그먼트라할지라도 같은 목적지 소켓을 통해 동일한 프로세스로 전달된다.__   
+
+__Web은 Port 번호 80을 가지고 있기 때문에 Client가 서버로 세그먼트를 보내면 모든 세그먼트는 목적지 Port번호 80을 가지고 있다.   
+     그러므로 출발지 IP/Port번호도 검사하는데 세그먼트가 많을수록 연결 소켓도 많이 생성하며, 각각의 연결에 따라서 새로운 프로세스를 많이 생성하는데 오늘날은 연결소켓과 스레드를 생성하는 방식을 통해 HTTP 요청과 HTTP 응답을 한다.__   
+
+__UDP__   
+   - __UDP는 전송 계층이 할 수 있는 최소 기능인 Multiplexing/Demultiplexing, checksum을 통한 오류 검사만 한다.__   
+   - __UDP Segment 헤더는 16bit씩 구성된 4개의 필드를 가진다.__   
+      - 출발지 Port 번호   
+      - 목적지 Port 번호   
+      - UDP 세그먼트 길이   
+      - __checksum - Segment안의 비트에 대한 변경사항이 있는지 검사를 통한 오류 검출__   
+         - 송신측에서 UDP는 세그먼트 안에 있는 모든 16비트 워드 단위로 더하고 이에 대하여 1의 보수(0->1, 1->0)를 수행하며, 덧셈과정에서 발생하는 오버플로우는 Wrap around(가장 하위 비트에 더해줌) 윤회식 자리올림을 합니다. 이 결과는 UDP 세그먼트의 체크섬 필드에 삽입됩니다.   
+         - 수신자에서는 체크섬을 포함한 모든 16비트 워드를 더합니다. 만약 패킷에 어떤 오류도 있지 않다면, 수신자에서의 합은 1111 1111 1111 1111 이 될 것입니다. 만약 비트 중에서 하나라도 0이 있다면 패킷에 오류가 발생했음을 알 수 있습니다.   
+         - 링크계층 프로토콜(이더넷 프로토콜 포함)이 오류검사를 제공하는데, 굳이 왜 UDP가 체크섬을 제공하는가?   
+            - 모든 링크가 오류검사를 제공한다는 보장이 없기 때문입니다. 즉, 링크 중에서 하나가 오류검사를 제공하지 않는 프로토콜을 사용할 수도 있는 것입니다. 그러므로 주어진 링크 간의 신뢰성과 메모리 오류검사가 완벽히 보장되지 않기 때문에, 종단간의 데이터 전송 서비스가 오류검사를 제공한다면, UDP는 종단간의 트랜스포트 계층에서 오류검사를 제공해야만 합니다.   
+            - UDP는 오류검사를 제공하지만, 오류를 회복하기 위한 어떤 일도 하지 않습니다.   
+   
+   - __DNS가 UDP를 사용하는 어플리케이션 계층 프로토콜의 예__      
+      1. DNS 질의(Query)를 생성할 때, DNS 질의 메시지를 작성하고 UDP에게 메시지를 넘겨줍니다.   
+      2. 목적지 쪽에서 동작하는 UDP와 송신 측 UDP는 어떠한 Handshake도 수행하지 않고 메시지에 헤더 필드만 추가한 후 최종 세그먼트를 네트워크 계층에 넘겨준다.   
+      3. 네트워크 계층은 UDP 세그먼트를 데이터그램으로 캡슐화하고 네임(name)서버에 데이터그램을 송신합니다.   
+      4. 이 때 질의하는 호스트(송신쪽)에서의 DNS 애플리케이션은 질의에 대한 응답을 기다립니다.   
+      5. 만약 질의 호스트가 응답을 수신하지 못하면, 질의를 다른 네임서버로 송신하거나 요청한 애플리케이션으로 응답할 수 없다는 것을 통보   
+   
+   - __TCP보다 UDP 방식으로 어플리케이션 개발하는 이유__   
+      - __애플리케이션 레벨이 데이터 송신에 대해서 정교한 제어를 할 수 있습니다.__   
+         UDP 하에서는 데이터를 UDP에게 전달되자 마자 UDP가 데이터를 세그먼트로 만들고, 즉시 그 세그먼트를 네트워크 계층으로 전달합니다. 이에 반해서 TCP는 혼잡제어 메커니즘(Congestion Control)을 가지고 있습니다. Congestion Control 기능은 호스트들 사이에 링크가 과도하게 혼잡해지면 TCP 송신자를 조절합니다. 또한 목적지가 세그먼트의 수신여부를 확인응답(ACK)할 때까지 총 시간이 얼마나 걸리든 상관없이 신뢰적인 전달을 보장하기 위해 세그먼트 재전송을 계속할 것입니다. 그러나 실시간(Real-time) 애플리케이션은 종종 최소전송률만을 요구하고, 지나치게 지연되는 세그먼트 전송을 원하지 않습니다. 또한 조금의 데이터 손실은 허용할 수 있으므로 TCP의 서비스 모델은 이들 애플리케이션의 요구와 맞지 않습니다.   
+         
+      - __연결 설정 X__      
+         TCP는 3-way handshake를 사용하는 반면에 UDP는 형식적인 예비동작이 없습니다. 그러므로 UDP는 연결을 설정하기 위한 어떤 지연도 없습니다.   
+      - __연결 상태 X__   
+         TCP는 연결 상태를 유지하기 위한 수신버퍼, 송신버퍼, congestion control 파라미터, sequence number, ACK number 파라미터를 포함   
+         UDP는 연결상태를 유지하지 않으므로 이 파라미터 중의 어떤 것도 기록하지 않습니다.   
+         그래서 일반적으로 특정 애플리케이션에 할당된 서버는 애플리케이션이 TCP보다 UDP에서 동작할 때 좀 더 많은 클라이언트를 수용할 수 있습니다.   
+      - __작은 패킷 헤더 오베헤드__   
+         TCP는 20바이트의 헤더 오버헤드   
+         UDP는 8바이트의 헤더 오버헤드   
+      
+      
+   
+         
    
       
       
