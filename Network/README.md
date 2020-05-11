@@ -292,6 +292,57 @@ __UDP__
       - __작은 패킷 헤더 오베헤드__   
          TCP는 20바이트의 헤더 오버헤드   
          UDP는 8바이트의 헤더 오버헤드   
+   
+__네트워크 계층은 Unreliable Channel이다.__   
+   - __Unreliable을 통해 발생할 수 있는 것__   
+      - Message error   
+      - Message loss   
+   - __전송 계층의 TCP가 Reliable Channel로 데이터를 잘 전송하는 것 같이 보이지만, 네트워크 계층의 Unreliable Channel 위에 RDT(Reliable Data Transfer) protocol을 구현함으로써 데이터를 Reliable하게 전송할 수 있는 것이다.__   
+      - __stop-and-wait protocol__   
+      - __수신자와 송신자를 명시하기 위해 FSM(Finite State Machines)를 사용__   
+      - __하위 채널이 완벽히 reliable할 경우(RDT1.0)__   
+         - reliable transfer를 위한 어떠한 메카니즘도 필요없다.   
+      - __하위 채널이 packet error(손실 X)를 가질 경우 필요한 메카니즘(RDT2.0)__   
+         - __ARQ(Automatic Repeat reQuest) protocol__   
+            - __Error 검사__
+               - checksum bits를 추가   
+            - __Feedback__   
+               - ACKs(Acknowledgements): 수신자가 Packet을 정확하게 받았다고 송신자에게 알려줌   
+               - NAKs(Negative acknowledgements): 수신자가 Packet에 Error가 있다고 송신자에게 알려줌   
+            - __Retransmission__   
+               - 송신자가 NAK를 보낸 곳에 Packet을 재전송한다.   
+      - __ACK 또는 NAK에 Error가 있을 경우 필요한 메카니즘(RDT2.1)__   
+         - 송신자가 ACK 또는 NAK을 제대로 받지 못하게 되기 때문에 보냈던 데이터를 다시 수신자에게 보내게 된다. 이러한 경우 수신자는 다시 받은 데이터가 새로운 데이터인지 아니면 중복된 데이터인지 알 수 없기 때문에 __Sequence Number를 사용하여 Packet을 구분__하게 할 수 있다.   
+         - 송신자는 Sequence Number를 각 Packet에 추가   
+         - 송신자는 ACK 또는 NAK을 제대로 받지 못할 경우 현재 Packet 재전송   
+         - 수신자는 중복된 Packet 무시   
+         - __Packet header에 sequence number를 계속 추가할 경우__   
+            - header의 크기가 커지기 때문에 좋지 않다. header에는 최소한의 필요한 필드로만 구성되야하고 구성되는 필드들도 최소의 크기를 가지는 것이 좋다.   
+            - sequence number를 최소화 시키기 위해서 0, 1 두개만 사용한다.  
+      - __RDT2.1과 같은 기능을 가지지만 NAK을 사용하지 않는 메카니즘(RDT2.2)__   
+         - 수신자가 마지막으로 제대로 받은 Packet의 sequence number를 ACK에 추가하여 송신자에게 전달함으로써 송신자는 ACK의 sequence number를 통해 보낸 Packet의 재전송 또는 새로운 Packet 전송을 한다.   
+      - __Packet loss와 error 둘 다 있을 경우 필요한 메카니즘(RDT3.0)__   
+         - Timer   
+            - 일정 시간내에 ACK를 받지 못할 경우 Packet 재전송   
+            - Timer 짧은 경우   
+               - loss가 일어날 경우 재전송이 빠르다
+               - Packet 전송이 되는 중이거나 ACK 오고 있음에도 다시 전송하여 중복된 Packet을 다시 보내어 네트워크 오버헤드가 커질 수 있다.   
+               - Sequence number를 통해 수신자가 같은 Packet일 경우 무시(RDT2.2)해버리지만 송신자는 계속 다시 보낼 수 있기 때문에 네트워크에 문제가 생길 수 있다.   
+            - Timer 길 경우   
+               - 기다리는 시간이 길기 때문에 네트워크의 오버헤드가 적다.    
+               - loss가 일어날 경우 반응이 느리다.
+      __RDT3.0은 신뢰적인 데이터 전송의 완벽한 기능을 가지지만 Stop-and-wait 방식이기 때문에 고속 네트워크에서 좋은 성능을 보여주지 못한다.__   
+         - __ACK을 기다리지 않고 여러 Packet을 보내는 방식을 사용함으로써 문제 해결 가능__   
+         - __Pipelining__   
+            - __송신자의 이용률을 3배 증가시킬 수 있다.__   
+            - __3가지 고려사항__   
+               - 여러 Packet을 보내기 때문에 0,1이 아닌 __sequence number 범위 증가 필요__   
+               - 여러 Packet을 담을 수 있는 __버퍼 필요__   
+               - Pipelining Packet loss와 delayed Packet에 대한 __오류 회복 방법__   
+            - __2가지 기본적인 방법__   
+               - __GO-Back-N__: N부터 다시 전송
+               - __Selective Repeat__: 오류난 패킷만 선택 전송   
+      
       
       
    
