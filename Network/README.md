@@ -322,13 +322,13 @@ __네트워크 계층은 Unreliable Channel이다.__
       - __RDT2.1과 같은 기능을 가지지만 NAK을 사용하지 않는 메카니즘(RDT2.2)__   
          - 수신자가 마지막으로 제대로 받은 Packet의 sequence number를 ACK에 추가하여 송신자에게 전달함으로써 송신자는 ACK의 sequence number를 통해 보낸 Packet의 재전송 또는 새로운 Packet 전송을 한다.   
       - __Packet loss와 error 둘 다 있을 경우 필요한 메카니즘(RDT3.0)__   
-         - Timer   
+         - __Timer__   
             - 일정 시간내에 ACK를 받지 못할 경우 Packet 재전송   
-            - Timer 짧은 경우   
+            - __Timer 짧은 경우__   
                - loss가 일어날 경우 재전송이 빠르다
                - Packet 전송이 되는 중이거나 ACK 오고 있음에도 다시 전송하여 중복된 Packet을 다시 보내어 네트워크 오버헤드가 커질 수 있다.   
                - Sequence number를 통해 수신자가 같은 Packet일 경우 무시(RDT2.2)해버리지만 송신자는 계속 다시 보낼 수 있기 때문에 네트워크에 문제가 생길 수 있다.   
-            - Timer 길 경우   
+            - __Timer 길 경우__   
                - 기다리는 시간이 길기 때문에 네트워크의 오버헤드가 적다.    
                - loss가 일어날 경우 반응이 느리다.
       __RDT3.0은 신뢰적인 데이터 전송의 완벽한 기능을 가지지만 Stop-and-wait 방식이기 때문에 고속 네트워크에서 좋은 성능을 보여주지 못한다.__   
