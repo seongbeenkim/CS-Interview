@@ -334,14 +334,37 @@ __네트워크 계층은 Unreliable Channel이다.__
       __RDT3.0은 신뢰적인 데이터 전송의 완벽한 기능을 가지지만 Stop-and-wait 방식이기 때문에 고속 네트워크에서 좋은 성능을 보여주지 못한다.__   
          - __ACK을 기다리지 않고 여러 Packet을 보내는 방식을 사용함으로써 문제 해결 가능__   
          - __Pipelining__   
-            - __송신자의 이용률을 3배 증가시킬 수 있다.__   
+            - __송신자의 이용률을 증가시킬 수 있다.__   
             - __3가지 고려사항__   
                - 여러 Packet을 보내기 때문에 0,1이 아닌 __sequence number 범위 증가 필요__   
                - 여러 Packet을 담을 수 있는 __버퍼 필요__   
                - Pipelining Packet loss와 delayed Packet에 대한 __오류 회복 방법__   
             - __2가지 기본적인 방법__   
-               - __GO-Back-N__: N부터 다시 전송
-               - __Selective Repeat__: 오류난 패킷만 선택 전송   
+               - __GO-Back-N__   
+                  - Window size n만큼 feedback받지 않고 전송할 수 있다.   
+                     - Window size n만큼 전송시 각 Packet의 Timer가 켜지고 범위의 가장 처음 Packet의 제한 시간 내 ACK을 받지 못할 경우 모두 다시 재전송한다.  
+                         - Window 안에 있는 Packet들은 수신자가 제대로 Packet을 못받을 경우 재전송해야하기 때문에 버퍼에 반드시 저장되어있어야 한다.   
+                  - ACK N: N까지 모두 잘 수신했다는 의미   
+                  - 수신자는 순서대로 항상 정확하게 수신한 Packet의 가장 큰 seqence number를 ACK로 송신자에게 보낸다.   
+                     - 잘못된 순서의 Packet을 받을 경우 무시하고 이전에 정확하게 받은 Packet의 가장 큰 seqence number를 ACK로 송신자에게 보낸다.   
+                     - 0,1,2,3 Packet 4개를 보냈는데 0에 대한 ACK를 받을 경우 1,2,3,4로의 범위로 바뀌고 4에 대해서 전송하고 Timer를 켜고 1에 대한 ACK를 받을 경우 2,3,4,5의 범위로 바꾸고 5를 전송하고 Timer를 키는데 2에 대한 ACK을 받지 못하고 2에 대한 Timer 제한 시간이 다 된 경우 2~5를 다시 재전송한다.   
+                     - __즉 Packet loss 일어날 시 n만큼 돌아와서 전부 다시 보낸다.__    
+                        
+               - __Selective Repeat__   
+                  - Window size n만큼 Feedback받지 않고 전송할 수 있다.   
+                     - Window size n만큼 전송시 각 Packet의 Timer가 켜지고 각 Packet의 제한 시간 내 ACK을 받지 못할 경우 ACK을 받지 못한 Packet만 재전송한다.   
+                  - ACK N: N을 잘 수신했다는 의미   
+                  - 수신자는 정확히 받은 각 Packet에 대해서만 ACK을 송신자에게 보낸다.   
+                     - 받은 Packet은 버퍼에 반드시 저장해야한다.   
+                         - 버퍼가 순서대로 꽉 차게 되면 어플리케이션 계층에 넘겨주고 마지막 받은 Packet에 대한 ACK을 송신자에게 보내고 버퍼를 비운다.   
+                     - 0,1,2,3 Packet 4개를 보냈는데 0에 대한 ACK를 받을 경우 1,2,3,4로의 범위로 바뀌고 4에 대해서 전송하고 Timer를 켜고 1에 대한 ACK를 받을 경우 2,3,4,5의 범위로 바꾸고 5를 전송하고 Timer를 키는데 2에 대한 ACK을 받지 못하고 2에 대한 Timer 제한 시간이 다 된 경우 2~5를 다시 재전송한다.   
+                     - __즉 Packet loss 일어난 Packet만 다시 보낸다.__   
+                     - But, Sequence number가 계속 증가하는데 Sequence number의 값의 크기는 최대한 작게 하는 것이 좋다.   
+                        - __그러므로 Window size가 n일 경우 Sequence number의 범위를 2n으로 할 경우 재전송할 Packet에 대한 혼선없이 전송이 가능하다.__   
+                     - __문제점은 모든 Packet이 Timer를 가져야하기 때문에 Window size가 클 경우 복잡해지기 때문에 잘 사용하지 않는다.__   
+                        - Window를 대표하는 Timer를 하나를 가지고 사용한다.   
+                     
+                  
       
       
       
