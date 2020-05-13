@@ -235,11 +235,12 @@ __NAT은 UDP의 특징을 이용하여 작동중인 네트워크의 내부 호�
    
 ## 3. 전송 계층   
 ### Multiplexing/Demultiplexing   
-어플리케이션 계층 - Message   
-__전송 계층 - Segment(32bit) = head(출발지 port, 목적지 port 필드 등) + data(Message)__   
-네트워크 계층 - Packet = head(IP) + data(Segment)   
-데이터 링크 계층 - Frame = head + data(Packet)   
-물리적 계층 - Router = head + data(Frame)   
+__각 계층의 전송 단위__
+   - 어플리케이션 계층 - __Message__ = head + data(원하는 요청)   
+   - 전송 계층 - __Segment(32bit)__ = head(출발지 port, 목적지 port 필드 등) + data(Message)   
+   - 네트워크 계층 - __Packet__ = head(IP) + data(Segment)   
+   - 데이터 링크 계층 - __Frame__ = head + data(Packet)   
+   물리적 계층 - Router = head + data(Frame)를 통해서 상대방의 물리적 계층을 전송   
    
 __Multiplexing__   
    - 출발지 호스트에서 소켓으로부터 데이터를 전달받아 데이터를 모으고, 이를 세그먼트 단위로 묶어 생성하기 위해서 세그먼트 앞에 헤더를 붙여 캡슐화하고 세그먼트를 네트워크 계층으로 전달하는 작업   
@@ -293,7 +294,7 @@ __UDP__
          TCP는 20바이트의 헤더 오버헤드   
          UDP는 8바이트의 헤더 오버헤드   
    
-__네트워크 계층은 Unreliable Channel이다.__   
+### 네트워크 계층은 Unreliable Channel이다.   
    - __Unreliable을 통해 발생할 수 있는 것__   
       - Message error   
       - Message loss   
@@ -342,7 +343,7 @@ __네트워크 계층은 Unreliable Channel이다.__
             - __2가지 기본적인 방법__   
                - __GO-Back-N__   
                   - Window size n만큼 feedback받지 않고 전송할 수 있다.   
-                     - Window size n만큼 전송시 각 Packet의 Timer가 켜지고 범위의 가장 처음 Packet의 제한 시간 내 ACK을 받지 못할 경우 모두 다시 재전송한다.  
+                     - Window size n만큼 전송시 하나의 Timer가 켜지고 제한 시간 내 ACK을 받지 못할 경우 모두 다시 재전송한다.  
                          - Window 안에 있는 Packet들은 수신자가 제대로 Packet을 못받을 경우 재전송해야하기 때문에 버퍼에 반드시 저장되어있어야 한다.   
                   - ACK N: N까지 모두 잘 수신했다는 의미   
                   - 수신자는 순서대로 항상 정확하게 수신한 Packet의 가장 큰 seqence number를 ACK로 송신자에게 보낸다.   
@@ -362,7 +363,54 @@ __네트워크 계층은 Unreliable Channel이다.__
                      - But, Sequence number가 계속 증가하는데 Sequence number의 값의 크기는 최대한 작게 하는 것이 좋다.   
                         - __그러므로 Window size가 n일 경우 Sequence number의 범위를 2n으로 할 경우 재전송할 Packet에 대한 혼선없이 전송이 가능하다.__   
                      - __문제점은 모든 Packet이 Timer를 가져야하기 때문에 Window size가 클 경우 복잡해지기 때문에 잘 사용하지 않는다.__   
-                        - Window를 대표하는 Timer를 하나를 가지고 사용한다.   
+                        - 그래서 보통 Window를 대표하는 Timer를 하나를 가지고 사용한다.   
+
+### TCP   
+   - __point-to-point__   
+      - 수신자 1 : 송신자 1   
+   - __신뢰성있고, 순차적인 byte stream__    
+      - message의 경계가 없다.   
+      - GO-BACK-N과 같이 Timer를 하나 사용하지만 하나의 Segment만 재전송한다.   
+      - IP의 unreliable service의 상위에서 RDT 서비스를 생성하여 reliable전송 할 수 있게 한다.   
+      - Pipelined Segments   
+   - __pipelined__   
+      - TCP 혼잡, 흐름제어, window 크기 설정   
+   - __send & receive buffer__   
+      - 수신자와 송신자가 각각 window 크기 만큼 고유의 send, receive buffer 2개를 가지고 있다.   
+   - __full duplex data__   
+      - 같은 연결에서 데이터가 양방향으로 갈 수 있다.   
+      - MSS(Maximum Segment Size)   
+   - __연결지향형__   
+      - 3 way handshaking을 통해 데이터 교환전에 송신자와 수신자 연결   
+   - __흐름 제어__   
+      - 수신자가 받을 수 있는 만큼만 송신자가 데이터 전송   
+   - __혼잡 제어__   
+      - 내부 네트워크에서 전송할 수 있는 만큼만 데이터 전송   
+   - __TCP Segment(32bit) 구조__   
+      - __출발지 Port번호(16bit), 도착지 Port번호(16bit)__    
+         - 2^16-1 대략 6만개 정도의 Port 번호가 존재   
+      - __Sequence Number(32bit)__   
+         - Seq n: data의 첫번째 byte의 number   
+      - __Acknowledgement Number(32bit)__   
+         - ACK n: 다음으로 받아야 할 byte의 Sequence Number, 받은 Seq n + 1을 보낸다.   
+         - __데이터를 받을 경우 ACK을 바로 보내지 않는다. 일정 시간을 기다린 후 ACK를 보내는 이유(pending)__   
+            1. 내가 보내고자 하는 데이터를 같이 보낼수도 있다.   
+            2. pipelining 방식으로 데이터가 오기 때문에 일일이 ACK을 하지 않고 __현재까지 수신된 byte들을 단 하나의 ACK로 일괄 확인응답하는 Cumulative ACK__을 한다.   
+         - __Timeout 값을 RTT의 값에 따라 조절할 경우__   
+            - RTT는 Segment가 지나가는 경로가 다르기 때문에 항상 값이 다르고 만약 같은 경로로 지나간다해도 Segment의 Queuing delay 때문에 값이 다르다.   
+            - 그러므로 Estimated RTT값을 사용하여 빠르게 반응할 수 있게 한다.   
+               - Sample RTT: 실제로 ACK을 받을 때까지 걸린 측정된 시간   
+               - Estimated RTT: 최근 RTT들의 평균   
+               - 이럴 경우 실제 RTT가 김에도 Estimated RTT가 짧아서 데이터 유실할 가능성이 높아진다.   
+            - __그러므로 Estimated RTT * 4 * DevRTT(편차)를 사용하여 Timeout을 설정한다.__   
+         - __Fast retransmit__   
+            - TCP는 같은 ACK를 4번 받을 경우 유실됐다고 생각하고 Timeout 되기 전에 해당 데이터를 재전송하도록 권고한다.   
+      - __header 길이, (U,A,P,R,S,F), Receive window__   
+      - __checksum(16bit), URG data pointer(16bit)__   
+      - __옵션(32bit)__   
+      - __어플리케이션 데이터__   
+      
+      
                      
                   
       
