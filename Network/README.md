@@ -1,4 +1,10 @@
-# Network
+# :bookmark_tabs: Network
+* [1. 컴퓨터 네트워크 기본](#1-컴퓨터-네트워크-기본)   
+   - [네트워크 구성 요소](#네트워크-구성-요소)   
+* [2. 어플리케이션 계층](#2-어플리케이션-계층)   
+   - [Web and HTTP](#web-and-http)   
+* [3. 전송 계층](3-전송-계층)   
+   - [Multiplexing&Demultiplexing](#multiplexingdemultiplexing)
 
 ## 1. 컴퓨터 네트워크 기본   
 ### 네트워크 구성 요소   
@@ -234,7 +240,7 @@ __NAT은 UDP의 특징을 이용하여 작동중인 네트워크의 내부 호�
    
    
 ## 3. 전송 계층   
-### Multiplexing/Demultiplexing   
+### Multiplexing&Demultiplexing   
 __각 계층의 전송 단위__
    - 어플리케이션 계층 - __Message__ = head + data(원하는 요청)   
    - 전송 계층 - __Segment(32bit)__ = head(출발지 port, 목적지 port 필드 등) + data(Message)   
@@ -376,16 +382,45 @@ __UDP__
    - __pipelined__   
       - TCP 혼잡, 흐름제어, window 크기 설정   
    - __send & receive buffer__   
-      - 수신자와 송신자가 각각 window 크기 만큼 고유의 send, receive buffer 2개를 가지고 있다.   
+      - 수신자와 송신자 모두 window 크기 만큼 고유의 send, receive buffer 2개를 가지고 있다.   
    - __full duplex data__   
       - 같은 연결에서 데이터가 양방향으로 갈 수 있다.   
       - MSS(Maximum Segment Size)   
    - __연결지향형__   
       - 3 way handshaking을 통해 데이터 교환전에 송신자와 수신자 연결   
+         - Client가 TCP header의 SYN에 1을 세팅하고 자신의 Seq를 Server에 전송   
+         - Server는 SYN에 1, SYN에 대한 ACK 1로 세팅하고, Client의 Seq에 대한 ACK(Client의 Seq + 1), 자신의 Seq를 Client에 전송   
+         - Client는 SYN에 대한 ACK 1, Server의 Seq에 대한 ACK(Server의 Seq + 1)을 Server에 전송   
+         __마지막 3번째 과정에서 Segment에 데이터를 넣어 같이 전송할 수도 있다.__   
+      - 연결 해제 과정   
+         - Close를 원하는 Client가 FIN 1을 세팅하여 Server에 전송   
+         - Server가 FIN에 대한 ACK를 Client에 전송하고 보내야 할 데이터가 있을 경우 모두 보내고 연결 해제 후 FIN 1을 세팅하여 Client에 전송   
+         - Client는 FIN을 받으면 time wait을 실행하고 FIN에 대한 ACK를 Server에 전송   
+         __Server에 보낸 ACK가 유실될 경우 Server는 ACK을 받지 못하고 time out이 되어 Client에 FIN을 다시 전송할 수 있는데 Client가 연결 해제되어있을 경우 Server는 계속해서 FIN을 보내게 될 수도 있기 때문에 ACK가 확실히 전달되기 위해서 Client는 바로 연결 해제 하지 않고 time wait을 한다.__   
    - __흐름 제어__   
-      - 수신자가 받을 수 있는 만큼만 송신자가 데이터 전송   
+      - 수신자가 받을 수 있는 만큼만 송신자가 데이터 전송하기 위한 제어   
+      - 수신자의 버퍼가 얼마만큼 비어있는지 송신자에게 알려줘야한다.   
+         - TCP header의 recv_buff 필드에 저장해서 전송한다.   
+         - 송신자는 수신자의 recv_buff가 비어있는만큼 데이터를 전송한다.   
+            - 보내는 양이 많으면 보내는 속도가 빠르고 보내는 양이 적으면 보내는 속도가 느리다.   
+         - 수신자의 app에서 읽기 버퍼로부터 데이터를 읽지 않을 경우 계속해서 쌓인다.   
+            - 빈 공간이 하나도 없게될 경우 TCP header의 recv_buff에 0 byte를 저장해서 전송한다.   
+            - 송신자는 기다리지 않고 주기적으로 데이터 없이 또는 1 byte를 넣어 의미없는 Segment를 보내어 수신자의 ACK를 받아 수신자의 읽기 버퍼 상태를 확인한다.   
    - __혼잡 제어__   
-      - 내부 네트워크에서 전송할 수 있는 만큼만 데이터 전송   
+      - 송신자와 수신자 사이의 네트워크가 수용할 수 있는 만큼만 데이터 전송하기 위한 제어   
+      __네트워크가 막힐 경우 TCP 데이터가 제대로 전달되지 않아 재전송을 하는 특성 때문에 네트워크를 더 막히게 하여 TCP는 무너지게 된다.__   
+      - 어떻게 Public 네트워크 막히지 않게 할 수 있을까?   
+         - 네트워크가 혼잡할 경우 보내는 데이터의 양을 줄이고 한가할 경우 보내는 데이터의 양을 늘린다.   
+         - 네트워크의 상태를 확인하는 방법   
+            - __Network-assisted__   
+               - 네트워크의 라우터들이 상태를 알려준다.   
+               __라우터들은 데이터를 전송하느라 바쁘기 때문에 이 방법은 이상적인 방법이다.__   
+            - __End-end__   
+               - 현재 인터넷의 구현 방식   
+               - 호스트가 서로 TCP Segment를 전송하면서 유추하는 방법   
+               - TCP Segment의 ACK를 통해 유추하기 때문에 정확하지 않다.   
+               
+      __즉 송신자가 보내는 속도는 수신자의 버퍼 상태와 네트워크 상태에 의해 결정되는데 더 좋지 않은 쪽에 맞춰서 데이터를 전송해야 한다.__      
    - __TCP Segment(32bit) 구조__   
       - __출발지 Port번호(16bit), 도착지 Port번호(16bit)__    
          - 2^16-1 대략 6만개 정도의 Port 번호가 존재   
