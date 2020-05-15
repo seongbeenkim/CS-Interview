@@ -418,7 +418,38 @@ __UDP__
             - __End-end__   
                - 현재 인터넷의 구현 방식   
                - 호스트가 서로 TCP Segment를 전송하면서 유추하는 방법   
-               - TCP Segment의 ACK를 통해 유추하기 때문에 정확하지 않다.   
+               - TCP Segment의 ACK를 통해 유추하기 때문에 정확하지 않다.
+      - __Slow start__   
+         - 1개, 2개, 4개 .... 2n개 즉, 수신자로부터 ACK을 받을 경우 보내는 Segment를 2배씩 증가시킨다.   
+      - __Additive increase__   
+         - threshold(한계점)을 넘을 경우 2배씩이 아니라 1씩 증가시켜서 보낸다.   
+      - __Multipicative decrease__   
+         - Packet loss가 일어날경우 window size를 2배 줄이고 Slow start를 다시 처음부터 시작한다.   
+            1. __TCP Tahoe__   
+               - 80년대의 TCP로 첫번째 TCP 버전   
+               - threshold를 Window size/2로 설정   
+            2. __TCP Reno__   
+               - TCP 두번째 버전으로 현재 인터넷에서 사용   
+               - Packet loss이 일어나는 상황   
+                  1. timeout   
+                     - threshold를 Window size/2로 설정하고 Window size를 threshold로 설정 후 1씩 증가하며 다시 시작   
+                  2. 같은 ACK를 4번 받을 경우   
+                     - threshold를 Window size/2로 설정하고 Window size를 1 MSS로 설정 후 시작. 즉, Slow start부터 다시 시작   
+                  timeout 상황이 더 위험한 상황이다.   
+         - __네트워크는 공유 자원이기 때문에 해당 네트워크에 접근하는 모든 호스트는 window size를 2배 줄여야 하고 threshold 이후에는 항상 1씩 증가한다.__   
+      
+      - __TCP Fairness__   
+         - 같은 네트워크를 사용하는 아주 많은 TCP 세션들이 존재한다. (같은 라우터를 사용)   
+         - K개의 TCP 세션이 대역폭 R의 같은 라우터를 사용한다면, 각각의 세션은 R/K의 평균 전송률을 가진다.   
+            - K개의 TCP가 Additive increase를 증가시켜 전송량을 늘리고 R을 초과할 경우 Multipicative decrease하고 다시 Additive increase를 하는 과정을 반복함으로써 각각의 TCP 세션이 공평한 전송률은 가지게 된다.   
+         - TCP끼리의 경쟁이기 때문에 TCP를 많이 연 사람이 더 높은 전송률을 가지게 된다.    
+
+      - __MSS(Maximum Segment Size)__   
+         - 500 Byte   
+         - Window size가 MSS로 설정되어있다. 그러므로 처음에는 하나의 Segment만 전송할 수 있고 이에 대한 ACK를 받을 시 2배씩 증가한다.   
+      - __전송률 = Window size / RTT__     
+         - Window size가 더 변동이 심하기 때문에 전송률은 Window size(CongWin)에 좌우된다.   
+         
                
       __즉 송신자가 보내는 속도는 수신자의 버퍼 상태와 네트워크 상태에 의해 결정되는데 더 좋지 않은 쪽에 맞춰서 데이터를 전송해야 한다.__      
    - __TCP Segment(32bit) 구조__   
