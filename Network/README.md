@@ -3,7 +3,7 @@
    - [네트워크 구성 요소](#네트워크-구성-요소)   
 * [2. 어플리케이션 계층](#2-어플리케이션-계층)   
    - [Web and HTTP](#web-and-http)   
-* [3. 전송 계층](3-전송-계층)   
+* [3. 전송 계층](#3-전송-계층)   
    - [Multiplexing&Demultiplexing](#multiplexingdemultiplexing)
 
 ## 1. 컴퓨터 네트워크 기본   
