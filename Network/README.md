@@ -5,6 +5,7 @@
    - [Web and HTTP](#web-and-http)   
 * [3. 전송 계층](#3-전송-계층)   
    - [Multiplexing&Demultiplexing](#multiplexingdemultiplexing)
+* [4. 네트워크 계층](#4-네트워크-계층)   
 
 ## 1. 컴퓨터 네트워크 기본   
 ### 네트워크 구성 요소   
@@ -156,13 +157,15 @@ __HTTP(Hypertext Transfer Protocol)__
       - Server: Web Server가 HTTP를 사용하여 request에 응답하는 객체를 보낸다.   
    - __stateless__: 과거 client의 request에 대한 정보를 유지하지 않는다.   
          
-   __HTTP request, receive 하기 전에 TCP 연결을 먼저 해야한다.__   
+   __HTTP request, response 하기 전에 TCP 연결을 먼저 해야한다.__   
    
    - __non-persistent HTTP__: TCP를 연결을 통해 최대 하나의 객체가 전달된 후 TCP 연결이 끊긴다. 다운로드하는 다수의 객체는 다수의 TCP 연결이 필요하다.   
+      - HTTP 1.0이 사용   
       - RTT: 작은 패킷이 client에서 server로 갔다 다시 올 동안의 시간   
       - non-persistent HTTP response time = 2RTT + 파일 전송 시간
       ex) TCP 연결을 위한 RTT 하나, HTTP request와 반환 받아야할 response를 위한 RTT 하나, file 전송 시간 
    - __persistent HTTP__: 하나의 TCP 연결을 통해 다수의 객체가 전달될 수 있다.   
+      - HTTP 1.1이 사용   
       - Pipelining 기법: 다수의 객체를 요청할 경우 요청할 수 만큼 연속적으로 request를 하고 연속적으로 response 받는 방식을 사용하여 client와 server간 요청과 응답의 효율성을 높인다.   
       
    __일반 web은 persistent HTTP pipelining 기법을 사용한다__   
@@ -302,8 +305,8 @@ __UDP__
    
 ### 네트워크 계층은 Unreliable Channel이다.   
    - __Unreliable을 통해 발생할 수 있는 것__   
-      - Message error   
-      - Message loss   
+      - Message error(Packet error)   
+      - Message loss(Packet loss)   
    - __전송 계층의 TCP가 Reliable Channel로 데이터를 잘 전송하는 것 같이 보이지만, 네트워크 계층의 Unreliable Channel 위에 RDT(Reliable Data Transfer) protocol을 구현함으로써 데이터를 Reliable하게 전송할 수 있는 것이다.__   
       - __stop-and-wait protocol__   
       - __수신자와 송신자를 명시하기 위해 FSM(Finite State Machines)를 사용__   
@@ -350,7 +353,7 @@ __UDP__
                - __GO-Back-N__   
                   - Window size n만큼 feedback받지 않고 전송할 수 있다.   
                      - Window size n만큼 전송시 하나의 Timer가 켜지고 제한 시간 내 ACK을 받지 못할 경우 모두 다시 재전송한다.  
-                         - Window 안에 있는 Packet들은 수신자가 제대로 Packet을 못받을 경우 재전송해야하기 때문에 버퍼에 반드시 저장되어있어야 한다.   
+                         - Window 안에 있는 Packet들은 수신자가 제대로 Packet을 못받을 경우 재전송해야하기 때문에 송신자 send 버퍼에 반드시 저장되어있어야 한다.   
                   - ACK N: N까지 모두 잘 수신했다는 의미   
                   - 수신자는 순서대로 항상 정확하게 수신한 Packet의 가장 큰 seqence number를 ACK로 송신자에게 보낸다.   
                      - 잘못된 순서의 Packet을 받을 경우 무시하고 이전에 정확하게 받은 Packet의 가장 큰 seqence number를 ACK로 송신자에게 보낸다.   
@@ -363,13 +366,14 @@ __UDP__
                   - ACK N: N을 잘 수신했다는 의미   
                   - 수신자는 정확히 받은 각 Packet에 대해서만 ACK을 송신자에게 보낸다.   
                      - 받은 Packet은 버퍼에 반드시 저장해야한다.   
-                         - 버퍼가 순서대로 꽉 차게 되면 어플리케이션 계층에 넘겨주고 마지막 받은 Packet에 대한 ACK을 송신자에게 보내고 버퍼를 비운다.   
+                        - 손실된 패킷 이후 정확히 받은 다른 패킷들은 수신자의 손실된 패킷 자리를 비워놓고 recv 버퍼에 저장해놓은다.   
+                        - 버퍼가 순서대로 꽉 차게 되면 어플리케이션 계층에 넘겨주고 마지막 받은 Packet에 대한 ACK을 송신자에게 보내고 버퍼를 비운다.   
                      - 0,1,2,3 Packet 4개를 보냈는데 0에 대한 ACK를 받을 경우 1,2,3,4로의 범위로 바뀌고 4에 대해서 전송하고 Timer를 켜고 1에 대한 ACK를 받을 경우 2,3,4,5의 범위로 바꾸고 5를 전송하고 Timer를 키는데 2에 대한 ACK을 받지 못하고 2에 대한 Timer 제한 시간이 다 된 경우 2~5를 다시 재전송한다.   
                      - __즉 Packet loss 일어난 Packet만 다시 보낸다.__   
                      - But, Sequence number가 계속 증가하는데 Sequence number의 값의 크기는 최대한 작게 하는 것이 좋다.   
                         - __그러므로 Window size가 n일 경우 Sequence number의 범위를 2n으로 할 경우 재전송할 Packet에 대한 혼선없이 전송이 가능하다.__   
                      - __문제점은 모든 Packet이 Timer를 가져야하기 때문에 Window size가 클 경우 복잡해지기 때문에 잘 사용하지 않는다.__   
-                        - 그래서 보통 Window를 대표하는 Timer를 하나를 가지고 사용한다.   
+                        - 그래서 __보통 Window를 대표하는 Timer를 하나__를 가지고 사용한다.   
 
 ### TCP   
    - __point-to-point__   
@@ -446,7 +450,7 @@ __UDP__
 
       - __MSS(Maximum Segment Size)__   
          - 500 Byte   
-         - Window size가 MSS로 설정되어있다. 그러므로 처음에는 하나의 Segment만 전송할 수 있고 이에 대한 ACK를 받을 시 2배씩 증가한다.   
+         - Window size가 1 MSS로 설정되어있다. 그러므로 처음에는 하나의 Segment만 전송할 수 있고 이에 대한 ACK를 받을 시 2배씩 증가한다.   
       - __전송률 = Window size / RTT__     
          - Window size가 더 변동이 심하기 때문에 전송률은 Window size(CongWin)에 좌우된다.   
          
@@ -461,7 +465,7 @@ __UDP__
          - ACK n: 다음으로 받아야 할 byte의 Sequence Number, 받은 Seq n + 1을 보낸다.   
          - __데이터를 받을 경우 ACK을 바로 보내지 않는다. 일정 시간을 기다린 후 ACK를 보내는 이유(pending)__   
             1. 내가 보내고자 하는 데이터를 같이 보낼수도 있다.   
-            2. pipelining 방식으로 데이터가 오기 때문에 일일이 ACK을 하지 않고 __현재까지 수신된 byte들을 단 하나의 ACK로 일괄 확인응답하는 Cumulative ACK__을 한다.   
+            2. pipelining 방식으로 데이터가 오기 때문에 일일이 ACK을 하지 않고 __현재까지 수신된 byte들을 단 하나의 ACK로 일괄 확인 응답하는 Cumulative ACK__을 한다.   
          - __Timeout 값을 RTT의 값에 따라 조절할 경우__   
             - RTT는 Segment가 지나가는 경로가 다르기 때문에 항상 값이 다르고 만약 같은 경로로 지나간다해도 Segment의 Queuing delay 때문에 값이 다르다.   
             - 그러므로 Estimated RTT값을 사용하여 빠르게 반응할 수 있게 한다.   
@@ -476,8 +480,20 @@ __UDP__
       - __옵션(32bit)__   
       - __어플리케이션 데이터__   
       
-      
-                     
+## 4. 네트워크 계층   
+   - 송신자에서 Segment를 datagram로 변환   
+   - 수신자에서 Segment를 전송 계층에 전달   
+   - __Internet Protocol(IP)__   
+      - 라우터는 Packet을 목적지까지 전송하기 위해서 Network, Link, Physical 계층을 가지고 있다.   
+      - __라우터가 하는 일__   
+         - Forwarding   
+            - Packet header에 들어있는 목적지 주소가 라우터 테이블(포워딩 테이블)을 참조하여 올바른 목적지를 찾아 전달하는 것   
+         - Routing   
+            - 포워딩 테이블을 만들어 주는 것   
+            - 포워딩 테이블에 모든 주소를 넣을 경우 검색하기도 복잡하고 관리하기도 힘들기 때문에 주소 범위를 정하여 관리한다.   
+            - 포워딩 테이블 종류   
+               - Longest prefix matching   
+                  - 목적지 주소와 매칭되는 가장 긴 prefix 주소에 따라 링크를 연결한다.   
                   
       
       
