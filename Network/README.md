@@ -3,6 +3,9 @@
    - [네트워크 구성 요소](#네트워크-구성-요소)   
 * [2. 어플리케이션 계층](#2-어플리케이션-계층)   
    - [Web and HTTP](#web-and-http)   
+   - [Web caches (Proxy server)](#web-caches)   
+   - [FTP](#FTP)   
+   - [DNS](#DNS)   
 * [3. 전송 계층](#3-전송-계층)   
    - [Multiplexing&Demultiplexing](#multiplexingdemultiplexing)
 * [4. 네트워크 계층](#4-네트워크-계층)   
@@ -15,9 +18,33 @@ __네트워크 코어__ : 라우터, 네트워크
 __네트워크 접근, 물리적 장치__ : 통신 링크 (무선랜,wifi 등)   
    
 #### Network edge       
-__end system(hosts)__: 어플리케이션 실행 ex) web, email   
+__end system(hosts)__: 어플리케이션 실행   
+ex) web, email   
 __client/server model__: client host는 요청하고 항상 server로부터 서비스를 제공받는다.   
 ex) Web browser/server, email client/server    
+
+### 애플리케이션 구조
+
+__client-server 구조__   
+   - __server__:   
+      - 모든 서버는 호스트이다   
+      - 모든 호스트가 서버인 것은 아님   
+      - 네트워크에 연결이 확립된 모든 장치는 호스트의 자격이 있는 반면, 다른 장치(클라이언트)로부터의 연결을 수락하는 호스트만 서버가 될 수 있다.   
+      - 영구적인 IP 주소   
+      - 스케일링을 위한 데이터 센터   
+   - __client__:  
+      - 서버와 통신  
+      - 간헐적으로 연결되었을 수 있다   
+      - 동적 IP 주소가 있을 수 있다. (껐다 키면 IP가 바뀔 수 있다)   
+      - 서로 직접적으로 통신하지 않는다   
+
+__peer-to-peer (P2P)__   
+   - no always-on server  (상시 서버 없음)   
+   - 임의의 end systems이 직접적으로 통신   
+   - peer가 다른 peer에게 서비스를 요청하고 및 제공함 (동등한 관계)   
+      - self scalability: 새로운 동료(peers) 새로운 service demand 및 새로운 service capacity를 가져온다.   
+   - peers가 간헐적으로 연결되고 IP 주소를 변경한다   
+      - 복잡한 관리   
    
 __1. Connection-oriented service   
 TCP(Transmission Control Protocol)__   
@@ -94,6 +121,16 @@ ex) skype, bittorrent, kazaa
 우리가 사용하는 프로세스(프로그램)가 존재하는 계층  
 프로세스는 app 개발자에 의해 통제되며 Socket을 통해 transport 계층과 연결된다.   
 어플리케이션 계층을 제외한 transport, network, link, physical 계층은 OS에 의해 통제되며 physical 계층끼리 인터넷을 통해 통신한다.   
+
+- __Processes communicating__   
+   - __process__: 호스트 내에서 실행 중인 프로그램   
+      - 같은 호스트 내에서, 두 개의 프로세스들이 (OS에 의해 정의된) inter-process communication를 사용하여 통신한다.   
+      - 서로 다른 호스트의 프로세스가 메시지를 교환하여 통신함   
+   - __clients, servers__   
+      - client process: 통신을 시작하는 프로세스   
+      - server process: 연락을 기다리는 프로세스   
+   - __aside__:   
+      - P2P 구조를 사용하는 애플리케이션은 client processes & server processes를 가진다.   
 - __Server__   
    - 인터넷에 상시 접속된 host   
    - 영구적인 IP 주소   
@@ -109,7 +146,8 @@ ex) skype, bittorrent, kazaa
        - 소켓 type을 지정   
          - TCP 또는 UDP   
             reliable vs best effort   
-            connection-oriented vs connecttionless
+            connection-oriented vs connecttionless   
+   - 프로세스는 소켓으로부터 메시지를 받고, 보낸다.   
    - Server와 Client가 통신할 수 있게 이어주는 것   
    - IP 주소(어떤 컴퓨터인지 나타냄), Port 번호(해당 컴퓨터의 어느 프로세스인지 나타냄)를 가짐   
    
@@ -163,13 +201,196 @@ __HTTP(Hypertext Transfer Protocol)__
       - HTTP 1.0이 사용   
       - RTT: 작은 패킷이 client에서 server로 갔다 다시 올 동안의 시간   
       - non-persistent HTTP response time = 2RTT + 파일 전송 시간
-      ex) TCP 연결을 위한 RTT 하나, HTTP request와 반환 받아야할 response를 위한 RTT 하나, file 전송 시간 
+      ex) TCP 연결을 위한 RTT 하나, HTTP request와 반환 받아야할 response를 위한 RTT 하나, file 전송 시간   
+      - non-persistent HTTP issues:   
+         - object 당 2번의 RTT가 걸림   
+         - 각 TCP 연결을 위한 OS 오버헤드   
+         - 브라우저가 참조된 object를 가져오기 위해 종종 병렬 TCP 연결을 연다   
+      
    - __persistent HTTP__: 하나의 TCP 연결을 통해 다수의 객체가 전달될 수 있다.   
       - HTTP 1.1이 사용   
       - Pipelining 기법: 다수의 객체를 요청할 경우 요청할 수 만큼 연속적으로 request를 하고 연속적으로 response 받는 방식을 사용하여 client와 server간 요청과 응답의 효율성을 높인다.   
       
    __일반 web은 persistent HTTP pipelining 기법을 사용한다__   
+   
+__User-server state: cookies__   
+   - 많은 웹 사이트들은 쿠키를 사용한다.   
+   - __4가지 구성요소__   
+      - HTTP 응답 메시지의 쿠키 헤더 라인   
+      - 다음 HTTP  요청 메시지의 쿠키 헤더 라인    
+      - 쿠키 파일은 사용자의 브라우저에 의해 관리되고 사용자의 호스트에 보관된다.   
+      - 웹 사이트의 백엔드 데이터베이스   
       
+   - 어떻게 "state"를 유지할까?   
+      - protocol endpoints: 여러 트랜잭션에서 송/수신자 상태를 유지   
+      - cookies: http 메시지는 state를 나타낸다(carry)   
+
+### Web caches   
+   - 목표: Origin Server를 거치지 않고 Client request에 대한 response를 해주는 것   
+      - 사용자 브라우저를 설정: Proxy server에 요청된 내용들에 대한 캐시를 통한 웹 접근   
+      - __Proxy Server__: 클라이언트가 자신을 통해서 다른 네트워크 서비스에 간접적으로 접속할 수 있게 해주는 컴퓨터   
+      - __서버와 클라이언트 사이에서 중계기로서 통신을 수행하는 기능을 가리켜 proxy__ 라고 한다.   
+      - 브라우저는 모든 HTTP 요청을 캐시로 보낸다   
+         - 캐시의 객체: 캐시는 객체를 반환   
+         - 저장되어 있는 데이터가 없을 경우 캐시는 원래 서버에서 객체를 요청한 다음 객체를 클라이언트에게 반환   
+      - Origin server를 통해 생긴 데이터(캐시)는 Proxy server에 저장되고 같은 request를 받았을 경우 origin server를 거치지 않고 Proxy server에서 데이터를 response한다.   
+      - 캐시는 웹 페이지를 디스플레이하기 위해 다운로드한 데이터의 콜렉션이다.   
+      - __Why Web caching?__    
+         - 클라이언트 요청에 대한 응답 시간을 줄임   
+         - 기관의 접근 링크에서 트래픽을 줄인다   
+         - 캐시가 있는 인터넷 밀도: "poor" 컨텐츠 제공 업체가 효과적으로 컨텐츠를 제공 할 수 있다(P2P 파일 공유도 마찬가지)   
+         - bandwidth 사용을 줄인다.   
+         - access link 속도를 늘리는 것보다 비용이 적게 들고 빠르다.   
+      - __캐시와 쿠키의 차이__   
+         - __쿠키__   
+            - 정보를 사용자의 PC 임시 저장소에 저장   
+            - 사용자가 임의로 저장   
+            - 사용자와 관련된 정보 저장    
+               - 비밀번호, 방문 날짜 등   
+         - __캐시__   
+            - 정보를 웹 서버의 저장소에 저장   
+            - 사용자의 의지와 관계없이 무조건 자동 저장   
+               - ex) 웹 사이트에서 영상 처음 보면 오래걸리는데, 다시 보면 빨리 로딩됨   
+
+### FTP   
+   - File Transfer Protocol
+   - TCP/IP 프로토콜을 가지고 서버와 클라이언트 사이의 __파일 전송__을 하기 위한 프로토콜이다.   
+   - client/server model   
+      - client: 전송을 시작하는 쪽   
+      - server: 원격 호스트   
+   - FTP: RFC 959   
+   - FTP server: Port 21   
+      - FTP server는 "state"를 유지한다   
+         - ex) 현재 디렉토리, 이전 인증   
+   - HTTP와 달리 연결의 종류는 2가지가 있다.   
+      - Control Connection: 먼저 제어 Port인 Server 21번 포트로 사용자 인증, 명령을 위한 연결이 만들어지고, 연결을 통해 Client에서 지시하는 명령어가 전달된다.   
+      - 데이터 전송용 연결: 실제의 파일 전송은 필요할 때 새로운 연결이 만들어 진다.   
+   - 제어 연결(control conection)을 통해 승인 된 클라이언트   
+   - 클라이언트가 원격 디렉토리를 탐색하고 제어 연결을 통해 명령을 보냄   
+   - Server가 파일 전송 명령을 받으면, Server는 Client와의 두번째 TCP 데이터 연결을 연다.   
+   - 하나의 파일을 전송 한 후, 서버는 데이터 연결을 닫는다.   
+   - 다른 파일을 전송하려면, 서버는 또 다른 TCP 데이터 연결을 열어야한다.   
+   
+### DNS   
+   - Domain Name System   
+   - __많은 name 서버의 계층 구조로 구현된 분산 데이터 베이스__   
+   - __host가 분산 데이터베이스(name servers)로 질의하여 host name에서 IP 주소를 획득하는 어플리케이션 계층 프로토콜__   
+   - __host name을 IP 주소로 변환__   
+   - host aliasing   
+      - 간단한 별칭 호스트 네임을 복잡한 정식 호스트 네임으로 변환   
+   - canonical, alias names   
+   - canonical names => cname   
+   - mail server aliasing   
+   - load distribution   
+      - 중복 웹 서버(replicated Web server): 많은 IP 주소는 하나의 정식 호스트 네임에 대응된다.   
+      - 중복 웹 서버에서는 서버들이 부하 분산   
+   - __DNS 메세지 종류__   
+      - DNS 질의 메세지(2개 영역만 있음) = Header + 질의   
+      - DNS 응답 메세지(5개 영역 있음)    = Header + ( 질의 + 응답 + 책임 + 부가정보 )   
+
+   - __질의/응답 동작 형태__   
+     - __DNS 클라이언트__   
+        - 설정되어진 local name server에게 질의/응답이라는 단 2개의 DNS 메세지로 통신   
+     - __DNS 네임서버__   
+        - 질의를 위임받은 local name server는 다른 name server와 재귀적/반복적 방법을 통해 원하는 호스트의 IP 주소 등을 얻고 이를 요청한 Client에게 알려준다.   
+        
+   - __centralize DNS__      
+      - __단점__   
+         - single point of failure   
+            - 단일 중앙 집중 방식이기 때문에 서버 고장 시 모든 서비스가 동작하지 않는다.      
+         - traffic volume   
+         - distant centralized database   
+            - 거리가 먼 호스트가 접근할 경우 느릴 수도 있음   
+         - doesn't scale   
+            - scale ability 불가, 즉 규모가 커지지 않는다.      
+      - __계층화로 해결할 수 있다.__   
+      - __장점__   
+         - 단일 중앙 집중 방식이기 때문에 관리가 쉽다.       
+         - 최적의 결과를 낼 수 있다.   
+   - __Distributed hierarchical database__   
+      - __Client가 IP 찾는 과정__   
+         1 - Client가 `www.amazon.com`의 IP를 원한다.   
+         2 - Client가 __Root server__ 에 쿼리하여 __.com DNS server__ 를 찾는다.   
+         3 - Client가 __.com DNS server__ 에 쿼리하여 __amazon.com DNS server__ 를 찾는다.   
+         4 - Client는 __amazon.com DNS server__ 에 쿼리하여 __`www.amazon.com`의 의 IP 주소__ 를 얻는다.      
+      
+         - __DNS name resolution example__   
+            - 1~4 모든 과정은 각 과정에서 해결이 안됐을 시 진행된다고 가정한다. 해당 과정에서 IP 주소 발견하면 IP 주소 반환한다.   
+            - __반복적 질의(iterative query)__   
+               - 질의된 도메인에 대해 응답하거나, 아니면 이 작업을 할 수 있는 다른 DNS 서버에 Client를 연결시켜 주는 작업      
+                  - 자신이 관리하지 않는 질의 요청에 대해 응답 가능한 name server 목록 전달   
+                  - Client는 다수의 DNS 서버들에게 같은 질의를 반복할 수 있게 된다.   
+               - local DNS server가 상위 DNS 서버에게 쿼리를 보내어 IP 주소를 구하는 작업   
+               
+               1 - 호스트가 local DNS 서버한테 도메인의 IP 주소 질의   
+               2 - 모를 경우 local DNS server가 root DNS server한테 질의   
+               3 - 모를 경우 local DNS server가 TLD DNS server에 질의    
+               4 - 모를 경우 local DNS server가 authoritative DNS 서버에 질의   
+               5 - 모를 경우 에러 메세지 반환   
+               5-1 - 찾을 경우 authoritative response 반환하고 local DNS server는 도메인 IP 주소를 캐싱하고 Client server에 도메인의 IP 주소 전달   
+               - __장점__   
+                  - local DNS가 바쁘다.   
+               - __단점__   
+                  - local DNS가 데이터를 많이 가지고 있어 빠르게 받을 수 있다.   
+                  
+            - __재귀적 질의(recursive query)__   
+               - 질의된 도메인에 대해 즉각 응답하거나, 다른 DNS 서버에게 질의한 결과로 응답하거나, 찾고 있는 정보가 없다는 에러 메시지를 보내준다.         
+                  - 연결할 수 있는 name server에 name 확인 부담을 준다   
+               - 최종 응답이 Client에 반환될 때까지 상위 DNS 서버를 쿼리하도록 설정된 DNS 서버로부터 정보를 요청할 때 발생   
+               1 - 호스트가 local DNS 서버한테 도메인의 IP 주소 질의   
+               2 - 모를 경우 local DNS server가 root DNS server한테 질의   
+               3 - 모를 경우 root DNS server가 TLD DNS server에 질의    
+               4 - 모를 경우 TLD DNS server가 authoritative DNS 서버에 질의   
+               5 - 모를 경우 에러 메세지 반환   
+               5-1 - 찾을 경우 authoritative response 반환하고 local DNS server는 도메인 IP 주소를 캐싱하고 Client server에 도메인의 IP 주소 전달   
+               - __단점__   
+                  - 상위 DNS 계층 서버에 많은 부담을 준다.   
+            - 재귀적 질의 및 반복적 질의 선택은 DNS 해석기가 요청할 때 이를 결정한다.   
+               - DNS header 내 flag 필드에 표시를 한다.   
+            
+      - __Root name servers__   
+         - 번역되지 않는 name을 root name server에 질의   
+         - 인터넷의 DNS Root 영역의 name server다.   
+         - 루트 영역의 레코드 요청에 직접 답하고, 적절한 최상위 도메인(TLD)에 대한 권한 있는 name server 목록을 반환하여 다른 요청에 응답한다.   
+         - Root name server는 사람이 판독 가능한 호스트 name을 인터넷 호스트 간의 통신에 사용되는 IP주소로 번역하는 첫 번째 단계이기 때문에 인터넷 인프라의 중요한 부분이다.   
+      - __TLD & authoritative servers__   
+         - __TLD(Top-Level Domain) server__   
+            - com, org, net, edu, aero, jobs, museums 및 모든 top-level country domains 예: uk, fr, ca, jp   
+            - Network Solution 사가 com의 TLD 서버를 관리   
+               ex) Educause가 edu의 TLD 서버 관리   
+         - __Authoritative DNS servers__  
+            - 조직 자체의 DNS server, 조직의 명명된 호스트에 대한 권한있는 호스트 이름 대 IP 매핑 제공   
+            - 조직이나 서비스 제공 업체가 유지할 수 있다.   
+            - 권한있는 server는 해당 영역의 권한이다. DNS의 다른 name server에서 쿼리   
+         - __Local DNS name server__   
+            - DNS 계층에 속하지 않는다.   
+            - 각 ISP(가정 ISP, 회사, 대학)는 local DNS 서버(default name server)를 가진다.   
+            - 호스트가 DNS 쿼리를 만들면 쿼리가 로컬 DNS 서버로 전송된다.   
+               - 최근 name-address 변환 쌍인 local 캐시를 가짐   
+               - proxy 역할을 하며 쿼리를 계층으로 전달   
+      - __DNS caching__   
+         - DNS name server가 한 번 요청된 DNS 요청을 일정 시간(TTL)만큼 메모리에 저장하여 뒀다가, 똑같은 요청이 들어오면 신속히 처리할 수 있도록 하는 기능   
+         - TTL(Time-to-Live)
+            - 컴퓨터나 네트워크에서 데이터의 유효 기간을 나타내기 위한 방법   
+            - Counter나 타임스탬프의 형태로 데이터에 포함되며, 정해진 유효기간이 지나면 데이터는 폐기된다.   
+            - 컴퓨터 네트워크에서 TTL은 패킷의 무한 순환을 방지하는 역할을 한다.   
+            - 컴퓨터 애플리케이션에서 TTL은 캐시의 성능이나 프라이버시 수준을 향상시키는 데에 사용되기도 한다.   
+         - __name server가 IP 주소를 찾을 경우 캐싱한다.__   
+            - 일정 시간(TTL) 후 캐시 항목은 사라진다.   
+            - 일반적으로 local name servers에 TLD servers이 캐싱된다. 따라서 root name server는 자주 방문하지 않는다   
+            - 캐시된 항목은 최신 버전이 아닐 수 있다.   
+               - name host가 IP 주소를 변경하는 경우, 모든 TTL이 만료될 때까지 인터넷 전체에 알려지지 않을 수 있다.   
+      - __DNS 응답 종류__   
+         - __Authoritive Answer__   
+            - 질의된 도메인의 네임서버에서 직접 찾은 결과   
+         - __Non-authoritive Answer__    
+            - 질의를 위임받은 local name server의 캐시에서 찾은 결과 응답   
+      __ 다수의 name server가 있을 경우 RTT가 가장 짧은 name server에 DNS 질의 메세지를 보낸다.   
+
+
+
+   
+       
 ### TCP 과정   
 __TCP Server__
    1. __socket()__ - socket 생성   
