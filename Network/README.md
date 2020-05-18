@@ -4,8 +4,8 @@
 * [2. 어플리케이션 계층](#2-어플리케이션-계층)   
    - [Web and HTTP](#web-and-http)   
    - [Web caches (Proxy server)](#web-caches)   
-   - [FTP](#FTP)   
-   - [DNS](#DNS)   
+   - [FTP](#ftp)   
+   - [DNS](#dns)   
 * [3. 전송 계층](#3-전송-계층)   
    - [Multiplexing&Demultiplexing](#multiplexingdemultiplexing)
 * [4. 네트워크 계층](#4-네트워크-계층)   
@@ -369,8 +369,8 @@ __User-server state: cookies__
                - 최근 name-address 변환 쌍인 local 캐시를 가짐   
                - proxy 역할을 하며 쿼리를 계층으로 전달   
       - __DNS caching__   
-         - DNS name server가 한 번 요청된 DNS 요청을 일정 시간(TTL)만큼 메모리에 저장하여 뒀다가, 똑같은 요청이 들어오면 신속히 처리할 수 있도록 하는 기능   
-         - TTL(Time-to-Live)
+         - __DNS name server가 한 번 요청된 DNS 요청을 일정 시간(TTL)만큼 메모리에 저장하여 뒀다가, 똑같은 요청이 들어오면 신속히 처리할 수 있도록 하는 기능__   
+         - __TTL(Time-to-Live)__
             - 컴퓨터나 네트워크에서 데이터의 유효 기간을 나타내기 위한 방법   
             - Counter나 타임스탬프의 형태로 데이터에 포함되며, 정해진 유효기간이 지나면 데이터는 폐기된다.   
             - 컴퓨터 네트워크에서 TTL은 패킷의 무한 순환을 방지하는 역할을 한다.   
@@ -707,17 +707,147 @@ __UDP__
    - __Internet Protocol(IP)__   
       - 라우터는 Packet을 목적지까지 전송하기 위해서 Network, Link, Physical 계층을 가지고 있다.   
       - __라우터가 하는 일__   
-         - Forwarding   
-            - Packet header에 들어있는 목적지 주소가 라우터 테이블(포워딩 테이블)을 참조하여 올바른 목적지를 찾아 전달하는 것   
-         - Routing   
-            - 포워딩 테이블을 만들어 주는 것   
-            - 포워딩 테이블에 모든 주소를 넣을 경우 검색하기도 복잡하고 관리하기도 힘들기 때문에 주소 범위를 정하여 관리한다.   
+         - __Forwarding__   
+            - __Packet header에 들어있는 목적지 주소가 라우터 테이블(포워딩 테이블)을 참조하여 올바른 목적지를 찾아 전달하는 것__   
+         - __Routing__   
+            - __포워딩 테이블을 만들어 주는 것__   
+            - __포워딩 테이블에 모든 주소를 넣을 경우 검색하기도 복잡하고 관리하기도 힘들기 때문에 주소 범위를 정하여 관리한다.__   
             - 포워딩 테이블 종류   
-               - Longest prefix matching   
+               - __Longest prefix matching__   
                   - 목적지 주소와 매칭되는 가장 긴 prefix 주소에 따라 링크를 연결한다.   
+      - __IP datagram 구조__   
+         - 32bit   
+         - __ver__: IP Protocol version number, __head len__: header 길이(bytes), __type of service__: 데이터 타입, __length(16bit)__: datagram 길이(bytes)   
+         - __16-bit 식별자__, __flags__, __fragment offset__ => __for reassembly or fragmentation__   
+         - __TTL(8bit)__: 데이터 무환순환 방지를 위해 데이터 최대 한정 시간 설정. 라우터를 거칠때마다 1씩 감소하고 0이 될 경우 데이터 버린다., __upper layer(8bit)__: 상위 계층(전송 계층) 명시를 의미 즉, TCP인지 UDP인지를 명시하고 수신자에서 사용, __header checkum(16bit)__   
+         - __32 bit 출발지 IP 주소__   
+         - __32 bit 목적지 IP 주소__   
+         - __Options(32bit)__   
+         - __data(32bit)__: 변수 길이, TCP or UDP Segment   
+         - __IP header는 총 20 bytes, TCP header도 총 20 bytes이므로 어플리케이션 Message에 20 + 20 = 40 bytes overhead가 붙여진것이라 볼 수 있다.__   
+            - 인터넷에서 40 bytes인 패킷들이 돌아다니는데 대부분 이러한 패킷은 TCP ACK 패킷이다.   
+      
+      - __IP Address(IPv4)__   
+         - __고유한 32bit 숫자__   
+         - 8bit 4부분으로 나누어져서 각 부분이 10진수로 변환되어 255.255.255.255 처럼 마침표(.)로 구분하여 표현된다.
+         - __호스트의 들어있는 네트워크 인터페이스를 가르키는 주소__   
+         - __네트워크 인터페이스 카드를 여러 개 가질 경우 여러 개의 IP를 가질 수 있다.__    
+            - ex) 라우터   
+               - 인터페이스를 여러 개 가지고 있기 때문에 여러 개의 IP를 가진다.   
+         - __IP를 무작위로 배정하지 않는 이유__   
+            - 라우터의 forwarding 테이블이 너무 커져서 검색이 어려워질 수 있기 때문이다.   
+         - __현재 IP주소를 배정하는 방법__   
+            - __계층화__   
+               - Network(= Prefix = Subnet) 24 bit, Host 8 bit 로 나눠진다.   
+                  - Network을 나타낼때는 /24로 표현한다.   
+                  - ex) IP 주소: 12.34.158.5 일경우 Network: 12.34.158.0/24   
+               - IP주소는 항상 24 bit Subnet Mask와 같이 다닌다.   
+                  - Subnet mask를 통해 어디까지가 Network이고 Host인지 구별할 수 있다.   
+                     - ex) IP 주소: 12.34.158.5 / Subnet mask: 255.255.255.0 를 AND 연산을 할 경우 Network 12.34.158.0만 알아낼 수 있다.   
+                  - Subnet으로부터 같은 Network에 속한 호스트들을 알아낼 수 있다.   
+                  - 같은 Network에 속한 호스트들은 같은 prefix를 가지기 때문에 라우터의 Forwarding 테이블이 단순해져 확장성(Scalability)이 증가된다.   
+                  - 라우터를 업데이트 할 필요없이(Forwarding table entry 추가 필요 x) 같은 Prefix를 가진 새로운 호스트를 쉽게 추가할 수 있다.   
+                     - 라우터의 Forwarding table entry는 목적지 IP 주소가 매칭되는 prefix에 매핑하여 forwarding하기 때문이다.   
                   
+         - __과거 Class에 따른 IP 주소 배정__   
+            - __Class A__   
+               - Network을 나타낼때는 __/8__ 로 표현한다.   
+                  - Network는 8bit, Host는 24bit   
+                  - 전 세계의 2^8 = 128개의 기관만이 Network주소를 가질 수 있었고 각 기관이 Host 24bit 만큼 모두 사용하지 못하여 공간이 낭비되었다.   
+            - __Class B__   
+               - Network을 나타낼때는 __/16__ 로 표현한다.   
+                  - Network는 16bit, Host는 16bit   
+                  - Class A과 비슷하다.   
+            - __Class C__   
+               - Network을 나타낼때는 __/24__ 로 표현한다.   
+                  - Network는 24bit, Host는 8bit   
+                  - 전 세계의 2^24개의 기관이 Network주소를 가질 수 있으나 Host가 8bit이기 때문에 할당할 수 있는 Host의 수가 너무 적었다.      
+         - Classless Inter-Domain Routing(CIDR)   
+            - __Class가 가진 문제점을 해결하기 위해 나온 방법__   
+            - __Network를 8 bit 단위로 정하지 않고 32bit내 원하는 만큼 유연하게 __/n__ 로 정할 수 있다.__   
+               - 하나의 기관이 Class C에서 1000개의 Host를 할당하기 위해서는 Network /24를 4개 받아야 한다. Host 8bit * 4개 = 1020개   
+                  - 여러 prefix를 가지기 때문에 라우터의 Forwarding table의 크기가 커진다.   
+               - 하나의 기관이 CIDR에서 1000개의 Host를 할당하기 위해서는 Network /22를 1개 받으면 된다. Host 10bit * 1개 = 1024개   
+                  - 하나의 prefix만 가지기 때문에 라우터의 Forwarding table의 크기가 줄어든다.   
+         
+         - __Longest Prefix Match Forwarding__   
+            - __목적지 기반 forwarding__   
+               - Packet은 목적지 IP 주소를 가진다.   
+               - __라우터는 가장 길게 매칭되는 prefix를 찾는다.__     
+               - Cute algorithm problem: very fast lookup   
+           
+         - __Subnets__   
+            - __IP 주소의 같은 Subnet(Prefix)를 가진 장치 인터페이스 집합__   
+            - __라우터를 거치지 않고 물리적으로 서로 접근이 가능한 Host들의 집합__    
+            - __IP 주소__   
+               - Subnet part - 높은 순위 bits    
+               - Host part - 낮은 순위 bits   
+            - __라우터는 여러 개의 인터페이스를 가지므로 여러 개의 IP를 가진다.__   
+               - 각 IP 주소의 prefix가 다 다르다.   
+                  - 라우터는 여러 개의 Subnet에 속하기 때문에(교집합) 다른 곳으로 가려면 라우터를 거쳐서 가야한다.   
+
+      - __IPv6__   
+         - 1996년에 IPv4의 주소 공간 부족 문제점을 해결하기 위해서 나왔다.        
+         - 128 bit   
+         
+      - __IPv4__   
+         - 2015년에 NAT(Network Address Tranlation)을 사용하여 기존의 IPv4 주소 공간 문제를 해결하였다.   
+         - __NAT__   
+            - IP 주소 재사용을 가능하게 한다.   
+            - __local 네트워크는 오로지 한 개의 IP 주소만 가진다.__   
+               - 바깥 세상과으로부터 독립   
+                  - 밖에 알리지 않고 local 네트워크에 있는 디바이스의 주소를 바꿀 수 있다.   
+                  - local 네트워크의 주소를 바꾸지 않고 ISP를 바꿀 수 있다.   
+                  - local net에 있는 디바이스는 바깥세상에 의해 명시적으로 addressable, visible하지 않는다.   
+               - 하나의 네트워크 망에서 여러 개의 디바이스들이 존재할 때, 그들 각각에게 실제 IP를 하나씩 주게 되면 IP를 너무 많이 필요로 한다.   
+                  - IPv4 주소 공간이 부족하다.   
+                  
+            - __NAT 라우터가 하는 기능__   
+               - __Outgoing datagrams__   
+                  - 내부에서 외부로 나가는 datagram의 (출발지 IP 주소, Port 번호)를 (NAT IP 주소, 새로운 Port 번호)로 대체한다.   
+               - __모든 (출발지 IP 주소, 포트 번호)->(NAT IP 주소, 새로운 포트 번호) 변환 쌍을 NAT translation table에 기록한다.__   
+               - __Incoming datagrams__      
+                  - 외부에서 내부로 들어오는 datagram의 목적지 필드에 있는 (NAT IP 주소, 새로운 Port 번호)를 NAT translation table 내의 상응하는 (출발지 IP 주소, Port 번호)로 바꾼다.   
+                  
+            - __외부에서 보기에는 하나의 IP 주소만 있는 것처럼 보인다.__   
+            - __NAT 라우터는 ISP의 DHCP 서버로부터 IP 주소를 얻고, NAT-DHCP-라우터로 제어되는 홈 네트워크의 주소 공간에서 DHCP 서버를 실행하여 컴퓨터에게 주소를 제공__   
+            - __16bit의 port-number field__   
+               - 하나의 LAN 주소로 동시에 2^16 = 약 60,000개의 연결이 가능   
+               - Flow   
+                  - [(WAN side addr) 138.76.29.7, 5001]이랑 [(LAN side addr) 10.0.0.1, 3345]를 바인딩한 것
+               - 약 60,000개의 flow를 생성할 수 있다   
+               
+            - __NAT 문제점__   
+               - 라우터는 네트워크, 데이터 링크, 물리적 계층까지만 처리해야 한다.   
+               - end-to-end 법칙을 위반   
+                  - host가 중간 노드에서 (IP 주소, Port 번호) 수정 없이 직접 통신해야 한다는 원칙 위반   
+                  - 라우터는 네트워크 계층 장치이므로 네트워크 IP datagram header만 봐야하는데 header의 IP 주소도 변경하고 data 부분의 TCP header의 Port 번호(전송 계층)도 변경한다.     
+               - Port 번호의 용도는 수신자 호스트에서 프로세스를 찾을 때 사용되어야 하는데 라우터를 거쳐 호스트를 찾을 때 사용된다.   
+               
+            - __NAT를 사용하는 네트워크에서는 Server를 운영할 수 없다.__   
+               - Client는 오직 외부 IP 주소만 알 수 있다.   
+                  - 그러므로 Client가 LAN의 로컬 주소(내부 IP 주소)를 목적지 주소로 사용할 수 없다.   
+               - Server는 Client의 요청을 기다리는 역할임으로 NAT 테이블이 만들어지지 않는다.   
+                  - NAT 내부에서 외부로 나갈 때만, 주소 변환 쌍이 NAT 테이블에 업데이트 된다.   
+                  - NAT 내부에서 외부로 datagram이 나갈 때 생성된 NAT 테이블을 활용하여 외부 datagram이 내부로 들어온다.   
+               - 내부 사설 IP는 사설 인터넷 내에서만 유효하기 때문에 외부에서 접근 불가   
+                  - 해결책   
+                     - 특정 Server를 위해 관리자가 NAT 테이블에 Server 정보를 매핑해두는 방식   
+                        - 특정 Port로 들어오는 연결 요청을 Server로 전달(forward) 하도록 NAT을 정적으로 구성   
+                     - Universal Plug and Play(UPnP) Internet Gateway Device(IGD) Protocol   
+                        - UPnP 프로토콜을 사용하여 자동으로 NAT Port 매핑 테이블을 생성한다.   
+                        - 호스트가 가까운 NAT을 발견하고 동적으로 Port 매핑을 자동 설정하는 프로토콜 사용   
+                     - Skype를 사용하여 전달(relaying)   
+                        - NAT의 Client와 릴레이로 연결을 설정   
+                        - 외부 Client는 릴레이에 연결   
+                        - 릴레이가 두 연결 사이에 패킷을 중계   
+                        - Skype에서 사용   
+ 
+
+                  
+            
       
-      
+
       
    
          
