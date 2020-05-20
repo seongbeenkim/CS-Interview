@@ -713,12 +713,29 @@ __UDP__
             - __Routing__   
                - __포워딩 테이블을 만들어 주는 것__   
                - __포워딩 테이블에 모든 주소를 넣을 경우 검색하기도 복잡하고 관리하기도 힘들기 때문에 주소 범위를 정하여 관리한다.__   
-               - 포워딩 테이블 종류   
+               - __포워딩 테이블 종류__   
                   - __Longest prefix matching__   
-                     - 목적지 주소와 매칭되는 가장 긴 prefix 주소에 따라 링크를 연결한다.   \
-            - __NS, DHCP Server, NAT, 방화벽__   
+                     - 목적지 주소와 매칭되는 가장 긴 prefix 주소에 따라 링크를 연결한다.   
+               
+               - __Routing 알고리즘__   
+                  - __목적지까지 최소 비용 경로를 찾는 알고리즘__   
+                  - __접근 방식 2가지__   
+                     - __Link state 알고리즘__   
+                        - 각 라우터가 모든 네트워크 정보를 알고 있는 경우(Global)   
+                           - 모든 라우터가 자신의 Link state를 broadcast 하여 서로 같은 모든 정보를 알 수 있게 한다.   
+                           - 메인 서버가 아니라 각 라우터들이 다익스트라 알고리즘을 사용하여 출발지부터 모든 라우터에 대한 최단경로를 찾아내기 위한 자신 고유의 포워딩 테이블을 만들어낸다.   
+                              - 노드가 n개 일 경우 O(n^2)의 시간이 걸린다.   
+                              
+                     - __Distance vector 알고리즘__   
+                        - 이웃해있는 라우터에 대해서만 정보 교환을 통해 알고 있는 경우(Decentralized)    
+                           - 
+               
+            - __NS, DHCP Server, NAT, Firewall__   
                - Gateway IP 주소를 가지고 있을 뿐만 아니라 NAT 기능, Name Server, DHCP Server, 방화벽도 가지고 있다.   
-      - __IP datagram 구조__   
+               
+               
+               
+      - __IPv4 datagram 구조__   
          - 32bit   
          - __ver__: IP Protocol version number, __head len__: header 길이(bytes), __type of service__: 데이터 타입, __length(16bit)__: datagram 길이(bytes)   
          - __16-bit 식별자__, __flags__: 뒤에 분리된 datagram의 존재 여부, __fragment offset__ => __for reassembly or fragmentation__   
@@ -812,8 +829,14 @@ __UDP__
                   
          - __IPv4의 문제점을 해결하기 위해 나온 방법__   
             - __IPv6__   
-               - 1996년에 IPv4의 주소 공간 부족 문제점을 해결하기 위해서 나왔다.        
-               - 128 bit   
+               - 1996년에 __IPv4의 주소 공간 부족 문제점을 해결__하기 위해서 나왔다.        
+               - __128 bit__   
+               - __IPv6 datagram 구조__    
+                  - ver, priority, flow lable   
+                  - payload length, next header, hop limit   
+                  - source address   
+                  - destination address   
+                  - data   
 
             - __IPv4 with NAT__   
                - 2015년에 NAT(Network Address Tranlation)을 사용하여 기존의 IPv4 주소 공간 문제를 해결하였다.   
@@ -869,11 +892,30 @@ __UDP__
                               - 릴레이가 두 연결 사이에 패킷을 중계   
                               - Skype에서 사용   
  
+                  __IPv4 -> IPv6__    
+                     - __Tunneling__   
+                        - IPv4와 IPv6를 같이 사용하는 방식   
+                        - IPv6 -> IPv4에게 전송할 때 IPv4 datagram 구조에 맞춰서 전송한다.   
+                           - 즉 IPv6안에 IPv4가 들어있다.   
+ 
                   __IPv6를 사용하는 것이 더 좋은 방법이기 때문에 전세계에 존재하는 라우터를 IPv4에서 IPv6로 변경하는게 좋지만 IPv4의 환경이 이미 전체적으로 자리잡고 있고 라우터는 각자 소유하고 있기 때문에 모든 라우터를 변경하는 것은 현실적으로 어렵다.__   
+                     
+                        
                   
          - __개인이 인터넷을 사용하기 위해서 가지고 있어야 할 필수적인 정보__   
             - __IP, Subnet mask, Router, DNS__   
                - ex) __IP__ : 192.168.1.47, __Subnet mask__: 255.255.255.0, __Router__: 192.168.1.1, __DNS__: 192.168.1.1   
+          
+      - __ICMP(Internet Control Message Protocol)__   
+         - __네트워크에서 일어나는 정보에 대해서 출발지에게 알려주기 위한 네트워크 자체가 만들어내는 프로토콜__   
+            - __Packet이 목적지에 도착하지 못했을 경우__    
+               - TTL이 0이 되었을 경우   
+               - 목적지의 Port가 닫혀있을 경우   
+               - IP header가 잘못됐을 경우   
+            - __Traceroute__   
+               - 목적지까지 거쳐가는 라우터의 정보를 알려준다.   
+                  - TTL 1, 2, 3, 4 등 점차 늘려가면서 각 라우터 순서를 알아낸다.   
+             
                
    - __Dynamic Host Configuration Protocol(DHCP)__   
       - __정적 IP VS 동적 IP__   
@@ -917,7 +959,7 @@ __UDP__
             
          __즉, Client가 DHCP를 통해 네트워크 정보를 얻은 뒤, 접속을 원하는 사이트를 입력시 DNS를 통해 Name Server에서 목적지 호스트 IP를 얻어오고, NAT를 통해 IP, Port 번호를 변환 뒤 라우터를 통해서 목적지 호스트 IP로 데이터를 전송한다. + 방화벽(Firewall)__    
       
-      - __우리는 일반적으로 비용을 지불하여 ISP회사(ex) kt, sk, lgu+)로부터 IP 주소 하나를 할당받는다__   
+      - __우리는 일반적으로 비용을 지불하여 ISP회사(ex) KT, SK, LGU+)로부터 IP 주소 하나를 할당받는다__   
          - 공유기를 사용하여 다수의 사람이 다수의 다른 IP를 할당할 수 있게 하는데 공유기는 NAT, DHCP, Name Server, 방화벽 기능을 가지고 있다. 공유기는 라우터 IP를 가지며 공유기로 연결된 다수의 사람들은 같은 prefix를 가지는 Client가 된다.  외부에서는 ISP회사 준 하나의 IP로만 인식되지만 공유기를 거쳐 NAT으로 변환된 다수의 내부 IP들이 존재한다.     
          
       
