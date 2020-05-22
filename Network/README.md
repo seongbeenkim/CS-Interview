@@ -733,7 +733,37 @@ __UDP__
                               
                      - __Distance vector 알고리즘__   
                         - 이웃해있는 라우터에 대해서만 정보 교환을 통해 알고 있는 경우(Decentralized)    
-                           - 벨만포드 알고리즘을 사용하여 
+                           - __벨만포드 알고리즘을 사용하여 최단 경로를 찾아낸다.__   
+                              - 자신의 distance vector estimate를 이웃들에게 보낸다.   
+
+                           - __iterative, asynchronous__   
+                              - local iteration이 발생   
+                                 - local link cost가 변경될 경우   
+                                 - 이웃으로부터 Distance Vector 업데이트 메세지 받을 경우   
+                                    - 이웃으로부터 Distance Vector 업데이트 메세지 받으면, B-F equation을 이용하여 자신의 Distance Vector 업데이트   
+                           - __distributed__   
+                              - 각 노드들은 자신의 Distance Vector가 변경될 때 이웃에게 알린다.      
+                           - __link cost changes__   
+                              - __x-y : 4, y-z : 1, x-z : 50일 경우__
+                              - __link cost가 감소한 경우 업데이트가 빠름__   
+                                 - x-y : 4 -> 1, y-z : 1, x-z : 50   
+                                 - 변경된 link cost값을 Distance vector에서 변경해주면서 업데이트 하면 된다.   
+                                 - t0 : y가 link cost 변화를 탐지하고 자신의 DV를 업데이트한 후, 이웃들에게 이를 알림   
+                                 - t1 : z가 y로부터 업데이트 정보를 받고, 자신의 테이블을 업데이트. x로의 최소 비용을 업데이트 한 후, 이웃들에게 자신의 DV 보냄   
+                                 - t2 : y가 z로부터 업데이트된 정보로를 받고, 자신의 테이블을 업데이트. y의 최소 비용 테이블은 변하지 않았으므로 z에게 메시지를 보내지 않음 => 업데이트 끝!   
+                                 
+                              - __link cost가 증가한 경우 업데이트가 느림__   
+                                 - x-y : 4 -> 60, y-z : 1, x-z : 50   
+                                 - 어떤 목적지로 가는 도중 중간에 거쳐가는 노드에게도 Distance vector값을 전달할 경우 자기 자신을 다시 거쳐가는 경우를 모르기 때문에 Distance Vector 값이 계속해서 변경될 가능성이 있다.   
+                                    - z가 x로 갈 때, y를 통한 경로보다 x로 바로 가는 것이 cheap하다는 것을 깨달을 때까지 44번의 반복이 발생 -> 'count to infinity' 문제   
+                                 - 그러므로 중간에 거쳐가는 노드에는 변경된 값을 넘겨주지 않고 무한대 값을 넘겨준다.   
+                                 - __poison reverse__를 이용해 문제 해결  
+                                    - 만약 Z가 X를 얻기 위해 Y를 통해 간다면 z에서 y 거리를 ∞ 주고 업데이트 하도록 함   
+                                    - 그 이후 다음 단계에서 Distance vector를 검사한다.   
+                                    - 즉, 업데이트된 곳 반대를 ∞로 설정해주고 업데이트하면 빠르다.   
+                                    - poisoned reverse가 infinity problem을 대부분 해결하기는 하나, 세 개 이상의 이웃 노드를 포함한 루프인 경우 감지하지 못한다.   
+                           - __즉, 이웃으로부터 Distance Vector list를 받거나 링크 cost값이 변경되면 B-F equation을 이용하여 자신의 Distance Vector 계산한 뒤 업데이트가 되었다면 이웃에게 전달한다.__   
+                     - __Link state , Distance vector 알고리즘 둘 다 하나의 네트워크에 국한되었을때 내부를 위한 라우팅 알고리즘이다.__   
                
             - __NS, DHCP Server, NAT, Firewall__   
                - Gateway IP 주소를 가지고 있을 뿐만 아니라 NAT 기능, Name Server, DHCP Server, 방화벽도 가지고 있다.   
