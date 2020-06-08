@@ -15,7 +15,7 @@
    
 * [3. 전송 계층](#3-전송-계층)   
    - [Multiplexing&Demultiplexing](#multiplexingdemultiplexing)   
-   - [네트워크 계층은 Unreliable Channel이다.](#네트워크-계층은-unreliable-channel이다)   
+   - [RDT, ARQ, Pipelining](#네트워크-계층은-unreliable-channel이다)   
    - [TCP](#tcp)   
 * [4. 네트워크 계층](#4-네트워크-계층)   
    - [라우터](#라우터)   
