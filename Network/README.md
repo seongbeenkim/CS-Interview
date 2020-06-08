@@ -1,14 +1,33 @@
 # :bookmark_tabs: Network
 * [1. 컴퓨터 네트워크 기본](#1-컴퓨터-네트워크-기본)   
    - [네트워크 구성 요소](#네트워크-구성-요소)   
+   - [데이터 전송](#데이터-전송)   
+   - [라우터에서 Packet delay](#라우터에서-packet-delay)   
+   - [delay 줄이는 방법](#delay-줄이는-방법)   
+   
 * [2. 어플리케이션 계층](#2-어플리케이션-계층)   
    - [Web and HTTP](#web-and-http)   
    - [Web caches (Proxy server)](#web-caches)   
    - [FTP](#ftp)   
    - [DNS](#dns)   
+   - [TCP 과정](#tcp-과정)   
+   - [UDP 과정](#udp-과정)   
+   
 * [3. 전송 계층](#3-전송-계층)   
-   - [Multiplexing&Demultiplexing](#multiplexingdemultiplexing)
+   - [Multiplexing&Demultiplexing](#multiplexingdemultiplexing)   
+   - [네트워크 계층은 Unreliable Channel이다.](#네트워크-계층은-unreliable-channel이다)   
+   - [TCP](#tcp)   
 * [4. 네트워크 계층](#4-네트워크-계층)   
+   - [라우터](#라우터)   
+   - [IPv4 datagram 구조](#ipv4-datagram-구조)   
+   - [IP Address(IPv4)](#ip-addressipv4)   
+   - [Dynamic Host Configuration Protocol(DHCP)](#dynamic-host-configuration-protocoldhcp)   
+   
+* [5. 링크 계층](#5-링크-계층)   
+   - [Broadcast medium](#broadcast-medium)   
+   - [](#)   
+   - [](#)   
+   - [](#)   
 
 ## 1. 컴퓨터 네트워크 기본   
 ### 네트워크 구성 요소   
@@ -73,7 +92,7 @@ __Protocol Family__: 프로토콜 체계
    - PF_PACKET: Low Level 소켓을 위한 프로토콜 체계   
    - PF_IPX: IPX 노벨 프로토콜 체계   
    
-#### Network Core   
+### 데이터 전송   
 __데이터 전송 방식__   
 __1. Circuit switching__   
 - 출발지에서 목적지까지의 길을 미리 지정하고 전송   
@@ -89,7 +108,7 @@ __Circuit switching VS Packet switching__
 Circuit switching 사용 시 최대 10명의 유저까지 지원   
 Packet switching 사용 시 받는 대로 보내기 때문에 제한이 없어 일반적으로 많이 사용하지만 10명 이상이 몰릴 경우 문제가 생길 수 있다.   
 
-#### 라우터에서 Packet delay   
+### 라우터에서 Packet delay   
 __1. nodal processing delay(처리 지연)__: 라우터에서 패킷을 받았을 때 검사(최종 목적지가 어디인지 다음 라우터는 무엇인지)하고 output link를 결정한다.   
 __2. queuing delay(큐잉 지연)__: output link에 전송될 때까지 큐에서 대기하는 시간, 라우터의 혼잡 레벨에 따라 다르다.   
 __3. transmission delay(전송 지연)__: 전송 시 걸리는 delay, output link로 첫번째 비트가 나가는 순간부터 마지막 비트가 나가는 순간까지 걸리는 시간   
@@ -100,7 +119,7 @@ __4. propagation delay(전파 지연)__: 데이터가 output link로 전달된 �
 - d = 물리적 링크의 길이, s = propagation 속도, propagation delay = d/s   
 - s는 전파이기 때문에 조절할 수 없으며, d가 짧을 수록 propagation delay가 적게 걸린다.   
    
-#### delay 줄이는 방법   
+### delay 줄이는 방법   
 __nodal processing delay__: 좋은 성능의 라우터를 사용   
 __queuing delay__: x, 인터넷 사용량이 항상 다르기 때문이다.   
 __transmission delay__: 링크 대역폭을 확장   
@@ -704,304 +723,550 @@ __UDP__
 ## 4. 네트워크 계층   
    - 송신자에서 Segment를 datagram로 변환   
    - 수신자에서 Segment를 전송 계층에 전달   
-   - __Internet Protocol(IP)__   
-      - __라우터__   
-         - 라우터는 Packet을 목적지까지 전송하기 위해서 Network, Link, Physical 계층을 가지고 있다.   
-         - __라우터가 하는 일__   
-            - __Forwarding__   
-               - __Packet header에 들어있는 목적지 주소가 라우터 테이블(포워딩 테이블)을 참조하여 올바른 목적지를 찾아 전달하는 것__   
-            - __Routing__   
-               - __포워딩 테이블을 만들어 주는 것__   
-               - __포워딩 테이블에 모든 주소를 넣을 경우 검색하기도 복잡하고 관리하기도 힘들기 때문에 주소 범위를 정하여 관리한다.__   
-               - __포워딩 테이블 종류__   
-                  - __Longest prefix matching__   
-                     - 목적지 주소와 매칭되는 가장 긴 prefix 주소에 따라 링크를 연결한다.   
-               
-               - __Routing 알고리즘__   
-                  - __목적지까지 최소 비용 경로를 찾는 알고리즘__   
-                  - __접근 방식 2가지__   
-                     - __Link state 알고리즘__   
-                        - 각 라우터가 모든 네트워크 정보를 알고 있는 경우(Global)   
-                           - 모든 라우터가 자신의 Link state를 broadcast 하여 서로 같은 모든 정보를 알 수 있게 한다.   
-                              - 모든 네트워크가 아닌 자신이 속해있는 네트워크에만 broadcast를 한다.   
+   
+### 라우터   
+   - 라우터는 Packet을 목적지까지 전송하기 위해서 Network, Link, Physical 계층을 가지고 있다.   
+   - __Forwarding__   
+      - __Packet header에 들어있는 목적지 주소가 라우터 테이블(포워딩 테이블)을 참조하여 올바른 목적지를 찾아 전달하는 것__   
+   - __Routing__   
+      - __포워딩 테이블을 만들어 주는 것__   
+      - __포워딩 테이블에 모든 주소를 넣을 경우 검색하기도 복잡하고 관리하기도 힘들기 때문에 주소 범위를 정하여 관리한다.__   
+      - __포워딩 테이블 종류__   
+         - __Longest prefix matching__   
+            - 목적지 주소와 매칭되는 가장 긴 prefix 주소에 따라 링크를 연결한다.   
 
-                           - 메인 서버가 아니라 각 라우터들이 다익스트라 알고리즘을 사용하여 출발지부터 모든 라우터에 대한 최단경로를 찾아내기 위한 자신 고유의 포워딩 테이블을 만들어낸다.   
-                              - n개의 노드가 있을 때, 모든 노드를 확인해야하기 때문에 n(n+1)/2번의 비교가 필요하므로 O(n^2)의 시간이 걸린다.   
-                              - 더 효율적으로 구현하면 O(nlogn)이 가능하다.   
-                              - oscillation possible   
-                                 - 주어진 트래픽의 양의 따라 새로운 경로를 찾아내는 과정을 반복하면서 링크를 계속 변경한다.   
-                              
-                     - __Distance vector 알고리즘__   
-                        - 이웃해있는 라우터에 대해서만 정보 교환을 통해 알고 있는 경우(Decentralized)    
-                           - __벨만포드 알고리즘을 사용하여 최단 경로를 찾아낸다.__   
-                              - 자신의 distance vector estimate를 이웃들에게 보낸다.   
+      - __Routing 알고리즘__   
+         - __목적지까지 최소 비용 경로를 찾는 알고리즘__   
+         - __접근 방식 2가지__   
+            - __Link state 알고리즘__   
+               - OSPF를 구현할 수 있다.   
+               - 각 라우터가 모든 네트워크 정보를 알고 있는 경우(Global)   
+                  - 모든 라우터가 자신의 Link state를 broadcast 하여 서로 같은 모든 정보를 알 수 있게 한다.   
+                     - 모든 네트워크가 아닌 자신이 속해있는 네트워크에만 broadcast를 한다.   
 
-                           - __iterative, asynchronous__   
-                              - local iteration이 발생   
-                                 - local link cost가 변경될 경우   
-                                 - 이웃으로부터 Distance Vector 업데이트 메세지 받을 경우   
-                                    - 이웃으로부터 Distance Vector 업데이트 메세지 받으면, B-F equation을 이용하여 자신의 Distance Vector 업데이트   
-                           - __distributed__   
-                              - 각 노드들은 자신의 Distance Vector가 변경될 때 이웃에게 알린다.      
-                           - __link cost changes__   
-                              - __x-y : 4, y-z : 1, x-z : 50일 경우__
-                              - __link cost가 감소한 경우 업데이트가 빠름__   
-                                 - x-y : 4 -> 1, y-z : 1, x-z : 50   
-                                 - 변경된 link cost값을 Distance vector에서 변경해주면서 업데이트 하면 된다.   
-                                 - t0 : y가 link cost 변화를 탐지하고 자신의 DV를 업데이트한 후, 이웃들에게 이를 알림   
-                                 - t1 : z가 y로부터 업데이트 정보를 받고, 자신의 테이블을 업데이트. x로의 최소 비용을 업데이트 한 후, 이웃들에게 자신의 DV 보냄   
-                                 - t2 : y가 z로부터 업데이트된 정보로를 받고, 자신의 테이블을 업데이트. y의 최소 비용 테이블은 변하지 않았으므로 z에게 메시지를 보내지 않음 => 업데이트 끝!   
-                                 
-                              - __link cost가 증가한 경우 업데이트가 느림__   
-                                 - x-y : 4 -> 60, y-z : 1, x-z : 50   
-                                 - 어떤 목적지로 가는 도중 중간에 거쳐가는 노드에게도 Distance vector값을 전달할 경우 자기 자신을 다시 거쳐가는 경우를 모르기 때문에 Distance Vector 값이 계속해서 변경될 가능성이 있다.   
-                                    - z가 x로 갈 때, y를 통한 경로보다 x로 바로 가는 것이 cheap하다는 것을 깨달을 때까지 44번의 반복이 발생 -> 'count to infinity' 문제   
-                                 - 그러므로 중간에 거쳐가는 노드에는 변경된 값을 넘겨주지 않고 무한대 값을 넘겨준다.   
-                                 - __poison reverse__를 이용해 문제 해결  
-                                    - 만약 Z가 X를 얻기 위해 Y를 통해 간다면 z에서 y 거리를 ∞ 주고 업데이트 하도록 함   
-                                    - 그 이후 다음 단계에서 Distance vector를 검사한다.   
-                                    - 즉, 업데이트된 곳 반대를 ∞로 설정해주고 업데이트하면 빠르다.   
-                                    - poisoned reverse가 infinity problem을 대부분 해결하기는 하나, 세 개 이상의 이웃 노드를 포함한 루프인 경우 감지하지 못한다.   
-                           - __즉, 이웃으로부터 Distance Vector list를 받거나 링크 cost값이 변경되면 B-F equation을 이용하여 자신의 Distance Vector 계산한 뒤 업데이트가 되었다면 이웃에게 전달한다.__   
-                     - __Link state , Distance vector 알고리즘 둘 다 하나의 네트워크에 국한되었을때 내부를 위한 라우팅 알고리즘이다.__   
-               
-            - __NS, DHCP Server, NAT, Firewall__   
-               - Gateway IP 주소를 가지고 있을 뿐만 아니라 NAT 기능, Name Server, DHCP Server, 방화벽도 가지고 있다.   
-               
-               
-               
-      - __IPv4 datagram 구조__   
-         - 32bit   
-         - __ver__: IP Protocol version number, __head len__: header 길이(bytes), __type of service__: 데이터 타입, __length(16bit)__: datagram 길이(bytes)   
-         - __16-bit 식별자__, __flags__: 뒤에 분리된 datagram의 존재 여부, __fragment offset__ => __for reassembly or fragmentation__   
-            - 네트워크 링크는 MTU(Max Transfer Size)를 가진다.   
-               - WIFT, LAN 등 네트워크 링크의 타입이 다르고 MUT도 다르다.   
-               - IP datagram에 비해 링크의 MTU가 작을 경우 IP datagram를 보낼 수 없다.   
-               - 그러므로 IP datagram를 MTU size에 맞춰 다수의 IP datagram로 분리하여 보낸다.   
-               - IP header의 bits가 순서를 확인하기 위해 사용되며 최종 목적지에서 분리된 IP datagram이 하나로 다시 조합된다.   
-               - ex) 4000 bytes datagram, MTU = 1500 bytes일 경우   
-                  - header = 20 bytes, data = 3980 bytes   
-                  - 최초 datagram: length = 4000, ID = x, flags = 0, fragment offset = 0      
-                     
-                  - 분리1 datagram: length = 1500, ID = x, flags = 1, fragment offset = 0   
-                     - header = 20, data = 0~1480   
-                  - 분리2 datagram: length = 1500, ID = x, flags = 1, fragment offset = 185    
-                     - header = 20, data = 1480 ~ 2960,   1480/8 = 185 = offset
-                     - /8을 하여 필드의 3 bits를 줄여준다.   
-                  - 분리3 datagram: length = 1040, ID = x, flags = 0, fragment offset = 370   
-                     - header = 20, data = 2960 ~ 4440,   2960/8 = 370 = offset   
-               - 중간의 분리된 IP datagram이 손실된다면 reassembly가 안되어 제대로 전송이 안되기 때문에 TCP Timer에 의해 재전송이된다.    
-                              
-         - __TTL(8bit)__: 데이터 무환순환 방지를 위해 데이터 최대 한정 시간 설정. 라우터를 거칠때마다 1씩 감소하고 0이 될 경우 데이터 버린다., __upper layer(8bit)__: 상위 계층(전송 계층) 명시를 의미 즉, TCP인지 UDP인지를 명시하고 수신자에서 사용, __header checkum(16bit)__   
-         - __32 bit 출발지 IP 주소__   
-         - __32 bit 목적지 IP 주소__   
-         - __Options(32bit)__   
-         - __data(32bit)__: 변수 길이, TCP or UDP Segment   
-         - __IP header는 총 20 bytes, TCP header도 총 20 bytes이므로 어플리케이션 Message에 20 + 20 = 40 bytes overhead가 붙여진것이라 볼 수 있다.__   
-            - 인터넷에서 40 bytes인 패킷들이 돌아다니는데 대부분 이러한 패킷은 TCP ACK 패킷이다.   
-      
-      - __IP Address(IPv4)__   
-         - __고유한 32bit 숫자__   
-         - __가지고 있는 문제점__   
-            - 주소 공간 부족   
-            - 보안   
-         - 8bit 4부분으로 나누어져서 각 부분이 10진수로 변환되어 255.255.255.255 처럼 마침표(.)로 구분하여 표현된다.
-         - __호스트의 들어있는 네트워크 인터페이스를 가르키는 주소__   
-         - __네트워크 인터페이스 카드를 여러 개 가질 경우 여러 개의 IP를 가질 수 있다.__    
-            - ex) 라우터   
-               - 인터페이스를 여러 개 가지고 있기 때문에 여러 개의 IP를 가진다.   
-         - __IP를 무작위로 배정하지 않는 이유__   
-            - 라우터의 forwarding 테이블이 너무 커져서 검색이 어려워질 수 있기 때문이다.   
-         - __현재 IP주소를 배정하는 방법__   
-            - __계층화__   
-               - Network(= Prefix = Subnet) 24 bit, Host 8 bit 로 나눠진다.   
-                  - Network을 나타낼때는 /24로 표현한다.   
-                  - ex) IP 주소: 12.34.158.5 일경우 Network: 12.34.158.0/24   
-               - IP주소는 항상 24 bit Subnet Mask와 같이 다닌다.   
-                  - Subnet mask를 통해 어디까지가 Network이고 Host인지 구별할 수 있다.   
-                     - ex) IP 주소: 12.34.158.5 / Subnet mask: 255.255.255.0 를 AND 연산을 할 경우 Network 12.34.158.0만 알아낼 수 있다.   
-                  - Subnet으로부터 같은 Network에 속한 호스트들을 알아낼 수 있다.   
-                  - 같은 Network에 속한 호스트들은 같은 prefix를 가지기 때문에 라우터의 Forwarding 테이블이 단순해져 확장성(Scalability)이 증가된다.   
-                  - 라우터를 업데이트 할 필요없이(Forwarding table entry 추가 필요 x) 같은 Prefix를 가진 새로운 호스트를 쉽게 추가할 수 있다.   
-                     - 라우터의 Forwarding table entry는 목적지 IP 주소가 매칭되는 prefix에 매핑하여 forwarding하기 때문이다.   
-                  
-         - __과거 Class에 따른 IP 주소 배정__   
-            - __Class A__   
-               - Network을 나타낼때는 __/8__ 로 표현한다.   
-                  - Network는 8bit, Host는 24bit   
-                  - 전 세계의 2^8 = 128개의 기관만이 Network주소를 가질 수 있었고 각 기관이 Host 24bit 만큼 모두 사용하지 못하여 공간이 낭비되었다.   
-            - __Class B__   
-               - Network을 나타낼때는 __/16__ 로 표현한다.   
-                  - Network는 16bit, Host는 16bit   
-                  - Class A과 비슷하다.   
-            - __Class C__   
-               - Network을 나타낼때는 __/24__ 로 표현한다.   
-                  - Network는 24bit, Host는 8bit   
-                  - 전 세계의 2^24개의 기관이 Network주소를 가질 수 있으나 Host가 8bit이기 때문에 할당할 수 있는 Host의 수가 너무 적었다.      
-         - Classless Inter-Domain Routing(CIDR)   
-            - __Class가 가진 문제점을 해결하기 위해 나온 방법__   
-            - __Network를 8 bit 단위로 정하지 않고 32bit내 원하는 만큼 유연하게 __/n__ 로 정할 수 있다.__   
-               - 하나의 기관이 Class C에서 1000개의 Host를 할당하기 위해서는 Network /24를 4개 받아야 한다. Host 8bit * 4개 = 1020개   
-                  - 여러 prefix를 가지기 때문에 라우터의 Forwarding table의 크기가 커진다.   
-               - 하나의 기관이 CIDR에서 1000개의 Host를 할당하기 위해서는 Network /22를 1개 받으면 된다. Host 10bit * 1개 = 1024개   
-                  - 하나의 prefix만 가지기 때문에 라우터의 Forwarding table의 크기가 줄어든다.   
-         
-         - __Longest Prefix Match Forwarding__   
-            - __목적지 기반 forwarding__   
-               - Packet은 목적지 IP 주소를 가진다.   
-               - __라우터는 가장 길게 매칭되는 prefix를 찾는다.__     
-               - Cute algorithm problem: very fast lookup   
-           
-         - __Subnets__   
-            - __IP 주소의 같은 Subnet(Prefix)를 가진 장치 인터페이스 집합__   
-            - __라우터를 거치지 않고 물리적으로 서로 접근이 가능한 Host들의 집합__    
-            - __IP 주소__   
-               - Subnet part - 높은 순위 bits    
-               - Host part - 낮은 순위 bits   
-            - __라우터는 여러 개의 인터페이스를 가지므로 여러 개의 IP를 가진다.__   
-               - 각 IP 주소의 prefix가 다 다르다.   
-                  - 라우터는 여러 개의 Subnet에 속하기 때문에(교집합) 다른 곳으로 가려면 라우터를 거쳐서 가야한다.   
-                  
-         - __IPv4의 문제점을 해결하기 위해 나온 방법__   
-            - __IPv6__   
-               - 1996년에 __IPv4의 주소 공간 부족 문제점을 해결__하기 위해서 나왔다.        
-               - __128 bit__   
-               - __IPv6 datagram 구조__    
-                  - ver, priority, flow lable   
-                  - payload length, next header, hop limit   
-                  - source address   
-                  - destination address   
-                  - data   
+                  - 메인 서버가 아니라 각 라우터들이 다익스트라 알고리즘을 사용하여 출발지부터 모든 라우터에 대한 최단경로를 찾아내기 위한 자신 고유의 포워딩 테이블을 만들어낸다.   
+                     - n개의 노드가 있을 때, 모든 노드를 확인해야하기 때문에 n(n+1)/2번의 비교가 필요하므로 O(n^2)의 시간이 걸린다.   
+                     - 더 효율적으로 구현하면 O(nlogn)이 가능하다.   
+                     - oscillation possible   
+                        - 주어진 트래픽의 양의 따라 새로운 경로를 찾아내는 과정을 반복하면서 링크를 계속 변경한다.   
 
-            - __IPv4 with NAT__   
-               - 2015년에 NAT(Network Address Tranlation)을 사용하여 기존의 IPv4 주소 공간 문제를 해결하였다.   
-               - __NAT__   
-                  - IP 주소 재사용을 가능하게 한다.   
-                  - __local 네트워크는 오로지 한 개의 IP 주소만 가진다.__   
-                     - 바깥 세상과으로부터 독립   
-                        - 밖에 알리지 않고 local 네트워크에 있는 디바이스의 주소를 바꿀 수 있다.   
-                        - local 네트워크의 주소를 바꾸지 않고 ISP를 바꿀 수 있다.   
-                        - local net에 있는 디바이스는 바깥세상에 의해 명시적으로 addressable, visible하지 않는다.   
-                     - 하나의 네트워크 망에서 여러 개의 디바이스들이 존재할 때, 그들 각각에게 실제 IP를 하나씩 주게 되면 IP를 너무 많이 필요로 한다.   
-                        - IPv4 주소 공간이 부족하다.   
+            - __Distance vector 알고리즘__   
+               - RIP를 구현할 수 있다.   
+               - 이웃해있는 라우터에 대해서만 정보 교환을 통해 알고 있는 경우(Decentralized)    
+                  - __벨만포드 알고리즘을 사용하여 최단 경로를 찾아낸다.__   
+                     - 자신의 distance vector estimate를 이웃들에게 보낸다.   
 
-                  - __NAT 라우터가 하는 기능__   
-                     - __Outgoing datagrams__   
-                        - 내부에서 외부로 나가는 datagram의 (출발지 IP 주소, Port 번호)를 (NAT IP 주소, 새로운 Port 번호)로 대체한다.   
-                     - __모든 (출발지 IP 주소, 포트 번호)->(NAT IP 주소, 새로운 포트 번호) 변환 쌍을 NAT translation table에 기록한다.__   
-                     - __Incoming datagrams__      
-                        - 외부에서 내부로 들어오는 datagram의 목적지 필드에 있는 (NAT IP 주소, 새로운 Port 번호)를 NAT translation table 내의 상응하는 (출발지 IP 주소, Port 번호)로 바꾼다.   
+                  - __iterative, asynchronous__   
+                     - local iteration이 발생   
+                        - local link cost가 변경될 경우   
+                        - 이웃으로부터 Distance Vector 업데이트 메세지 받을 경우   
+                           - 이웃으로부터 Distance Vector 업데이트 메세지 받으면, B-F equation을 이용하여 자신의 Distance Vector 업데이트   
+                  - __distributed__   
+                     - 각 노드들은 자신의 Distance Vector가 변경될 때 이웃에게 알린다.      
+                  - __link cost changes__   
+                     - __x-y : 4, y-z : 1, x-z : 50일 경우__
+                     - __link cost가 감소한 경우 업데이트가 빠름__   
+                        - x-y : 4 -> 1, y-z : 1, x-z : 50   
+                        - 변경된 link cost값을 Distance vector에서 변경해주면서 업데이트 하면 된다.   
+                        - t0 : y가 link cost 변화를 탐지하고 자신의 DV를 업데이트한 후, 이웃들에게 이를 알림   
+                        - t1 : z가 y로부터 업데이트 정보를 받고, 자신의 테이블을 업데이트. x로의 최소 비용을 업데이트 한 후, 이웃들에게 자신의 DV 보냄   
+                        - t2 : y가 z로부터 업데이트된 정보로를 받고, 자신의 테이블을 업데이트. y의 최소 비용 테이블은 변하지 않았으므로 z에게 메시지를 보내지 않음 => 업데이트 끝!   
 
-                  - __외부에서 보기에는 하나의 IP 주소만 있는 것처럼 보인다.__   
-                  - __NAT 라우터는 ISP의 DHCP 서버로부터 IP 주소를 얻고, NAT-DHCP-라우터로 제어되는 홈 네트워크의 주소 공간에서 DHCP 서버를 실행하여 컴퓨터에게 주소를 제공__   
-                  - __16bit의 port-number field__   
-                     - 하나의 LAN 주소로 동시에 2^16 = 약 60,000개의 연결이 가능   
-                     - Flow   
-                        - [(WAN side addr) 138.76.29.7, 5001]이랑 [(LAN side addr) 10.0.0.1, 3345]를 바인딩한 것
-                     - 약 60,000개의 flow를 생성할 수 있다   
+                     - __link cost가 증가한 경우 업데이트가 느림__   
+                        - x-y : 4 -> 60, y-z : 1, x-z : 50   
+                        - 어떤 목적지로 가는 도중 중간에 거쳐가는 노드에게도 Distance vector값을 전달할 경우 자기 자신을 다시 거쳐가는 경우를 모르기 때문에 Distance Vector 값이 계속해서 변경될 가능성이 있다.   
+                           - z가 x로 갈 때, y를 통한 경로보다 x로 바로 가는 것이 cheap하다는 것을 깨달을 때까지 44번의 반복이 발생 -> 'count to infinity' 문제   
+                        - 그러므로 중간에 거쳐가는 노드에는 변경된 값을 넘겨주지 않고 무한대 값을 넘겨준다.   
+                        - __poison reverse__를 이용해 문제 해결  
+                           - 만약 Z가 X를 얻기 위해 Y를 통해 간다면 z에서 y 거리를 ∞ 주고 업데이트 하도록 함   
+                           - 그 이후 다음 단계에서 Distance vector를 검사한다.   
+                           - 즉, 업데이트된 곳 반대를 ∞로 설정해주고 업데이트하면 빠르다.   
+                           - poisoned reverse가 infinity problem을 대부분 해결하기는 하나, 세 개 이상의 이웃 노드를 포함한 루프인 경우 감지하지 못한다.   
+                  - __즉, 이웃으로부터 Distance Vector list를 받거나 링크 cost값이 변경되면 B-F equation을 이용하여 자신의 Distance Vector 계산한 뒤 업데이트가 되었다면 이웃에게 전달한다.__   
+            - __Link state , Distance vector 알고리즘 둘 다 하나의 네트워크에 국한되었을때 내부를 위한 라우팅 알고리즘이다.__   
 
-                  - __NAT 문제점__   
-                     - __end-to-end 법칙을 위반__   
-                        - host가 중간 노드에서 Packet(IP 주소, Port 번호) 수정 없이 직접 통신해야 한다는 원칙 위반   
-                        - 라우터는 네트워크 계층 장치이므로 네트워크 IP datagram header만 봐야하는데 header의 IP 주소도 변경하고 data 부분의 TCP header의 Port 번호(전송 계층)도 변경한다.     
-                           - 라우터는 네트워크, 데이터 링크, 물리적 계층까지만 처리해야 한다.   
-                     - __라우터는 Port를 확인하면 안된다__   
-                        - Port 번호의 용도는 수신자 호스트에서 프로세스를 찾을 때 사용되어야 하는데 라우터에서 호스트를 찾을 때 사용된다.   
+         - __Hierarchical routing 알고리즘__   
+            - 6억개의 목적지가 있다면?   
+               - 모든 목적지를 라우팅 테이블에 저장할 수 없음   
+               - 라우팅 테이블의 변경은 링크를 벅차게 함   
 
-                  - __NAT를 사용하는 네트워크에서는 Server를 운영할 수 없다.__   
-                     - __Client는 오직 외부 IP 주소만 알 수 있다.__   
-                        - 그러므로 Client가 LAN의 로컬 주소(내부 IP 주소)를 목적지 주소로 사용할 수 없다.   
-                     - __Server는 Client의 요청을 기다리는 역할이므로 NAT 테이블이 만들어지지 않는다.__   
-                        - NAT 내부에서 외부로 나갈 때만, 주소 변환 쌍이 NAT 테이블에 업데이트 된다.   
-                        - NAT 내부에서 외부로 datagram이 나갈 때 생성된 NAT 테이블을 활용하여 외부 datagram이 내부로 들어온다.   
-                     - __내부 사설 IP는 사설 인터넷 내에서만 유효하기 때문에 외부에서 접근 불가__   
-                        - __해결책__   
-                           - __특정 Server를 위해 관리자가 NAT 테이블에 Server 정보를 매핑해두는 방식__   
-                              - 특정 Port로 들어오는 연결 요청을 Server로 전달(forward) 하도록 NAT을 정적으로 구성   
-                           - __Universal Plug and Play(UPnP) Internet Gateway Device(IGD) Protocol__   
-                              - UPnP 프로토콜을 사용하여 자동으로 NAT Port 매핑 테이블을 생성한다.   
-                              - 호스트가 가까운 NAT을 발견하고 동적으로 Port 매핑을 자동 설정하는 프로토콜 사용   
-                           - __Skype를 사용하여 전달(relaying)__   
-                              - NAT의 Client와 릴레이로 연결을 설정   
-                              - 외부 Client는 릴레이에 연결   
-                              - 릴레이가 두 연결 사이에 패킷을 중계   
-                              - Skype에서 사용   
- 
-                  __IPv4 -> IPv6__    
-                     - __Tunneling__   
-                        - IPv4와 IPv6를 같이 사용하는 방식   
-                        - IPv6 -> IPv4에게 전송할 때 IPv4 datagram 구조에 맞춰서 전송한다.   
-                           - 즉 IPv6안에 IPv4가 들어있다.   
- 
-                  __IPv6를 사용하는 것이 더 좋은 방법이기 때문에 전세계에 존재하는 라우터를 IPv4에서 IPv6로 변경하는게 좋지만 IPv4의 환경이 이미 전체적으로 자리잡고 있고 라우터는 각자 소유하고 있기 때문에 모든 라우터를 변경하는 것은 현실적으로 어렵다.__   
-                     
-                        
-                  
-         - __개인이 인터넷을 사용하기 위해서 가지고 있어야 할 필수적인 정보__   
-            - __IP, Subnet mask, Router, DNS__   
-               - ex) __IP__ : 192.168.1.47, __Subnet mask__: 255.255.255.0, __Router__: 192.168.1.1, __DNS__: 192.168.1.1   
-          
-      - __ICMP(Internet Control Message Protocol)__   
-         - __네트워크에서 일어나는 정보에 대해서 출발지에게 알려주기 위한 네트워크 자체가 만들어내는 프로토콜__   
-            - __Packet이 목적지에 도착하지 못했을 경우__    
-               - TTL이 0이 되었을 경우   
-               - 목적지의 Port가 닫혀있을 경우   
-               - IP header가 잘못됐을 경우   
-            - __Traceroute__   
-               - 목적지까지 거쳐가는 라우터의 정보를 알려준다.   
-                  - TTL 1, 2, 3, 4 등 점차 늘려가면서 각 라우터 순서를 알아낸다.   
-             
-               
-   - __Dynamic Host Configuration Protocol(DHCP)__   
-      - __정적 IP VS 동적 IP__   
-         - __정적 IP__   
-            - 고정된 IP   
-            - 장점: 정체성이 있다, 항상 들어올 수 있다.   
-            - 단점: 비용이 비싸다, 사용성이 떨어진다, 얼마 쓰지도 않으면서 계속 할당받고 있어야 한다.   
-         - __동적 IP__   
-            - IP가 시간에 따라 바뀐다.      
-            - 장점: 주소를 유연하게 사용 가능 ,비용 절약   
-            - 단점: 고정적으로 데이터 받는 서비스 사용 불가   
+            - __Administrative Autonomy__   
+               - internet = network of networks   
+               - 각 네트워크 admin은 자신의 네트워크 내에서 라우팅을 컨트롤하기를 원한다.   
+
+            - __Autonomous Systems(ASes)__
+               - __AS: LG U+, SKT, KT와 같은 자치권을 가진 시스템으로 각자 고유의 AS 번호를 가진다.__   
+                  - AS Numbers(ASNs)   
+                     - 16 bit 값   
+                     - 64512 ~ 65535는 private   
+                     - 현재 11000개 이상이 사용되고 있다.   
+               - __AS간 관계가 존재__   
+                  - 비용과 관련   
+                  - __Cutomers and Providers Relationship__   
+                     - Customer는 인터넷 접속을 위해 Provider에게 비용 지불하고 Privider는 Customer에게 서비스 제공      
+                     - ex) 학생 등록금 <-> 대학교 AS <-> SKT   
+                  - __Peering Relationship__   
+                     - 비슷한 계층 AS가 있을 경우에는 서로 비용을 지불하지 않는다.   
+
+               - 같은 AS 내의 라우터는 같은 라우팅 알고리즘을 사용
+               - 라우터를 영역으로 통합   
+               - __Inter-AS 라우팅 프로토콜__   
+                  - AS 사이의 라우팅 알고리즘   
+                     - __BGP__   
+                        - Routing Gateway Protocol   
+                        - AS 정책에 기반   
+                  - __ASPATH__   
+                     - 자신의 Prefix(AS 번호)를 다른 AS에 광고하면서 목적지까지 전달됨   
+                     - 각 AS를 거칠때마다 자신의 AS 번호를 ASPATH 추가시키고 목적지에서는 경로 횟수 또는 비용 등 정책에 따라 경로를 선택할 수 있다. 일반적으로 AS는 자신이 갑이 되는 위치 즉, 자신이 비용을 제일 많이 받을 수 있는 경로를 선택한다.   
+
+               - __Intra-AS 라우팅 프로토콜__   
+                  - Interior Gateway Protocols (IGP)라고도 알려짐   
+                  - AS 내의 라우팅 알고리즘   
+                     - 최단경로가 목적   
+                     - __RIP__   
+                        - Routing Information Protocol   
+                        - Distance vector 알고리즘 : 이웃의 더 좋은 정보를 이용하여 업데이트    
+                        - RIP table processing   
+                           - RIP 라우팅 테이블은 route-d라 불리는 application 계층 프로세스에 의해 관리된다.   
+                           - advertisement는 주기적으로 반복해서 UDP 패킷을 보냄   
+
+                     - __OSPF__   
+                        - Open Shortest Path First  => 빠르고 정확   
+                        - Link state 알고리즘 : 다익스트라 알고리즘으로 경로 연산   
+                        - OSPF advertisement는 이웃 당 하나의 엔트리를 전달   
+                        - advertisements는 전체 AS에게 flood   
+                           - TCP나 UDP 대신에 IP로 직접 OSPF 메시지 전달   
+                        - IS-IS routing protocol: OSPF와 거의 동일   
+                        - OSPF "advanced" features (not in RIP)   
+                           - security: 모든 OSPF 메시지는 인증됨(authenticated) -> 악의적인 침입을 막기 위해   
+                           - 여러개의 같은 cost 경로를 허용 (RIP는 하나의 경로만 허용)   
+                              - cost가 같은 경로 여러 개가 있으면 나눠서 보냄 => 속도↑   
+                           - 각 link에 대해 서로 다른 TOS에 대한 여러 cost 행렬 (예: best effort ToS에 대해 낮음으로 설정된 위성 링크 비용, 실시간 ToS에 대해 높음)   
+                           - 통합된 uni-cast 와 multicast 지원   
+                              - Multicast OSPF (MOSPF)는 OSPF 기반의 동일한 토포로지 데이터를 사용한다   
+                           - 계층적인 OSPF in large domains   
+                        - __Hierarchical OSPF__   
+                           - two-level hierarchy: local area, backbone   
+                              - link-state advertisements는 영역 안에서만 일어남   
+                              - 각 노드에는 자세한 영역 토폴로지가 있다.   
+                              - 다른 지역은 net로 가는 방향(최단 경로)만 안다   
+                              - __area border routers__   
+                                 - 자신의 영역 안의 nets까지의 거리를 요약하여 다른 영역 경계 라우터에게 알린다.   
+                                 - __backbone routers__    
+                                    - 백본으로 제한된 OSPF 라우팅을 실행   
+                                    - __boundary routers__   
+                                       - 다른 AS에 연결   
+
+         - __Broadcast, Multicast routing__   
+            - 출발지에서 모든 다른 노드에게 패킷 전달   
+            - source 중복은 비효율적이다.   
+
+            - __In-network duplication__   
+               - __Flooding__   
+                  - 노드가 broadcast 패킷을 받으면, 카피본을 모든 이웃에게 보낸다.   
+                     - 문제점: cycles & broadcast storm   
+                  - 즉, 나를 제외한 나머지한테 보냄   
+               - __Controlled flooding__   
+                  - 이전에 같은 패킷을 broadcast한 적이 없는 경우에만 패킷을 broadcast한다.   
+                     - 노드는 이미 broadcast한 패킷의 트랙을 저장한다.   
+                     - 또는 reverse path forwarding (RPF): 출발지와 노드 사이의 최단 경로에 도달한 경우에만 패킷 forward   
+                  - 즉, 나와 이전에 보낸 사람 제외하고 보냄 = broadcasting   
+               - __Spanning tree__   
+                  - 어떤 노드로부터 중복된 패킷을 받지 않는다.   
+                  - 노드는 스패닝 트리를 따라서만 카피하고 forward한다.   
+
+   - __Name Server, DHCP Server, NAT, Firewall__   
+      - Gateway IP 주소를 가지고 있을 뿐만 아니라 NAT 기능, Name Server, DHCP Server, 방화벽도 가지고 있다.   
+
+   - __Interconnected ASes__   
+      - 네트워크끼리의 연결을 위한 라우팅 알고리즘   
+      - 포워딩 테이블은 intra-AS와 inter-AS 라우팅 알고리즘에 의해 설정된다.   
+         - intra-AS은 내부 목적지 엔트리를 설정하고   
+         - inter-AS & intra-AS는 외부 목적지 엔트리를 설정한다.   
+
+
+### IPv4 datagram 구조   
+   - 32bit   
+   - __ver__: IP Protocol version number, __head len__: header 길이(bytes), __type of service__: 데이터 타입, __length(16bit)__: datagram 길이(bytes)   
+   - __16-bit 식별자__, __flags__: 뒤에 분리된 datagram의 존재 여부, __fragment offset__ => __for reassembly or fragmentation__   
+      - 네트워크 링크는 MTU(Max Transfer Size)를 가진다.   
+         - WIFT, LAN 등 네트워크 링크의 타입이 다르고 MUT도 다르다.   
+         - IP datagram에 비해 링크의 MTU가 작을 경우 IP datagram를 보낼 수 없다.   
+         - 그러므로 IP datagram를 MTU size에 맞춰 다수의 IP datagram로 분리하여 보낸다.   
+         - IP header의 bits가 순서를 확인하기 위해 사용되며 최종 목적지에서 분리된 IP datagram이 하나로 다시 조합된다.   
+         - ex) 4000 bytes datagram, MTU = 1500 bytes일 경우   
+            - header = 20 bytes, data = 3980 bytes   
+            - 최초 datagram: length = 4000, ID = x, flags = 0, fragment offset = 0      
+
+            - 분리1 datagram: length = 1500, ID = x, flags = 1, fragment offset = 0   
+               - header = 20, data = 0~1480   
+            - 분리2 datagram: length = 1500, ID = x, flags = 1, fragment offset = 185    
+               - header = 20, data = 1480 ~ 2960,   1480/8 = 185 = offset
+               - /8을 하여 필드의 3 bits를 줄여준다.   
+            - 분리3 datagram: length = 1040, ID = x, flags = 0, fragment offset = 370   
+               - header = 20, data = 2960 ~ 4440,   2960/8 = 370 = offset   
+         - 중간의 분리된 IP datagram이 손실된다면 reassembly가 안되어 제대로 전송이 안되기 때문에 TCP Timer에 의해 재전송이된다.    
+
+   - __TTL(8bit)__: 데이터 무환순환 방지를 위해 데이터 최대 한정 시간 설정. 라우터를 거칠때마다 1씩 감소하고 0이 될 경우 데이터 버린다., __upper layer(8bit)__: 상위 계층(전송 계층) 명시를 의미 즉, TCP인지 UDP인지를 명시하고 수신자에서 사용, __header checkum(16bit)__   
+   - __32 bit 출발지 IP 주소__   
+   - __32 bit 목적지 IP 주소__   
+   - __Options(32bit)__   
+   - __data(32bit)__: 변수 길이, TCP or UDP Segment   
+   - __IP header는 총 20 bytes, TCP header도 총 20 bytes이므로 어플리케이션 Message에 20 + 20 = 40 bytes overhead가 붙여진것이라 볼 수 있다.__   
+      - 인터넷에서 40 bytes인 패킷들이 돌아다니는데 대부분 이러한 패킷은 TCP ACK 패킷이다.   
+
+### IP Address(IPv4)   
+   - __고유한 32bit 숫자__   
+   - __가지고 있는 문제점__   
+      - 주소 공간 부족   
+      - 보안   
+   - 8bit 4부분으로 나누어져서 각 부분이 10진수로 변환되어 255.255.255.255 처럼 마침표(.)로 구분하여 표현된다.
+   - __호스트의 들어있는 네트워크 인터페이스를 가르키는 주소__   
+   - __네트워크 인터페이스 카드를 여러 개 가질 경우 여러 개의 IP를 가질 수 있다.__    
+      - ex) 라우터   
+         - 인터페이스를 여러 개 가지고 있기 때문에 여러 개의 IP를 가진다.   
+   - __IP를 무작위로 배정하지 않는 이유__   
+      - 라우터의 forwarding 테이블이 너무 커져서 검색이 어려워질 수 있기 때문이다.   
+   - __현재 IP주소를 배정하는 방법__   
+      - __계층화__   
+         - Network(= Prefix = Subnet) 24 bit, Host 8 bit 로 나눠진다.   
+            - Network을 나타낼때는 /24로 표현한다.   
+            - ex) IP 주소: 12.34.158.5 일경우 Network: 12.34.158.0/24   
+         - IP주소는 항상 24 bit Subnet Mask와 같이 다닌다.   
+            - Subnet mask를 통해 어디까지가 Network이고 Host인지 구별할 수 있다.   
+               - ex) IP 주소: 12.34.158.5 / Subnet mask: 255.255.255.0 를 AND 연산을 할 경우 Network 12.34.158.0만 알아낼 수 있다.   
+            - Subnet으로부터 같은 Network에 속한 호스트들을 알아낼 수 있다.   
+            - 같은 Network에 속한 호스트들은 같은 prefix를 가지기 때문에 라우터의 Forwarding 테이블이 단순해져 확장성(Scalability)이 증가된다.   
+            - 라우터를 업데이트 할 필요없이(Forwarding table entry 추가 필요 x) 같은 Prefix를 가진 새로운 호스트를 쉽게 추가할 수 있다.   
+               - 라우터의 Forwarding table entry는 목적지 IP 주소가 매칭되는 prefix에 매핑하여 forwarding하기 때문이다.   
+
+   - __과거 Class에 따른 IP 주소 배정__   
+      - __Class A__   
+         - Network을 나타낼때는 __/8__ 로 표현한다.   
+            - Network는 8bit, Host는 24bit   
+            - 전 세계의 2^8 = 128개의 기관만이 Network주소를 가질 수 있었고 각 기관이 Host 24bit 만큼 모두 사용하지 못하여 공간이 낭비되었다.   
+      - __Class B__   
+         - Network을 나타낼때는 __/16__ 로 표현한다.   
+            - Network는 16bit, Host는 16bit   
+            - Class A과 비슷하다.   
+      - __Class C__   
+         - Network을 나타낼때는 __/24__ 로 표현한다.   
+            - Network는 24bit, Host는 8bit   
+            - 전 세계의 2^24개의 기관이 Network주소를 가질 수 있으나 Host가 8bit이기 때문에 할당할 수 있는 Host의 수가 너무 적었다.      
             
-      - __IP 주소를 어떻게 얻을 수 있나?__   
-         - 한 기관은 ISP로부터 주소 블록을 획득하여, 개별 IP 주소를 기관 내부의 호스트와 라우터 인터페이스에 할당한다.   
-         - 라우터 인터페이스 주소에 대해서, 시스템 관리자는 라우터 안에 IP 주소를 할당한다.   
-         - 호스트에 IP를 할당하는 것은 일반적으로 동적 호스트 구성 프로토콜(Dynamic Host Configuration Protocol, DHCP)을 더 많이 사용한다.   
-            - 네트워크 관리자는 해당 호스트가 네트워크에 접속하고자 할 때마다 동일한 ip 주소를 받도록 하거나, 다른 임시 ip 주소를 할당하도록 DHCP를 설정한다.   
-            - DHCP는 호스트 IP 주소의 할당뿐만 아니라, 서브넷 마스크, 첫 번째 홉 라우터 주소나 로컬 DNS 서버 주소 같은 추가 정보를 얻게 해 준다.   
-            - 네트워크에서 자동으로 호스트와 연결해 주는 DHCP 능력 때문에 "plug and play"라고도 한다   
-         
-      - __DHCP 기본 동작 과정__   
-         - __DHCP discover__   
-            - device가 부팅되면 동일 서브넷에 위치한 DHCP Server를 찾기 위해 DHCP discover 메시지를 이더넷 망에 broadcast한다. (IP dest:FF-FF-FF-FF-FF)   
-               - __UDP Packet을 전송하는데 UDP Packet은 IP datagram으로 캡슐화된다.__   
-               - __브로드캐스팅__   
-                  - 목적지 주소를 255.255.255.255로 설정하여 서브넷에 있는 모든 멤버에게 메세지를 전달하는 것이다.   
-               - 브로드캐스팅을 통해 전달된 메세지에 다른 호스트는 반응하지 않고 DHCP 서버만 반응을 하는 이유는 Port 번호 때문이다.   
-                  - DHCP Server만 해당 Port를 열고 listening을 하고 있기 때문이다.   
-               - Client가 출발지 IP 주소 0.0.0.0으로 보내면 DHCP가 채워서 IP 할당해서 보냄   
-         - __DHCP offer__   
-            - DHCP discover 메시지를 수신한 DHCP Server는 DHCP offer 메시지를 broadcast로 모든 Client에게 전송한다. 여기에는 장치(Client)에게 임대해 줄 IP 주소와 자신의 IP 주소가 포함되어 있다.   
-               - broadcast 또는 unicast로 모든 Client에게 전송하는 이유는 Client의 IP가 아직 할당되지 않아 어떤 Client인지 모르기 때문이다. 마찬가지로 Port 번호를 통해 Client를 발견한다.   
-         - __DHCP request__   
-            - Client는 DHCP offer 메시지로부터 받은 네트워크 정보들을 사용하겠다고 요청   
-               - Client는 아직까지 받은 IP를 사용하지 않은 상태이기 때문에 DHCP discover과 똑같이 broadcast를 하여 전송한다.   
-         - __DHCP ACK__   
-            - DHCP Server는 'DHCP ACK' 메시지를 통해 Client의 IP 주소, Subnet mask, Default gateway IP 주소(라우터 IP 주소), DNS 서버 IP 주소, Lease Time(IP 주소 임대 시간)을 전달한다.    
-               - DHCP offer와 똑같이 broadcast를 하여 전송한다.   
-         - __여러 DHCP가 있을 경우__    
-            - 마음에 드는 IP 중 하나를 선택한다.    
+   - Classless Inter-Domain Routing(CIDR)   
+      - __Class가 가진 문제점을 해결하기 위해 나온 방법__   
+      - __Network를 8 bit 단위로 정하지 않고 32bit내 원하는 만큼 유연하게 __/n__ 로 정할 수 있다.__   
+         - 하나의 기관이 Class C에서 1000개의 Host를 할당하기 위해서는 Network /24를 4개 받아야 한다. Host 8bit * 4개 = 1020개   
+            - 여러 prefix를 가지기 때문에 라우터의 Forwarding table의 크기가 커진다.   
+         - 하나의 기관이 CIDR에서 1000개의 Host를 할당하기 위해서는 Network /22를 1개 받으면 된다. Host 10bit * 1개 = 1024개   
+            - 하나의 prefix만 가지기 때문에 라우터의 Forwarding table의 크기가 줄어든다.   
+
+   - __Longest Prefix Match Forwarding__   
+      - __목적지 기반 forwarding__   
+         - Packet은 목적지 IP 주소를 가진다.   
+         - __라우터는 가장 길게 매칭되는 prefix를 찾는다.__     
+         - Cute algorithm problem: very fast lookup   
+
+   - __Subnets__   
+      - __IP 주소의 같은 Subnet(Prefix)를 가진 장치 인터페이스 집합__   
+      - __라우터를 거치지 않고 물리적으로 서로 접근이 가능한 Host들의 집합__    
+      - __IP 주소__   
+         - Subnet part - 높은 순위 bits    
+         - Host part - 낮은 순위 bits   
+      - __라우터는 여러 개의 인터페이스를 가지므로 여러 개의 IP를 가진다.__   
+         - 각 IP 주소의 prefix가 다 다르다.   
+            - 라우터는 여러 개의 Subnet에 속하기 때문에(교집합) 다른 곳으로 가려면 라우터를 거쳐서 가야한다.   
+
+   - __IPv4의 문제점을 해결하기 위해 나온 방법__   
+      - __IPv6__   
+         - 1996년에 __IPv4의 주소 공간 부족 문제점을 해결__하기 위해서 나왔다.        
+         - __128 bit__   
+         - __IPv6 datagram 구조__    
+            - ver, priority, flow lable   
+            - payload length, next header, hop limit   
+            - source address   
+            - destination address   
+            - data   
+
+      - __IPv4 with NAT__   
+         - 2015년에 NAT(Network Address Tranlation)을 사용하여 기존의 IPv4 주소 공간 문제를 해결하였다.   
+         - __NAT__   
+            - IP 주소 재사용을 가능하게 한다.   
+            - __local 네트워크는 오로지 한 개의 IP 주소만 가진다.__   
+               - 바깥 세상과으로부터 독립   
+                  - 밖에 알리지 않고 local 네트워크에 있는 디바이스의 주소를 바꿀 수 있다.   
+                  - local 네트워크의 주소를 바꾸지 않고 ISP를 바꿀 수 있다.   
+                  - local net에 있는 디바이스는 바깥세상에 의해 명시적으로 addressable, visible하지 않는다.   
+               - 하나의 네트워크 망에서 여러 개의 디바이스들이 존재할 때, 그들 각각에게 실제 IP를 하나씩 주게 되면 IP를 너무 많이 필요로 한다.   
+                  - IPv4 주소 공간이 부족하다.   
+
+            - __NAT 라우터가 하는 기능__   
+               - __Outgoing datagrams__   
+                  - 내부에서 외부로 나가는 datagram의 (출발지 IP 주소, Port 번호)를 (NAT IP 주소, 새로운 Port 번호)로 대체한다.   
+               - __모든 (출발지 IP 주소, 포트 번호)->(NAT IP 주소, 새로운 포트 번호) 변환 쌍을 NAT translation table에 기록한다.__   
+               - __Incoming datagrams__      
+                  - 외부에서 내부로 들어오는 datagram의 목적지 필드에 있는 (NAT IP 주소, 새로운 Port 번호)를 NAT translation table 내의 상응하는 (출발지 IP 주소, Port 번호)로 바꾼다.   
+
+            - __외부에서 보기에는 하나의 IP 주소만 있는 것처럼 보인다.__   
+            - __NAT 라우터는 ISP의 DHCP 서버로부터 IP 주소를 얻고, NAT-DHCP-라우터로 제어되는 홈 네트워크의 주소 공간에서 DHCP 서버를 실행하여 컴퓨터에게 주소를 제공__   
+            - __16bit의 port-number field__   
+               - 하나의 LAN 주소로 동시에 2^16 = 약 60,000개의 연결이 가능   
+               - Flow   
+                  - [(WAN side addr) 138.76.29.7, 5001]이랑 [(LAN side addr) 10.0.0.1, 3345]를 바인딩한 것
+               - 약 60,000개의 flow를 생성할 수 있다   
+
+            - __NAT 문제점__   
+               - __end-to-end 법칙을 위반__   
+                  - host가 중간 노드에서 Packet(IP 주소, Port 번호) 수정 없이 직접 통신해야 한다는 원칙 위반   
+                  - 라우터는 네트워크 계층 장치이므로 네트워크 IP datagram header만 봐야하는데 header의 IP 주소도 변경하고 data 부분의 TCP header의 Port 번호(전송 계층)도 변경한다.     
+                     - 라우터는 네트워크, 데이터 링크, 물리적 계층까지만 처리해야 한다.   
+               - __라우터는 Port를 확인하면 안된다__   
+                  - Port 번호의 용도는 수신자 호스트에서 프로세스를 찾을 때 사용되어야 하는데 라우터에서 호스트를 찾을 때 사용된다.   
+
+            - __NAT를 사용하는 네트워크에서는 Server를 운영할 수 없다.__   
+               - __Client는 오직 외부 IP 주소만 알 수 있다.__   
+                  - 그러므로 Client가 LAN의 로컬 주소(내부 IP 주소)를 목적지 주소로 사용할 수 없다.   
+               - __Server는 Client의 요청을 기다리는 역할이므로 NAT 테이블이 만들어지지 않는다.__   
+                  - NAT 내부에서 외부로 나갈 때만, 주소 변환 쌍이 NAT 테이블에 업데이트 된다.   
+                  - NAT 내부에서 외부로 datagram이 나갈 때 생성된 NAT 테이블을 활용하여 외부 datagram이 내부로 들어온다.   
+               - __내부 사설 IP는 사설 인터넷 내에서만 유효하기 때문에 외부에서 접근 불가__   
+                  - __해결책__   
+                     - __특정 Server를 위해 관리자가 NAT 테이블에 Server 정보를 매핑해두는 방식__   
+                        - 특정 Port로 들어오는 연결 요청을 Server로 전달(forward) 하도록 NAT을 정적으로 구성   
+                     - __Universal Plug and Play(UPnP) Internet Gateway Device(IGD) Protocol__   
+                        - UPnP 프로토콜을 사용하여 자동으로 NAT Port 매핑 테이블을 생성한다.   
+                        - 호스트가 가까운 NAT을 발견하고 동적으로 Port 매핑을 자동 설정하는 프로토콜 사용   
+                     - __Skype를 사용하여 전달(relaying)__   
+                        - NAT의 Client와 릴레이로 연결을 설정   
+                        - 외부 Client는 릴레이에 연결   
+                        - 릴레이가 두 연결 사이에 패킷을 중계   
+                        - Skype에서 사용   
+
+            __IPv4 -> IPv6__    
+               - __Tunneling__   
+                  - IPv4와 IPv6를 같이 사용하는 방식   
+                  - IPv6 -> IPv4에게 전송할 때 IPv4 datagram 구조에 맞춰서 전송한다.   
+                     - 즉 IPv6안에 IPv4가 들어있다.   
+
+            __IPv6를 사용하는 것이 더 좋은 방법이기 때문에 전세계에 존재하는 라우터를 IPv4에서 IPv6로 변경하는게 좋지만 IPv4의 환경이 이미 전체적으로 자리잡고 있고 라우터는 각자 소유하고 있기 때문에 모든 라우터를 변경하는 것은 현실적으로 어렵다.__   
+
+
+
+   - __개인이 인터넷을 사용하기 위해서 가지고 있어야 할 필수적인 정보__   
+      - __IP, Subnet mask, Router, DNS__   
+         - ex) __IP__ : 192.168.1.47, __Subnet mask__: 255.255.255.0, __Router__: 192.168.1.1, __DNS__: 192.168.1.1   
+
+   - __ICMP(Internet Control Message Protocol)__   
+      - __네트워크에서 일어나는 정보에 대해서 출발지에게 알려주기 위한 네트워크 자체가 만들어내는 프로토콜__   
+         - __Packet이 목적지에 도착하지 못했을 경우__    
+            - TTL이 0이 되었을 경우   
+            - 목적지의 Port가 닫혀있을 경우   
+            - IP header가 잘못됐을 경우   
+         - __Traceroute__   
+            - 목적지까지 거쳐가는 라우터의 정보를 알려준다.   
+               - TTL 1, 2, 3, 4 등 점차 늘려가면서 각 라우터 순서를 알아낸다.   
+
+
+### Dynamic Host Configuration Protocol(DHCP)   
+   - __정적 IP VS 동적 IP__   
+      - __정적 IP__   
+         - 고정된 IP   
+         - 장점: 정체성이 있다, 항상 들어올 수 있다.   
+         - 단점: 비용이 비싸다, 사용성이 떨어진다, 얼마 쓰지도 않으면서 계속 할당받고 있어야 한다.   
+      - __동적 IP__   
+         - IP가 시간에 따라 바뀐다.      
+         - 장점: 주소를 유연하게 사용 가능 ,비용 절약   
+         - 단점: 고정적으로 데이터 받는 서비스 사용 불가   
+
+   - __IP 주소를 어떻게 얻을 수 있나?__   
+      - 한 기관은 ISP로부터 주소 블록을 획득하여, 개별 IP 주소를 기관 내부의 호스트와 라우터 인터페이스에 할당한다.   
+      - 라우터 인터페이스 주소에 대해서, 시스템 관리자는 라우터 안에 IP 주소를 할당한다.   
+      - 호스트에 IP를 할당하는 것은 일반적으로 동적 호스트 구성 프로토콜(Dynamic Host Configuration Protocol, DHCP)을 더 많이 사용한다.   
+         - 네트워크 관리자는 해당 호스트가 네트워크에 접속하고자 할 때마다 동일한 ip 주소를 받도록 하거나, 다른 임시 ip 주소를 할당하도록 DHCP를 설정한다.   
+         - DHCP는 호스트 IP 주소의 할당뿐만 아니라, 서브넷 마스크, 첫 번째 홉 라우터 주소나 로컬 DNS 서버 주소 같은 추가 정보를 얻게 해 준다.   
+         - 네트워크에서 자동으로 호스트와 연결해 주는 DHCP 능력 때문에 "plug and play"라고도 한다   
+
+   - __DHCP 기본 동작 과정__   
+      - __DHCP discover__   
+         - device가 부팅되면 동일 서브넷에 위치한 DHCP Server를 찾기 위해 DHCP discover 메시지를 이더넷 망에 broadcast한다. (IP dest:FF-FF-FF-FF-FF)   
+            - __UDP Packet을 전송하는데 UDP Packet은 IP datagram으로 캡슐화된다.__   
+            - __브로드캐스팅__   
+               - 목적지 주소를 255.255.255.255로 설정하여 서브넷에 있는 모든 멤버에게 메세지를 전달하는 것이다.   
+            - 브로드캐스팅을 통해 전달된 메세지에 다른 호스트는 반응하지 않고 DHCP 서버만 반응을 하는 이유는 Port 번호 때문이다.   
+               - DHCP Server만 해당 Port를 열고 listening을 하고 있기 때문이다.   
+            - Client가 출발지 IP 주소 0.0.0.0으로 보내면 DHCP가 채워서 IP 할당해서 보냄   
+      - __DHCP offer__   
+         - DHCP discover 메시지를 수신한 DHCP Server는 DHCP offer 메시지를 broadcast로 모든 Client에게 전송한다. 여기에는 장치(Client)에게 임대해 줄 IP 주소와 자신의 IP 주소가 포함되어 있다.   
+            - broadcast 또는 unicast로 모든 Client에게 전송하는 이유는 Client의 IP가 아직 할당되지 않아 어떤 Client인지 모르기 때문이다. 마찬가지로 Port 번호를 통해 Client를 발견한다.   
+      - __DHCP request__   
+         - Client는 DHCP offer 메시지로부터 받은 네트워크 정보들을 사용하겠다고 요청   
+            - Client는 아직까지 받은 IP를 사용하지 않은 상태이기 때문에 DHCP discover과 똑같이 broadcast를 하여 전송한다.   
+      - __DHCP ACK__   
+         - DHCP Server는 'DHCP ACK' 메시지를 통해 Client의 IP 주소, Subnet mask, Default gateway IP 주소(라우터 IP 주소), DNS 서버 IP 주소, Lease Time(IP 주소 임대 시간)을 전달한다.    
+            - DHCP offer와 똑같이 broadcast를 하여 전송한다.   
+      - __여러 DHCP가 있을 경우__    
+         - 마음에 드는 IP 중 하나를 선택한다.    
+
+      __즉, Client가 DHCP를 통해 네트워크 정보를 얻은 뒤, 접속을 원하는 사이트를 입력시 DNS를 통해 Name Server에서 목적지 호스트 IP를 얻어오고, NAT를 통해 IP, Port 번호를 변환 뒤 라우터를 통해서 목적지 호스트 IP로 데이터를 전송한다. + 방화벽(Firewall)__    
+
+   - __우리는 일반적으로 비용을 지불하여 ISP회사(ex) KT, SK, LGU+)로부터 IP 주소 하나를 할당받는다__   
+      - 공유기를 사용하여 다수의 사람이 다수의 다른 IP를 할당할 수 있게 하는데 공유기는 NAT, DHCP, Name Server, 방화벽 기능을 가지고 있다. 공유기는 라우터 IP를 가지며 공유기로 연결된 다수의 사람들은 같은 prefix를 가지는 Client가 된다.  외부에서는 ISP회사 준 하나의 IP로만 인식되지만 공유기를 거쳐 NAT으로 변환된 다수의 내부 IP들이 존재한다.     
+
+
+## 5. 링크 계층   
+   - __네트워크 Terminology__   
+      - __Node__   
+         - 호스트와 라우터   
+      - __Link__   
+         - 인접한 노드들 사이의 통신 경로   
+         - wired links   
+         - wireless links   
+         - LANs   
+      - __2계층 패킷__   
+         - Frame, encapulates datagram   
+      - data-link layer는 Datagram을 링크를 통해서 하나의 노드에서 물리적으로 인접한 노드로 전송하는 역할   
+   
+   - __링크 계층이 구현되어 있는 장소__   
+      - 모든 호스트의 Adaptor = (Network Interface Card(NIC))에 구현되어 있다.   
+         - Ethernet card, 802.11 card 등 Ethernet chipset    
+         - 링크, 물리적 계층을 구현한다.   
+      - 호스트의 시스템 버스에 연결되어 있다.   
+      - 하드웨어, 소프트웨어, 펌웨어의 조합   
+      
+   - __Link layer services__   
+      - __Framing, link access__   
+         - Datagram에 header와 trailer를 더해 Frame으로 캡슐화   
+         - 공유되는 매개체라면 채널 접근   
+         - "MAC" address는 출발지를 나타내기 위해 Frame header에 사용한다.   
+      - __인접한 노드들 사이에서 reliable delivery__   
+         - __wireless links__   
+            - 에러율 높음   
+            - 무선은 에러가 많아서 체크를 많이 해야 한다. (에러 확인하면 데이터를 다시 보내는데, 이러한 작업이 많아 유선보다 느리다.)   
+         - __wire link(유선,광케이블)__   
+            - 에러율 적음   
             
-         __즉, Client가 DHCP를 통해 네트워크 정보를 얻은 뒤, 접속을 원하는 사이트를 입력시 DNS를 통해 Name Server에서 목적지 호스트 IP를 얻어오고, NAT를 통해 IP, Port 번호를 변환 뒤 라우터를 통해서 목적지 호스트 IP로 데이터를 전송한다. + 방화벽(Firewall)__    
-      
-      - __우리는 일반적으로 비용을 지불하여 ISP회사(ex) KT, SK, LGU+)로부터 IP 주소 하나를 할당받는다__   
-         - 공유기를 사용하여 다수의 사람이 다수의 다른 IP를 할당할 수 있게 하는데 공유기는 NAT, DHCP, Name Server, 방화벽 기능을 가지고 있다. 공유기는 라우터 IP를 가지며 공유기로 연결된 다수의 사람들은 같은 prefix를 가지는 Client가 된다.  외부에서는 ISP회사 준 하나의 IP로만 인식되지만 공유기를 거쳐 NAT으로 변환된 다수의 내부 IP들이 존재한다.     
+      - __Flow control__   
+         - 인접한 송신 노드와 수신 노드 사이의 페이싱(pacing)   
+      - __Error detection__   
+         - signal attenuation, noise로 에러 유발됨   
+         - 수신자는 에러 탐지   
+            - 수신자가 재전송 받기 위해 시그널을 보내거나 Frame을 버림   
+            
+      - __Error correction__   
+         - 수신자가 식별하고 bit error 수정   
+      - __Half-duplx and Full duplex__   
+         - __Half-duplex__   
+            - 단방향   
+            - 두 end points가 서로 소통할 때, 둘 다 보내고 받을 수는 있지만, 둘 다 동시에 보낼 수는 없음   
+         - __Full-duplex__   
+            - 양방향   
+            - 보내고 받는게 동시에 가능   
+               - 무선은 한번에 하지 못한다.   
+               
+   - __Adaptors communicationg__   
+      - __Sending side__   
+         - Datagram을 Frame으로 캡슐화   
+         - Error checking bits, rdt, flow control 등 추가   
+      - __Receiving side__  
+         - Errors, rdt, flow control 등 검사   
+         - Datagram을 추출하고 상위 계층에 전달   
          
-      
-      
-   
-         
-   
-      
-      
-   
+### Broadcast medium   
+   - 여러 명이 broadcast시 충돌하지 않게 해준다   
+   - __Medium Access Control(MAC)__   
+      - MAC protocol 이라고 불린다.   
+      - __3 가지 방식__   
+         - __Channel partitioning__   
+            - Channel을 여러 조각(time slots, frequenct, code)으로 나눈 뒤 해당 조각에 할당된 만큼만 전송할 수 있다.   
+            - __TDMA__   
+               - Time Division Multiple Access   
+               - 노드에 각 Time slot을 할당한다.   
+               - 고정된 길이의 slot만큼 즉, 할당된 시간 동안만 전송을 할 수 있다.   
+               - 사용되지 않는 slot이 있을 경우 slot이 낭비되어 비효율적이다.   
+                  - 전송할 패킷을 가진 노드가 하나일지라도 타임슬롯 R/N 대역폭으로 한정된다.   
+            - __FDMA__   
+               - Frequency Division Multiple Access   
+               - Channel 범위를 frequency 대역으로 나눈다.   
+               - 각 조각은 고정된 frequency 대역을 할당 받는다.    
+               - 사용되지 않는 frequency 대역은 낭비되어 비효율적이다.   
+         - __Random Access Protocol__    
+            - 노드가 보낼 Packet이 있을 때 전송   
+               - 완전한 채널 데이터 전송률 R로 전송한다.   
+               - 노드 사이에 우선순위가 없다.   
+            - 두 개 이상의 노드가 보낼 시 충돌한다.   
+            - __CSMA__   
+               - Carrier Sense Multiple Access   
+               - 전송하기 전에 누가 보내고 있는지 확인한다.   
+                  - __Channel이 idle일 경우__   
+                     - 전체 Frame을 전송한다.   
+                  - __Channel이 바쁠 경우__   
+                     - 전송을 미룬다.   
+               - __CSMA collisions__   
+                  - 여러 노드가 Channel이 idle임을 확인하고 전송할 경우 충돌할 수 있다.   
+                  - __Channel propagation delay__   
+                     - 신호가 채널의 한쪽 끝에서 다른 쪽 끝으로 전파되는 데 걸리는 시간   
+                     - 이러한 전파 지연이 길수록 네트워크의 다른 노드에서 이미 시작된 전송을 캐리어 감지 노드가 감지할 수 없는 경우가 더 증가하여 충돌한다.   
+                  - __Collision__    
+                     - 전체 Pactet 전송 시간이 낭비된다.   
+                     - 거리, 전파 지연은 충돌 확률 결정에 역할을 한다.   
+                  - __CSMA는 충돌을 피할 수 없다.__
+
+                  - __CSMA/CD (collision detection)__   
+                     - 일반적으로 많이 Ethernet에서 많이 사용한다.   
+                        - Wifi는 CSMA/CA를 사용한다.   
+                     - Carrier sending, deferral as in CSMA   
+                     - 짧은 시간 안에 충돌 탐지   
+                     - 충돌하면 전송을 중단시켜 채널 낭비를 줄인다.   
+                        - CSMA는 전송 뒤 충돌해도 그대로 전송한다.   
+                     - __충돌 탐지__   
+                        - 유선 LAN에서는 쉬움   
+                           - 시그널 길이 측정, 전송 비교, 시그널 받기   
+                        - 무선 LAN에서는 어려움   
+                           - 수신 신호 세기가 로컬 전송 세기에 압도되서 신호를 못 받음 (탐지 불가)   
+
+                  - __Ethernet CSMA/CD 알고리즘__    
+                     1. NIC는 네트워크 계층으로부터 Datagram 받고, Frame을 생성한다.   
+                     2. 만약 NIC가 Channel이 idel인 것을 감지하면, 프레임 전송을 시작한다. 만약 NIC가 Channel이 바쁘다고 느끼면, Channel이 idle이 될 때까지 기다렸다 전송한다.   
+                     3. 만약 NIC가 다른 전송 탐지없이 전체 프레임을 전송했다면, NIC는 프레임 전송 완료   
+                     4. 만약 NIC가 전송하는 동안 다른 전송을 탐지했다면, 중단하고 jam 신그널을 보낸다.   
+                     5. 중단 후, NIC는 binary (exponential) backoff에 진입: (exponential random backoff)   
+                        - m번째 충돌 이후, NIC는 {0, 1, 2, ..., 2^M -1}에서 랜덤하게 K를 고른다. 그리고 NIC는 K*512bit 시간을 기다리고 Step b로 돌아간다.   
+                        - __즉, 1번 충돌하면 {0,1} 중 하나를 골라 * 512bit 시간만큼 기다린 후 전송한다. 2번 충돌하면 {0,1,2,3} 중 하나를 골라 * 512bit 시간만큼 기다린 후 전송한다.__   
+                        - 충돌이 많으면 backoff 간격이 커진다. 즉, 노드가 많을 때 backoff 간격이 커진다.   
+                     - __이러한 방식을 사용하는 이유__   
+                        - 총 몇 개의 노드가 전송하는 상황인지 모르기 때문에 충돌이 날 시 조금씩 범위를 늘려가면서 모든 노드가 각자 다른 숫자를 골라 충돌이 나지 않도록 하기 위해서이다.   
+
+                  - __Taking turns Mac Protocol__   
+                     - Channel partitioning Mac Protocol   
+                        - high load에서 효율적이고 공정하게 채널 공유한다.      
+                        - low load에서 비효율적이다.   
+                           - 채널 접근 지연, 오직 한 개의 노드만 활동할 때에도 1/N bandwidth 할당한다.     
+
+                     - Random Access Mac protocol   
+                        - low load에서 효율적이다.   
+                           - 하나의 노드가 완전히 Channel을 이용할 수 있다.   
+                        - high load시 collision overhead 발생   
+
+                     - __Polling__    
+                        - __Master / Slave 구조__   
+                           - Master 노드는 전송할 차례가 된 Slave 노드를 초대한다.   
+                           - Master에서 오류 발생 시 모두 멈춘다.   
+                        - __문제__   
+                           - Polling overhead   
+                           - latency   
+                           - single point of failure(Master)   
+
+                     - __Token passing__   
+                        - Token을 하나의 노드로부터 다음 노드로 전달하면서 token을 받은 노드만 전송할 수 있다.   
+                        - token message
+                        - __문제__   
+                           - token overhead   
+                           - latency   
+                           - single point of failure(token)   
+
+
+
+
+
+
