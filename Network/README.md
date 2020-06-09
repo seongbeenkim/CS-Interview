@@ -24,8 +24,8 @@
    - [Dynamic Host Configuration Protocol(DHCP)](#dynamic-host-configuration-protocoldhcp)   
    
 * [5. 링크 계층](#5-링크-계층)   
-   - [Broadcast medium](#broadcast-medium)   
-   - [](#)   
+   - [MAC](#broadcast-medium)   
+   - [Ethernet](#ethernet)   
    - [](#)   
    - [](#)   
 
@@ -731,6 +731,8 @@ __UDP__
    - __Routing__   
       - __포워딩 테이블을 만들어 주는 것__   
       - __포워딩 테이블에 모든 주소를 넣을 경우 검색하기도 복잡하고 관리하기도 힘들기 때문에 주소 범위를 정하여 관리한다.__   
+      - __Hop__   
+         - 패킷이 하나의 라우터에서 다른 라우터로 이동하는 한 구간   
       - __포워딩 테이블 종류__   
          - __Longest prefix matching__   
             - 목적지 주소와 매칭되는 가장 긴 prefix 주소에 따라 링크를 연결한다.   
@@ -863,7 +865,7 @@ __UDP__
 
             - __In-network duplication__   
                - __Flooding__   
-                  - 노드가 broadcast 패킷을 받으면, 카피본을 모든 이웃에게 보낸다.   
+                  - 노드가 broadcast 패킷을 받으면, 복사본을 모든 이웃에게 보낸다.   
                      - 문제점: cycles & broadcast storm   
                   - 즉, 나를 제외한 나머지한테 보냄   
                - __Controlled flooding__   
@@ -1236,6 +1238,9 @@ __UDP__
                         - 충돌이 많으면 backoff 간격이 커진다. 즉, 노드가 많을 때 backoff 간격이 커진다.   
                      - __이러한 방식을 사용하는 이유__   
                         - 총 몇 개의 노드가 전송하는 상황인지 모르기 때문에 충돌이 날 시 조금씩 범위를 늘려가면서 모든 노드가 각자 다른 숫자를 골라 충돌이 나지 않도록 하기 위해서이다.   
+                        
+                     - __링크 계층에서 홉 사이의 Collision detect 됐을 때만 재전송하기 때문에 TCP 재전송과 다른 개념이다.__   
+                        - TCP는 중간 과정 상관없이 최종 목적지에서 오류 확인에 따라 재전송하기 때문에 비용이 많이 든다.     
 
                   - __Taking turns Mac Protocol__   
                      - Channel partitioning Mac Protocol   
@@ -1264,6 +1269,181 @@ __UDP__
                            - token overhead   
                            - latency   
                            - single point of failure(token)   
+                           
+### Ethernet 
+   - Ethernet은 네트워크에 연결된 각 기기들이 MAC 주소를 가지고 이 주소를 이용해 상호간에 데이터를 주고 받을 수 있도록 만들어졌다. 각 기기를 상호 연결시키는 데에는 허브, 네트워크 스위치 등의 장치를 이용한다.   
+   - __유선 LAN 기술__   
+   - token LANs과 ATM보다 간단하고 저렴   
+   - __Bus__   
+      - 90년대 중반에 인기   
+      - 서로 충돌할 수 있다.   
+   - __Star__   
+      - Switch를 중앙에 놓고 관리   
+      - 개별적으로 Ethernet protocol을 작동하여 충돌하지 않는다.   
+      - mac learning, switch learning   
+
+   - __Ethernet frame structure__   
+      - 송신 Adapter는 Ethernet frame에서 IP Datagram을 캡슐화한다.   
+      - __preamble__   
+         - 상위 7byte: 비트 동기화를 위해서 10101010로 된 비트열을 전달한다.   
+         - 하위 1byte: 프레임 시작을 알리는 10101011을 전달한다.   
+         - 수신자, 송신자 클락 속도 동기화하는데 사용된다.   
+      - __type__   
+         - 어떤 상위 계층 프로토콜인지 지정   
+      - __CRC__   
+         - cyclic redundancy check at receiver   
+         - crc붙여서 에러 탐지하거나 복구함   
+
+   - __unreliable, connectionless__   
+      - __connectionless__   
+         - 송수신자 사이에서 handshaking 없음   
+      - __unreliable__   
+         - 수신한 NIC은 ack이나 nack을 송신자한테 보내지 않음   
+            - CRC 붙여서 에러 탐지되면 버리고, 탐지 안되면 어쩔 수 없는 것   
+            - 나머지는 TCP한테 맡김   
+         - __Ethernet's MAC protocol__   
+            - No slot CSMA/CD with binary backoff   
+         - __Collision이 발생했는데 탐지하지 못할 경우를 대비해 Minimum Frame Size인 64bytes를 전송하게 하여 Collision을 감지할 수 있게 한다.__   
+            
+   - __MAC addresses__   
+      - 32 bit IP 주소   
+         - 네트워크 계층 주소를 위한 인터페이스    
+         - 네트워크 계층으로 Forwarding을 위해 사용된다.   
+      - __48 bit MAX(or LAN or physical or Ethernet) address__   
+         - 앞 24 bit는 제조회사, 뒤 24 bit는 고유 번호   
+         - 같은 네트워크에서 물리적으로 연결된 인터페이스의 IP 주소를 감지하기 위해 사용   
+         - __이름 : 호스트 네임, 주소 : IP 주소, 주민번호 : MAC 주소__   
+         
+   - __LAN addresses__   
+      - LAN에 있는 각 Adapter는 고유의 LAN 주소를 가진다.   
+      - __MAC 주소는 IEEE에서 할당 -> unique를 보장__   
+      - 제조업자는 MAC 주소 공간의 일부분을 구매   
+      - MAC flat address -> portability   
+         - MAC addr은 처음부터 끝까지 모든 digit으로 무언가를 구분하지 않음. 계층이 없음 -> flat하다   
+         - flat한 게 IP와의 차이 (IP 주소는 계층적이니까)   
+         
+   - __ARP__   
+      - Address resolution protocol   
+      - __ARP Table__   
+         - Cache 테이블   
+         - plug-and-play   
+            - Wifi 등에 연결하는 순간 자동으로 동기화되며 그 때부터 <IP, MAC 주소> 업데이트   
+            - 노드는 net 관리자에게 간섭받지 않고 자신의 ARP 테이블을 만든다.   
+         - LAN에 있는 IP 노드(호스트, 라우터)들 각각은 ARP 테이블을 가진다.   
+            - 이를 통해 다음 홉의 라우터의 MAC 주소를 찾을 수 있다.   
+         - IP 주소 : MAC 주소 매핑해준다. + TTL   
+         - TTL (Time To Live): 일정 시간 지나면 매핑된 주소 사라짐   
+         
+      - __ARP protocol: same LAN__   
+         - __A가 B에게 Datagram을 보내고 싶은데 A는 B의 MAC 주소를 모를 경우 (A의 ARP Table에 매핑되는 B의 MAC 주소 존재 X)__   
+            - A는 B의 IP 주소가 담긴 ARP query 패킷을 broadcast한다.   
+               - 목적지 MAC 주소를 FF-FF-FF-FF-FF-FF로 채워서 보낸다.(broadcasting)   
+               - LAN에 있는 모든 노드는 ARP query를 받는다.   
+                  - IP 주소가 다르다면 무시   
+            - B는 ARP query 패킷을 확인하고, A에게 자신의(B) MAC 주소를 넣어서 응답해준다.      
+               - ARP query 패킷에 출발지 주소가 적혀있으므로 Unicast를 하여 A의 MAC 주소로 Frame을 보냄   
+            - A는 IP 주소 : MAC 주소 쌍을 TTL이 만료될 때까지 자신의 ARP Table에 저장한다.     
+         
+      - __Addressing: routing to another LAN__   
+         - __Walkthrough__   
+            - R을 통해 A로부터 B로 Datagram을 보낸다.   
+            - IP (Datagram) 과 MAC 계층 (Frame)
+            - A가 B의 IP 주소를 안다고 가정한다.   
+            - A가 첫 번째 hop 라우터 R의 IP 주소를 안다고 가정한다.   
+            - A가 R의 MAC 주소를 안다고 가정한다.   
+            
+            - __과정__   
+               - A는 IP datagram (source: A의 IP, destination: B의 IP)을 생성한다.   
+               - A는 R의 MAC 주소를 목적지로 지정한 링크 계층 Frame을 생성하고 IP datagram을 포함시킨다.   
+                  - 목적지 주소를 라우터의 MAC 주소로 지정하면, 나가고 싶다는 신호로 간주된다. 즉, 현재 네트워크 밖으로 datagram을 전송한다는 의미   
+               - A는 R로 Frame을 전송한다.   
+               - R은 A가 보낸 Frame을 받아 datagram이 제거된 IP 계층으로 올라가 IP를 확인한다.   
+                  - 1 계층 : Physical, 2 계층 : Ethernet (MAC), 3 계층: IP   
+               - R은 datagram (source: A의 IP, destination: B의 IP)을 Forwarding Table에 forward한다.   
+                  - 라우터는 패킷 안에 적힌 목적지 IP 주소를 보고 해당 호스트로 보내기 위해 라우팅 테이블을 보고 다음 라우터로 포워딩을 한다.   
+                  - 이 때 사용하는 것이 Longest prefix matching 알고리즘   
+               - R은 B의 MAC 주소를 목적지로 지정한 링크 계층 Frame을 생성하고 IP datagram을 포함시킨다.   
+               - R은 B로 Frame을 전송한다.   
+               - __4번째 부터 과정을 목적지에 도착할 때까지 반복한다.__       
+               
+               
+      - __Switch__   
+         - 호스트는 스위치와 직접 연결(direct connection)   
+            - 호스트는 스위치의 존재를 모른다.   
+         - Switch buffer packets   
+         - Enthernet protocol은 각 들어오는 링크에서 사용된다.   
+            - No Collisions   
+            - Full duplex   
+            - 각 링크는 자신 고유의 충돌 범위를 가진다.   
+         - A->A', B->'B 같이 여러 곳에 동시에 전송을 할 수 있다.   
+            - A->B', B->B' 같이 한 곳에 동시에 보낼 경우에도 Switch를 통해 충돌 없이 전송할 수 있다.   
+            
+         - __Switch forwarding table__   
+            - 각 Switch는 고유 Forwarding table을 가진다.   
+            - __Self-learning 과정__   
+               - A에서 A'로 보낼 경우 Switch에 전달된다.   
+               - Switch는 A에 대한 정보를 Switch forwarding table에 업데이트한다.   
+                  - ex) A, Port 번호: 0, TTL: 60초   
+               - Switch는 A'가 어디있는지 모르기 때문에 flood를 한다.   
+                  - 즉, 다른 모든 라우터 또는 스위치에 A`를 보낸다.   
+               - A'는 flood를 통해 받은 정보를 확인하고 Switch에 응답한다.   
+               - Switch는 A'에 대한 정보를 Switch forwarding table에 업데이트한다.   
+                  - ex) A', Port 번호: 4, TTL: 60초  
+               - __Switch forwarding table에 목적지에 대한 정보가 들어있다면 정보를 통해 데이터를 바로 전송하고 없을 경우 self-learning을 통해 table을 업데이트하면서 데이터를 보낸다.  
+                  
+         - __Interconnecting switches__   
+            - Switch끼리 연결 될 수 있다.   
+            - 하나의 Swtich가 모든 라우터 연결할 수 없을 때 Switch를 늘려 서로 연결시킨다.   
+            - self_learning을 통해서 Switch forwarding table를 갱신한다.   
+               
+         - __Router vs Switch__      
+            - __공통점__   
+               - __Store and Forward__   
+                  - __Router__  
+                     - 네트워크 계층 장치   
+                  - __Swtich__   
+                     - 링크 계층 장치   
+                  
+               - __Forwarding table__   
+                  - __Router__   
+                     - IP 주소와 라우팅 알고리즘을 사용하여 테이블 연산(다음 hop mapping)   
+                  - __Switch__   
+                     - flooding, learning을 사용하여 Forwarding 테이블 학습(MAC 주소 갱신)   
+                  - 3계층 장비라 3 계층의 주소를 다 봐야한다.   
+                  
+            - __차이점__   
+               - __Router__  
+                     - IP 주소, NAT, Name server, Firewall 등 여러 기능을 가진다.   
+                     - 연결할 노드의 수가 너무 많아 Router + Router 연결하여 확장할 경우   
+                        - 각 Router에 대한 Subnet이 생기기 때문에 데이터를 보낼 때 여러 단계를 거쳐서 전송한다.   
+               - __Swtich__   
+                     - 어떠한 기능도 하지 않고 여러 노드를 연결시켜주기만 한다.   
+                     - 연결할 노드의 수가 너무 많아 Router + Switch 연결하여 확장할 경우   
+                        - 같은 Subnet에 있기 때문에 Switch가 존재하지 않고 하나의 Router에 연결된 것처럼 데이터를 전송한다.    
+               - __그러므로 확장할 경우 Router보다는 Switch를 하는게 덜 복잡하다.__   
+                   
+               - __learning 차이점__   
+                  - __Router__   
+                     - 인접한 노드의 정보를 이용하여 다익스트라 or 벨만포드 알고리즘을 사용하여 업데이트   
+                     - 최단 경로 찾기   
+
+                  - __Switch__   
+                     - 플러그를 꽂자마자(통신이 시작하자마자) 있는걸 가지고 계속 업데이트   
+                     - 인접한 노드 찾기   
+                     
+      - __Data center networks__   
+         - 수많은 고객들에게 서비스하기 위해 Switch 계층화를 하여 만든 data center   
+         - 여러 Switch를 계층화시켜 load balancing, avoiding processing, networking, data bottlenecks   
+         - __Load balancer__   
+            - 어플리케이션 계층 라우팅   
+            - 부하가 적은 곳을 찾아 연결시킨다.   
+               - 외부 고객 요청을 받는다.   
+               - data center내에 작업을 직접 연결한다.   
+               - (고객에게 data center 내부 데이터를 숨기면서) 외부 고객에 결과를 반환한다.   
+                
+            
+            
+
 
 
 
