@@ -1561,7 +1561,7 @@ __UDP__
          - H1에서 선택된 AP로 결합 요청 프레임 전송   
          - 선택된 AP에서 H1으로 결합 응답 프레임 전송    
          
-   - __IEEE 802.11 MAC Protocol: CSMA/CA(Coliision Avoidance) __   
+   - __IEEE 802.11 MAC Protocol: CSMA/CA(Coliision Avoidance)__   
       - 일반 CSMA는 전송 전에 채널을 감지(sense)한다.   
          - CSMA/CA는 충돌 감지(collision detection)하지 않는다.   
          - 무선은 약한 수신 신호로 인해 전송시 충돌 감지 어렵다.   
