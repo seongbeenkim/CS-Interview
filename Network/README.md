@@ -26,9 +26,10 @@
 * [5. 링크 계층](#5-링크-계층)   
    - [MAC](#broadcast-medium)   
    - [Ethernet](#ethernet)   
-   - [](#)   
-   - [](#)   
-
+   
+* [6. 무선과 이동 네트워크](#6-무선과-이동-네트워크)   
+   - [Wireless](#wireless)   
+   - [IEEE 802.11 Wireless LAN](#ieee-80211-wireless-lan)   
 ## 1. 컴퓨터 네트워크 기본   
 ### 네트워크 구성 요소   
 __라우터__ : 메세지를 전달받아서 데이터를 전달, Network, Data link, Physical 계층으로 구성   
@@ -1441,12 +1442,163 @@ __UDP__
                - data center내에 작업을 직접 연결한다.   
                - (고객에게 data center 내부 데이터를 숨기면서) 외부 고객에 결과를 반환한다.   
                 
+## 6. 무선과 이동 네트워크   
+### Wireless   
+   - __Elements of a wireless network__   
+      - __Wireless hosts__   
+         - 스마트폰, 노트북   
+         - Mobile or non-mobile   
+         - wireless는 항상 mobility를 의미하지는 않는다.   
+      - __Base station(기지국)__   
+         - 유선 네트워크와 연결되어 있다.   
+         - 계전기   
+            - 유선 네트워크와 영역 내의 무선 호스트 사이에 Packets 전달하는 역할을 한다.   
+            - ex) cell towers, 802.11 AP(Access Points)   
+      - __Wireless link__    
+         - mobile을 기지국에 연결하기 위해 사용한다.   
+         - backbone link로서 사용될 수도 있다.   
+         - 다중 접속 프로토콜이 링크 접근을 조정한다.   
+         - 다양한 데이터 전송률, 전송 거리를 가진다.   
+      - __Infrastructure mode__   
+         - 기지국은 mobile(이동하는 호스트)을 유선 네트워크에 연결시킨다.   
+         - handoff   
+            - mobile(이동하는 호스트)이 유선 네트워크로 연결을 제공하는 기지국을 변경한다.   
+      - __Ad hoc mode__   
+         - 기지국이 없다.   
+         - 노드는 링크 범위 내의 다른 노드들에게만 전송할 수 있다.   
+         - 노드는 스스로 네트워크를 구성할 수 있다.   
+            - 노드들간의 라우팅   
+      - __Wireless network taxonomy__   
+         - __Infrastucture__   
+            - __Single hop__   
+               - 호스트는 더 큰 인터넷에 연결하는 기지국(Wifi, cellular, WiMAX)에 연결한다.   
+            - __Multiple hop__   
+               - 호스트는 더 큰 인터넷(Mesh network)로 연결하기 위해서 다수의 무선 노드를 통해 전달해야 한다.    
+         - __No Infrastucture__   
+            - __Single hop__   
+               - 기지국이 없고 더 큰 인터넷(Bluetooth, ad hoc nets)에 대한 연결도 없다.   
+            - __Multiple hop__   
+               - 기지국이 없고 더 큰 인터넷에 대한 연결도 없다. 여러 개의 무선 노드들의 중계를 거쳐 서로 통신한다. MANET(mobile ad hoc network), VANET(vehicular ad hoc network)   
+
             
+      - __Wireless Link 특징(1)__   
+         - __신호 세기의 감소(decreased signal strength)__   
+            - 물체를 통과하면서 무선 신호가 약화되고 거리가 멀어질수록 신호가 약해진다.(경로 손실)   
+         - __다른 출발지들로부터의 간섭(interference from other sources)__   
+            - 동일 표준 무선 주파수(e.g., 2.4 GHz)가 다른 장치(e.g., 휴대폰, 모터)와 공유되고 방해받는다.   
+         - __다중경로 전파(multipath propagation)__   
+            - 무선 신호가 물체와의 반사, 굴절, 산란 등으로 서로 다른 경로를 거쳐서 전파하여 약간 다른 시간에 도달된다.   
+            - 다중경로 전파는 수신 측에서 신호를 제대로 수신하지 못하게 한다.      
             
+      - __Wireless Link 특징(2)__   
+         - __SNR(Signal-to-noise ratio)__   
+            - SNR이 클수록 noise로부터 signal을 추출하기 더 쉽다.   
+            - 측정된 수신 신호의 세기와 잡음의 상대적인 비율   
+         - __SNR VS BER__   
+            - __물리 계층이 주어졌을 경우__   
+               - 파워 증가 -> SNR 증가 -> BER(Bit-error-rate) 감소   
+               - 동일한 변조 기법 내에서는 SNR 값이 높을 수록 BER은 낮아진다.   
+            - __SNR이 주어졌을 경우__   
+               - 동일한 SNR 내에서는 높은 전송률의 변조 기법이 높은 BER값을 가진다.   
+               - BER 조건을 충족하고 가장 높은 처리량을 주는 물리 계층을 선택한다.   
+                  - SNR은 mobility를 변경할 수도 있다.   
+                     - 동적으로 물리 계층을 적용시킨다.(modulation, technique, rate)   
+                     
+      - __Hidden terminal problem__   
+         - A-B는 서로 들을 수 있고 C-B는 서로 들을 수 있다.   
+         - A는 B로 전송할 때 C는 A 수신 못하는데 이 때 C가 B로 전송을 원할 경우, B가 수신하고 있지 않다고 판단하기 때문에 송신한다.      
+            - C의 CS(Carrier Sensing) 실패      
+         - B에서 A,C 수신 충돌, A와 C는 충돌 검출 못한다.    
+            - A와 C의 CD(Collision Detection) 실패
+            - 그러므로 CSMA 사용하지 못한다.   
+         - A는 C에 대해 숨겨짐, C도 A에 대해 숨겨진다.   
+         
+      - __CDMA(Code Division Multiple Access)__   
+         - 코드 분할 다중 접속   
+         - 무선 LAN 및 셀룰러 등에서 사용되는 공유 매체 접속 프로토콜   
+         - 고유한 코드를 각 유저에 할당한다.   
+         - __CDMA 동작 원리__   
+            ① 각 사용자들에게 유일한 코드를 할당   
+            ② 모든 사용자들이 동일 주파수를 공유   
+            ③ 각 사용자는 데이터를 인코드하기 위한 자신의 칩핑 시퀀스(chipping sequence, 코드)를 가짐   
+            ④ 인코드된 신호 = (original 데이터) * (칩핑 시퀀스)   
+            ⑤ 수신자는 인코드된 신호와 칩핑 시퀀스를 내적(inner-product)하여 디코딩   
+            ⑥ 코드들이 직교성(orthogonal)을 가지면 여러 사용자가 최소의 간섭으로 동시에 송수신   
 
-
-
-
-
-
-
+### IEEE 802.11 Wireless LAN   
+   - WI-FI(Wirelss Fidelity)
+      - HI-FI에 무선기술을 접목한 것으로, 고성능 무선통신을 가능하게 하는 무선랜 기술   
+   - 802.11b(2.4-5 GHz unlicensed spectrum, 11Mbps), 802.11a(5-6 GHz range, 54Mbps), 802.11g(2.4-5 GHz range, 54Mbps), 802.11n(2.4-5 GHz range, 200Mbps)     
+   - 다수 접속을 위해 모두 CSMA/CA을 사용한다.   
+   - Infrastructure 방식과 Ad hoc 방식이 있다.      
+   - __구성 방식__    
+      - 기지국과 통신하는 무선 호스트   
+         - 기지국 = AP(Acess point)   
+      - BBS(Basic Service Set)   
+         - 셀(Cell)이라고도 부른다.   
+         - Infrastructure 모드(하나 이상의 무선호스트, 하나의 기지국)   
+         - Ad hoc 모드(무선 호스트로만 구성)   
+   - __802.11: Channels, association__   
+      - __802.11b/g 채널__   
+         - 2.4GHz ~ 2.485GHz의 주파수 범위에서 11개의 서로 다른 주파수의 채널로 분할(85MHz 대역폭)   
+         - AP 관리자가 채널 선택   
+         - 간섭(interference) 가능성 : 채널이 인접 AP에서 선택한 것과 동일할 수 있다.   
+      - __호스트는 단 하나의 AP와 결합되어야 한다.__   
+         - 채널을 스캐닝(scanning)하고, AP의 이름(SSID)과 MAC 주소가 포함된 비콘 프레임(beacon frame)을 듣는다.   
+         - 결합할 AP를 선택   
+         - 인증(authentication)을 수행할 수도 있다.   
+         - AP 서브넷의 IP 주소를 획득하기 위해 DHCP 수행한다.       
+         
+   - __802.11 수동적/능동적 스캐닝(passive/active scanning)__   
+      - __Passive 스캐닝__   
+         - AP들로부터 비콘 프레임(자신의 AP정보가 들어있다.)이 전송된다.   
+         - H1에서 선택된 AP로 결합 요청 프레임 전송   
+            - AP의 신호 세기를 확인한다.    
+         - 선택된 AP에서 H1으로 결합 응답 프레임를 전송   
+      - __Active 스캐닝__   
+         - H1에서 탐사 요청 프레임(probe request frame)을 broadcast(초당 10번 정도)   
+         - AP로부터 탐사 응답 프레임(probe response frame)이 전송   
+         - H1에서 선택된 AP로 결합 요청 프레임 전송   
+         - 선택된 AP에서 H1으로 결합 응답 프레임 전송    
+         
+   - __IEEE 802.11 MAC Protocol: CSMA/CA(Coliision Avoidance) __   
+      - 일반 CSMA는 전송 전에 채널을 감지(sense)한다.   
+         - CSMA/CA는 충돌 감지(collision detection)하지 않는다.   
+         - 무선은 약한 수신 신호로 인해 전송시 충돌 감지 어렵다.   
+         - 무선은 숨은 터미널 문제, 신호 감소(fading) 등으로 모든 충돌 감지 어렵다.   
+      - __유선의 CSMA/CD와 달리 ACK을 보내는데 TCP의 end to end ACK이 아니라 Link 한 Hop 사이의 ACK를 의미한다.__   
+      - __802.11 sender__   
+         ① 채널이 사용되지 않음을 감지하면 DIFS(Distributed Inter-Freme Space)라는 짧은 시간 동안 기다린 후 전체 프레임 전송   
+         ② 채널이 사용중이면 임의의 백오프 시간을 선택하고, 채널이 사용되지 않는 동안만 감소하고 만료되면 프레임 전체를 전송한 후 ACK를 기다림. ACK를 수신하지 못하면 백오프 인터벌을 증가시킨 후 단계 2를 반복   
+      - __802.11 receiver__   
+         - 프레임을 수신하면 SIFS(Short Inter-Frame Space)라는 짧은 시간 동안 기다린 후 ACK 프레임을 전송   
+            -(ACK needed due to hidden terminal problem)   
+            
+   - __Avoiding collisions__   
+      - __유선보다 무선에서 충돌 시 비용이 더 크기 때문에 충돌을 미리 피하기 위한 대책이 필요하다.__   
+         - 유선은 충돌을 감지하여 전송을 멈춰 데이터가 날라가는 양이 적지만 무선은 충돌을 감지하지 못해 모든 데이터를 전송하고 ACK을 받을 때까지 기다리기 때문이다.   
+      - __아이디어__   
+         - 큰 데이터 프레임의 충돌을 피하기 위해서 데이터 임의의 데이터 프레임 접근을 하기 보다는 채널을 예약한다.    
+         - 즉, 작은 예약 패킷을 사용하여 데이터 프레임 충돌을 완벽하게 피한다.   
+      - 송신자는 CSMA를 사용하여 작은 RTS(Request to Send) 패킷을 broadcast   
+         - RTS에 얼마만큼의 데이터를 얼마만큼의 시간동안 전송할건지에 대한 정보가 담겨져있다.   
+         - RTS도 충돌 가능성이 있지만 크기가 작아서 효율적이다.    
+         - __RTS 충돌이 날 경우 임의의 시간을 backoff 한 후 재전송한다.__    
+            - 먼저 보낸 노드의 RTS가 AP에 도착하고 AP가 이에 대한 CTS를 broadcast하여 먼저 보낸 노드에서 CTS를 받고 데이터를 전송을 할 때 다른 쪽의 노드에서는 아직 CTS를 받지 못하여 RTS를 다시 보내게 될 경우도 있다.   
+            - 이럴 경우 다시 충돌이 나기 때문에 또 RTS를 처음부터 서로 다시 보내는 과정으로 돌아간다.   
+            - 이러한 경우가 임의의 한계 수치만큼 반복됐을 경우 해당 데이터프레임에 대한 전송을 중지하고 다음 데이터프레임에 대한 전송을 한다.   
+            - 하지만 포기한 데이터 프레임은 평생 재전송이 안되는 것이 아니라 TCP에 의해 재전송이 된다.   
+      - 수신을 받은 AP는 RTS에 응답하여 CTS(Clear to Send) 패킷을 broadcast   
+      - 모든 노드는 CTS를 수신한다.   
+         - 송신 측은 데이터 프레임을 전송   
+            - 데이터 전송이 끝나면 AP는 ACK 전송   
+         - 다른 노드는 전송을 미룬다.   
+         
+   - __802.11 frame: addressing__   
+      - Address 1 : 프레임을 수신하는 무선호스트나 AP의 MAC 주소   
+      - Address 2 : 프레임을 전송하는 무선호스트나 AP의 MAC 주소   
+      - Address 3 : AP에 연결된 라우터 인터페이스의 MAC 주소   
+      - Address 4 : 애드 혹 네트워크에서만 사용(중요 X)   
+      - duration : 예약된 전송 시간 기간 (RTS/CTS)   
+      - seg control : 프레임의 시퀀스 넘버 (for RDT)   
+      - Type : 프레임 타입(RTS, CTS, ACK, data)   
