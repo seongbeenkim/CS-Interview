@@ -1543,6 +1543,7 @@ __UDP__
          - 2.4GHz ~ 2.485GHz의 주파수 범위에서 11개의 서로 다른 주파수의 채널로 분할(85MHz 대역폭)   
          - AP 관리자가 채널 선택   
          - 간섭(interference) 가능성 : 채널이 인접 AP에서 선택한 것과 동일할 수 있다.   
+            - 간섭이 일어날 경우 CSMA/CA의 RTS, CTS를 통해 경쟁하여 채널을 획득한다.   
       - __호스트는 단 하나의 AP와 결합되어야 한다.__   
          - 채널을 스캐닝(scanning)하고, AP의 이름(SSID)과 MAC 주소가 포함된 비콘 프레임(beacon frame)을 듣는다.   
          - 결합할 AP를 선택   
@@ -1596,9 +1597,31 @@ __UDP__
          
    - __802.11 frame: addressing__   
       - Address 1 : 프레임을 수신하는 무선호스트나 AP의 MAC 주소   
+         - AP가 주변에 beacon frame을 전송하여 호스트는 AP의 이름과 MAC 주소를 알 수 있다.   
       - Address 2 : 프레임을 전송하는 무선호스트나 AP의 MAC 주소   
+         - DHCP request를 통해 자신의 IP 주소, Subnet mask, GWR IP, Local Name server IP를 알 수 있다.   
+         - 목적지를 broadcast를 하여 DHCP request를 전송한다.   
+         - DHCP 서버로부터 응답이 돌아올 경우 응답 프레임의 출발지 주소는 DHCP 서버의 주소이고 수신지는 broadcast   
+         - DHCP 서버가 보낸 broadcast에서 자신에 대한 응답인것을 확인하는 방법은 DHCP transaction number로 구분한다.   
       - Address 3 : AP에 연결된 라우터 인터페이스의 MAC 주소   
-      - Address 4 : 애드 혹 네트워크에서만 사용(중요 X)   
+         - ARP query를 통해 Address 3를 broadcast하여 라우터의 MAC 주소를 알 수 있다.   
+      - Address 4 : 애드 혹 네트워크에서만 사용(중요 X, 거의 사용하지 않는다.)   
       - duration : 예약된 전송 시간 기간 (RTS/CTS)   
       - seg control : 프레임의 시퀀스 넘버 (for RDT)   
       - Type : 프레임 타입(RTS, CTS, ACK, data)   
+      - __호스트 -> AP 보낼 시 header에 Address 1,2,3을 넣어 보내지만(Wifi Frame 802.11)__   
+      - __AP -> 라우터 보낼 시 header에 출발지 Address(Address 2), 목적지 Address(Address 3)만 넣어 보낸다.(Ethernet Frame 802.3)__   
+         - __호스트 -> AP는 왜 3개의 주소, AP -> 라우터는 왜 2개의 주소를 보내는가?__    
+            - AP는 링크 계층 디바이스이기 때문에 네트워크 계층이 존재하지 않는다. 그러므로 라우터가 유선상에서 봤을 경우에는 AP는 스위치이고 호스트가 무선상에서 봤을 때는 링크 계층 디바이스로 인식한다. 호스트가 header에 출발지 주소를 자신의 주소, 목적지 주소를 AP의 주소로 하고 AP에 프레임을 전달할 경우 해당 프레임의 IP 패킷은 호스트의 IP, 목적지의 IP(ex) 구글)가 들어있다. 이 경우 AP는 이러한 내용을 이해하고 처리하는 능력이 없어 어디로 전달해야할 지 모르기 때문에 라우터로 해당 프레임을 전송하지 못한다. 그래서 호스트가 출발지 주소를 자신의 주소, 목적지 주소를 라우터의 주소로 하여 프레임을 전달할 경우 AP를 거치지 않아 라우터에 전달되지 않기 때문에 해당 프레임에 대한 ACK를 받을수가 없어 제대로 된 전송이 불가하다. 그러므로 호스트에서 Address 1(AP MAC 주소),2(호스트 MAC 주소),3(AP에 연결된 라우터 MAC 주소)을 모두 넣어주어 프레임을 전달하면 AP는 해당 프레임을 받아 어느 라우터로 전송해야 할지 알기 때문에 해당 라우터로 전송을 할 수 있게 된다.    
+      - 여러 개의 호스트에서 보낸 데이터는 하나의 AP를 통해 전송 될 수 있다 = Multiplexing   
+      
+   - __802.11: mobility within same subnet__   
+      - 호스트는 이동하더라도 같은 IP subnet내에 있으면 IP가 유지된다.   
+      - __Switch__   
+         - Switch는 어떻게 어느 AP가 호스트와 결합되어있는지 알 수 있을까?      
+            - __self learning__   
+               - 스위치는 호스트로부터의 프레임을 관찰하고 호스트에 도달할 수 있는 스위치 포트를 기억한다.   
+      - __휴대폰이 이동하더라도 IP, Port 번호가 변경되지 않는 이유(연결이 끊기지 않는 이유)는 기지국의 coverage가 굉장히 크기 때문이다.__   
+               
+   - __802.11: advanced capabilities__   
+      - 
