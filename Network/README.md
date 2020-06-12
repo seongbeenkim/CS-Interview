@@ -17,6 +17,7 @@
    - [Multiplexing&Demultiplexing](#multiplexingdemultiplexing)   
    - [RDT, ARQ, Pipelining](#네트워크-계층은-unreliable-channel이다)   
    - [TCP](#tcp)   
+   
 * [4. 네트워크 계층](#4-네트워크-계층)   
    - [라우터](#라우터)   
    - [IPv4 datagram 구조](#ipv4-datagram-구조)   
@@ -30,6 +31,13 @@
 * [6. 무선과 이동 네트워크](#6-무선과-이동-네트워크)   
    - [Wireless](#wireless)   
    - [IEEE 802.11 Wireless LAN](#ieee-80211-wireless-lan)   
+   - [Cellular Internet access](#cellular-internet-access)   
+   - [Mobility](#mobility)   
+   
+* [7. 멀티미디어 네트워크](#7-멀티미디어-네트워크)   
+   - [](#)      
+   
+   
 ## 1. 컴퓨터 네트워크 기본   
 ### 네트워크 구성 요소   
 __라우터__ : 메세지를 전달받아서 데이터를 전달, Network, Data link, Physical 계층으로 구성   
@@ -1624,4 +1632,161 @@ __UDP__
       - __휴대폰이 이동하더라도 IP, Port 번호가 변경되지 않는 이유(연결이 끊기지 않는 이유)는 기지국의 coverage가 굉장히 크기 때문이다.__   
                
    - __802.11: advanced capabilities__   
-      - 
+      - __전송율 적응(rate adaptation)__   
+         - 모바일 사용자가 이동함에 따라 SNR이 변한다.   
+         - 기지국, 모바일 사용자는 동적으로 전송률을 변경한다.(물리 계층 변조 기법 변경)   
+            - 노드가 기지국에서 멀어지면 SNR이 작아지고, BER은 커진다.   
+            - BER이 너무 커지면 더 낮은 BER을 갖도록 낮은 전송률로 변경한다.      
+            
+      - __전력 제어(power management)__   
+         - 유선보다 무선에서 소모되는 전력이 10배가 더 든다.   
+         - 노드는 명시적으로 휴면 상태(sleep state)와 동작 상태(wake state)를 번갈아 가며 변경한다.   
+         - __node-to-AP__      
+            - 노드는 AP에게 자신이 다음 비콘 프레임이 올때까지 수면 모드로 진입할 것임을 알린다.   
+               - 802.11 프레임의 전력 제어 비트를 1로 세팅   
+               - AP는 일반적으로 100ms마다 비콘 신호를 전송   
+            - AP는 해당 노드에 프레임을 전송하지 않아야 한다는 것을 알게 된다.   
+            - 노드는 다음 비콘 프레임이 오기전에 깨어난다.(250us 소요)   
+         - __beacon frame__   
+            - AP에서 mobile로 보내지기를 기다리는 프레임을 수신해야 하는 mobile의 리스트를 포함한다.    
+            - 노드는 AP에서 mobile로 프레임이 전송되어 지면 깨어있고 그렇지 않다면 다음 비콘 프레임이 올 때까지 휴면 상태가 된다.   
+               - 목록에 해당하지 않으면 노드는 다시 수면 상태로 진입. 전송 프레임이 없는 노드의 99%는 수면 상태 유지(100ms vs 250us)   
+               
+   - __802.15: personal area network__   
+      - 10m 반경 이내 저전력 통신   
+      - ISM(Industrial, Scientific, Medical) 비허가 무선대역   
+      - 케이블 대체(마우스, 키보드, 헤드폰)
+      - Ad hoc : No Infrastructure   
+      - master/slaves   
+         - slaves는 master에게 전송할 권한을 요청한다.    
+         - master 요청을 승인한다.      
+      - 802.15 Bluetooth의 발전   
+         - 2.4-2.5 GHz 무선 대역   
+         - 802.15.1 : 블루투스(Bluetooth), 1Mbps 전송률   
+         - 802.15.2 : Wi-Fi 등과 공존   
+         - 802.15.3 : WPAN-HR(High Rate), 55Mbps 전송률   
+         - 802.15.4 : WPAN-LR(Low Rate), Zigbee, 6LoWPAN, 250 Kbps 전송   
+         
+### Cellular Internet access   
+   - __Components of cellular network architecture__   
+      - __cell__   
+         - 지리적 영역을 포함한다.   
+         - base station(BS)는 802.11 AP와 유사하다.   
+         - mobile users는 BS를 통해 네트워크와 연결된다.   
+         - air-interface는 mobile users와 BS 간의 물리 및 링크 계층 프로토콜   
+      - __MSC(Mobile Switching Center)__   
+         - cell들을 유선 tel. net과 같은 광역 네트워크에 연결한다.   
+         - call 설정을 관리한다.      
+         - mobility를 다룬다.    
+         
+   - __Cellular networks: the first hop__   
+      - mobile-to-BS radio spectrum를 공유하는 두 가지 기술   
+         - combined FDMA/TDMA   
+            - 범위를 주파수 채널로 나누고 각 채널을 time slot으로 나눈다.    
+         - CDMA(Code Division Multiple Access)   
+            - 모든 것을 섞어서 보낸다.   
+            - 각 사용자에게 다른 코드를 주어 자신에게만 해당하는 데이터만 증폭시키게 해준다.   
+            - 3G부터 사용한다.   
+            
+### Mobility   
+   - __What is mobility?__   
+      - 네트워크 관점에서 본 이동성(mobility)의 범위   
+      - 이동성 없음    
+         - 이동 사용자가 같은 AP를 통해 접속   
+      - 중간   
+         - 이동 사용자가 DHCP를 사용하여 네트워크와 연결하고 끊음   
+      - 이동성이 큼   
+         - 이동 사용자가 연결을 유지한 채 다수의 AP를 통과 like 휴대폰    
+         
+   - __Mobility: vocabulary__   
+      - __home network__       
+         - mobile의 영구적인 "home" 네트워크   
+         - e.g., 128.119.40/24    
+      - __home agent__   
+         - mobile가 멀리 떨어져 있을 때 이동성 관리 기능을 수행하는 개체   
+      - __permanent address__   
+         - mobile에 도달하기 위해 항상 사용될 수 있는 홈 네트워크 주소   
+         - e.g., 128.119.40.186    
+      - __visited network__   
+         - mobile이 현재 위치해 있는 네트워크   
+         - e.g., 79.129.13/24   
+      - __care-of-address__   
+         - visited network의 주소   
+         - e.g., 79.129.2   
+      - __foreign agent__   
+         - mobile의 이동성 관리 기능을 수행하는 visited network 안에 있는 개체   
+         - home agent와 통신을 하여 mobile이 현재 어디 있는지 알려준다.   
+      - __correspondent__   
+         - mobile과 통신하기를 원하는 상대방   
+         
+   - __Mobility:approaches__   
+      - __let routing handle it__   
+         - router가 routing table 교환을 통해 mobile의 영구 주소를 알린다.   
+            - routing tables은 각 mobile이 위치한 곳을 나타낸다.   
+            - end-systems 변경 없다.   
+         - __수백만개 이상의 이동노드들로 확장 불가능하다__   
+         
+      - __let end-systems handle it__   
+         - __Indirect routing__   
+            - correspondent는 home agent를 통하여 mobile과 통신한다.   
+         - __Direct routing__   
+            - correspondent는 mobile의 foreign address를 얻어 mobile에 직접 통신한다.   
+            
+   - __Mobility: registration__   
+      - mobile가 방문한 네트워크 진입 시 foreign agent와 접촉한다.   
+      - foreign agent는 home agent와 접촉하여 mobile이 자신의 네트워크 있다는 것을 알려준다.   
+
+   - __Mobility via indirect routing__   
+      - __과정__   
+         - 상대방이 mobile의 영구 주소를 사용하여 패킷들의 목적지 주소를 지정하여 보낸다.   
+         - home agent는 패킷을 가로채어 foreign agent로 전달한다.   
+         - foreign agent는 받은 패킷을 mobile로 전달한다.   
+         - mobile은 상대방에게 직접 응답한다.   
+      - __mobile는 2개의 주소를 이용__   
+         - __permanent address__   
+            - 상대방에 의해 사용된다. (mobile의 위치는 상대방에게 투명하다.)   
+         - __care-of-address__   
+            - home agent가 mobile로 데이터그램을 전송할 때 사용된다.   
+      - __foreign agent의 기능은 mobile에 의해 수행될 수 있다.__   
+      - __triangle routing__   
+         - 상대방 - 홈 - 네트워크 - 모바일   
+         - 상대방과 mobile이 같은 네트워크 영역 내에 있으면 비효율적   
+      - __장점__   
+         - permanent address만 알면 전송이 가능하다.   
+      - __단점__   
+         - 여러 번 거쳐 전송이 된다.   
+      
+      - __Indirect routing: moving between networks __   
+         - mobile이 다른 네트워크로 이동한다고 가정   
+            - 새로운 foreign agent 등록   
+            - 새로운 foreign agent를 home agent에 등록   
+            - home agent는 mobile에 대한 care-of-address 업데이트   
+            - 새로운 care-of-address를 사용하여 mobile로 패킷 계속 전달   
+         - __이동성과 foreign networks 변경이 투명함(transparent)과 동시에 연결이 계속 유지될 수 있다.__   
+
+   - __Mobility via direct routing__   
+      - __과정__   
+         - 상대방이 home agent에 mobile의 foreign address 요청하여 주소를 얻는다.   
+         - 상대방은 foreign agent에 패킷을 보낸다.   
+         - foreign agent는 패킷을 mobile에 전달한다.   
+         - mobile은 직접 상대방에게 응답한다.   
+      - __triangle routing 문제를 극복한다.__   
+      - __이동 및 네트워크 변경이 상대방에게 불투명(non-transparent)__   
+         - 상대방은 반드시 home agent로부터 care-of-address를 받아야한다.   
+      - __장점__   
+         - 전송이 빠르다.   
+      - __단점__   
+         - 상대방이 알아야 할 정보와 해야할 일들이 많아진다.   
+         
+      - __Accommodating mobility with direct routing__   
+         - __anchor foreign agent__   
+            - 첫번째로 방문한 네트워크의 foreign agent   
+            - 데이터는 항상 anchor foregin agent에 먼저 routing한다.   
+            - mobile이 다른 네트워크로 이동한다고 가정   
+               - 오래된 foreign agent로 전송된 데이터를 새로운 foreign agent로 할당해야 한다.   
+               - 다시 또 이동 시 연속적으로 적용한다.(chaining)   
+               
+## 7. 멀티미디어 네트워크   
+### 
+   - 
+               
