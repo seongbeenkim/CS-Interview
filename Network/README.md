@@ -1,4 +1,5 @@
 # :bookmark_tabs: Network
+
 * [1. 컴퓨터 네트워크 기본](#1-컴퓨터-네트워크-기본)   
    - [네트워크 구성 요소](#네트워크-구성-요소)   
    - [데이터 전송](#데이터-전송)   
@@ -35,7 +36,7 @@
    - [Mobility](#mobility)   
    
 * [7. 멀티미디어 네트워크](#7-멀티미디어-네트워크)   
-   - [](#)      
+   - [Multimedia](#multimedia)      
    
    
 ## 1. 컴퓨터 네트워크 기본   
@@ -1787,6 +1788,125 @@ __UDP__
                - 다시 또 이동 시 연속적으로 적용한다.(chaining)   
                
 ## 7. 멀티미디어 네트워크   
-### 
-   - 
+### Multimedia   
+   - __Multimedia: audio__   
+      - 상수 속도로 샘플된 아날로그 오디오 신호   
+         - 전화기 : 8,000 samples/sec   
+         - CD music : 44,100 samples/sec   
+      - 각 sample은 양자화된다.   
+         - 2^8 = 256 양자화된 값   
+         - 각 양자화된 값은 bits로 표현된다.   
+         - 8bits for 256개의 값   
+      - 수신자가 bits를 아날로그 신호로 다시 변환할 때 quality reduction 발생한다.  
+      - __아날로그 신호를 최대한 잘 표현하기 위해서는 더 많은 비트를 사용하면 된다.__   
+         - sample rate가 크면 클수록 더 잘 표현할 수 있다.   
+         - CD: 1.411 Mbps   
+         - MP3: 96, 128, 160 Kbps   
+         - Internet telephony: 5.3 Kbps and up   
+   
+   - __Multimedia: video__   
+      - 상수 속도로 보여지는 이미지의 연속   
+         - ex) 24 images/sec   
+      - __digital image__   
+         - pixels의 배열   
+            - 각 pixel은 bits로 표현된다.   
+      - __coding__    
+         - coding rate가 크면 클수록 더 잘 표현할 수 있다.   
+         - image를 표현하기 위해 사용된 bits를 줄이기 위해 이미지 사이와 안에서 중복을 사용한다.   
+            - __spatial coding(이미지 내)__   
+               - 같은 색의 값 N 개를 전송하지 않고, 컬러의 값(Color), 반복된 값의 수(N) 2개의 값만 전송한다.   
+            - __temporal coding(하나의 이미지로부터 다음 이미지)__   
+               - frame i, frame i+1이 있을 경우   
+                  - i+1에 frame 전부 보내지 않고 i와 다른 부분만 전송한다.   
+      - __CBR(Constant Bit Rate)__   
+         - 고정된 video encoding rate   
+      - __VBR(Variable Bit Rate)__   
+         - spatial, temporal coding 변화의 양과 같은 video encoding rate가 변화한다.   
+      - MPEG 1(CD-ROM) : 1.5 Mbps   
+      - MPEG 2(DVD) : 3-6 Mbps   
+      - MPEG 4(Internet) : 1 Mbps   
                
+   - __Multimedia networking: 3 application types__   
+      - __streaming, stored__   
+         - __streaming__   
+            - 전체 파일을 다운로드하기 전에 재생을 시작할 수 있다.  
+         - __stored(at server)__   
+            - audio/video가 render 되는 것보다 빠르게 전송할 수 있다.   
+            - ex) Netflix, Youtube, Hulu   
+      - __conversational__   
+         - IP를 통한 voice/video   
+         - 사람간 대화의 지연 허용을 제한한다.      
+         - ex) Skype   
+      - __streaming live__   
+         - audio, video   
+         - ex) live sporting event   
+         
+   - __Streaming stored video__   
+      - video가 녹화되어 서버에 저장된다.   
+         - ex) 30 frames/sec   
+      - video가 서버로부터 고객에게 전송된다.   
+         - 이 과정에서 서버가 video의 뒷 부분을 전송하는 동안 고객은 video의 앞 부분을 재생할 수 있다.(streaming)   
+         - Jitter가 발생 할 수 있다. 즉, network delay가 발생할 수 있다.   
+      - 고객은 video를 받고 실행한다.   
+         - ex) 30 frames/sec
+         
+   - __Streaming stored video: revised__    
+      - __고객은 첫번째 프레임부터 받는 순간부터 바로 재생을 하려고 할 경우 frame이 제대로 도착하지 않아 재생하지 못하는 상황이 발생할 수 있다.__   
+      - __그러므로 고객은 항상 일정시간 기다린 후에 재생을 하여 이러한 상황이 일어나는 것을 방지할 수 있다. = buffering__    
+      
+   - __Client-side buffering, playout__   
+      - __playout buffering__   
+         - x: fill rate   
+            - x의 값은 변화한다.   
+         - r: playout rate   
+            - r의 값은 상수 값이다. 즉, 변화하지 않는다.   
+         - x < r일 경우 buffer는 결국 텅비게 되어 buffer가 다시 채워질때까지 video의 재생은 멈추게 된다.   
+         - x > r일 경우 buffer는 텅비지 않는다. 초기 playout delay는 x의 변동성을 받아들이기 위해 충분히 크게 제공된다.   
+            - __initial playout delay tradeoff__   
+               - buffer starvation은 더 큰 delay를 가질수록 적게 일어나지만 더 큰 delay를 가질수록 사용자는 더 오래 기다려야 한다.   
+          
+   - __Streaming multimedia: HTTP__   
+      - HTTP GET을 통해 멀티미디어 파일을 얻는다.   
+      - TCP에서 가능한 최대 전송률로 전송한다.   
+      - fill rate는 TCP 혼잡 제어, 재전송(순차적 전송)때문에 변동한다.   
+      - playout delay가 클수록 TCP 전송률은 매끄럽다.   
+      - HTTP/TCP는 방화벽을 통해 더 쉽게 전달한다.   
+      
+   - __Streaming multimedia: DASH(Dynamic Adaptive Streaming over HTTP)__   
+      - __Server__   
+         - video 파일을 여러 chunk(일반적으로 256kb)으로 나눈다.   
+         - 각 chunk은 다른 비율로 저장되고 인코딩된다.   
+         - __manifest file__   
+            - 다른 chunk들을 위한 URL을 제공한다.   
+         - 제일 작은 사이즈부터 전송을 시작하고 제대로 전송이 된다면 다음 chunk는 더 큰 사이즈로 전송을 하는 과정을 반복한다.   
+         - 제대로 전송이 되지 않았다면 다음 chunk는 사이즈를 줄여 전송을 한다.   
+         - 이렇게 함으로써 네트워크 상황이 좋지 않더라도 client는 영상이 끊기지 않고 낮은 화질에서라도 계속 시청이 가능할 수 있게 된다.   
+            
+      - __Client__   
+         - 주기적으로 Server-to-Client 대역을 측정한다.   
+         - manifest를 참고하여 한번에 하나의 chunk만 요청한다.   
+            - 현재 주어진 대역에서 지속가능한 최대 coding rate를 선택한다.   
+            - 이용가능한 대역에 따라 다른 지점에서 다른 coding rate를 선택할 수도 있다.   
+            
+      - __Youtube, Netflix와 같은 서비스가 사용한다.__    
+      
+      - __여러 사용자가 하나의 서버에 같은 데이터를 요청할 경우 해결 방법__   
+         - __Multicast__   
+            - 1:1일 경우 Unicast를 사용하지만 1:n일 경우 라우터에 데이터를 복사한 뒤 그 데이터를 n에게 전송하는 Multicast를 사용한다.   
+            - 라우터내에 구현이 힘들어 보통 사용이 되지 않는다.   
+            
+         - __CDN(Content Distribution Network)__   
+            - CDN Storage를 여러 곳에 분산 시킨다.   
+            - 사용자가 서버에 접속하여 데이터를 요청할 때 서버는 manifest file을 넘겨주고 사용자는 manifest file을 통해 최소 Hop 수를 가진 CDN Storage로부터 데이터를 제공받는다.   
+            - Infrastructure 기반이기 때문에 관련 회사와 계약을 맺어 CDN을 만든다.   
+            - __같은 URL을 사용하는데 어떻게 자신 근처의 CDN으로부터 데이터를 제공받을 수 있는가?__   
+               - Youtube와 CDN 회사 Global CDN이 있다고 가정   
+                  - youtube.com/video1 을 요청할 경우 Youtube 서버는 globalcdn.com/video1을 고객에게 응답해준다.   
+                  - globalcdn.com/video1 에서 globalcdn.com에 접근하기 위해서는 IP를 알아야 하는데 이 때 DNS(UDP 사용 = IP 패킷이 들어있다.)을 통해 IP를 알아올 수 있다.   
+                     - globalcdn의 authoritative DNS가 요청한 사람의 IP 주소를 통해 가까운 CDN 서버의 IP를 알려준다.   
+                     - ex) 한국에서 접근하면 한국 전용 IP를 알려주고, 캐나다에서 접근하면 캐나다 전용 IP를 알려준다.   
+                     
+               - __하지만 고객의 IP는 NAT 등으로 인해 실제 IP가 아닐수도 있다. 어떻게 위치를 판별할 수 있는가?__    
+                  - 고객은 항상 SK, LG U+, KT 같은 네트워크를 거쳐 전달되기 때문에 실질적으로는 SK, LG U+, KT가 DNS query를 보내어 위치를 알 수 있게 된다.   
+               - __최소 Hop 수를 가진 CDN에 접근하는게 제일 좋기 때문에 보통 SK, LG U+, KT 같은 네트워크 내의 CDN을 위치시키거나 근처에 위치시킨다.   
+                  
