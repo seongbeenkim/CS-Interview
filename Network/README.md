@@ -41,6 +41,8 @@
 * [8. 네트워크 보안](#8-네트워크-보안)   
    - [Network security](#network-security)     
    - [Cryptography](#cryptography)   
+   - [Securing TCP connections: SSL](#securing-tcp-connections-ssl)   
+   - [Firewalls](#firewalls)   
    
 ## 1. 컴퓨터 네트워크 기본   
 ### 네트워크 구성 요소   
@@ -1949,6 +1951,7 @@ __UDP__
          - __TOR__   
             - 분산형 네트워크 기반의 익명 인터넷 통신 시스템   
             - 익명 인터넷 통신을 위해 오가는 데이터 소스를 추적하기 어렵게 발신자에서 수신자로 가는 도중 랜덤 서버를 통과하도록 해 트래픽을 3회에 걸쳐 전송하는 방식이다.   
+            - 목적지와 데이터 등 모두 숨길 수 있다.   
         
       - __어떻게 사용자에게 경고장을 보낼 수 있을까?__   
          - HTTP Request의 Host 확인을 통해 보낼 수 있다.   
@@ -2112,12 +2115,170 @@ __UDP__
                      
                - __인증기관의 키는 어떻게 인증을 받는가?__   
                   - root로 생각하고 인증기관은 그냥 인증되어있다고 가정하고 이용한다.   
+
+### Securing TCP connections: SSL   
+   - __SSL: Secure Sockets Layer__   
+      - __광범위하게 사용되는 보안 프로토콜(Widely deployed security protocol)__    
+         - 거의 모든 브라우저와 웹 서버에서 지원된다.   
+         - HTTPS   
+         - SSL로 연간 수백억원이 사용된다.   
+      - __특징__   
+         - 기밀성(Confidentiality)   
+         - 무결성(Integrity)   
+         - 인증(Authentication)   
+      - __목표__   
+         - 암호화(특히 신용카드 번호)   
+         - 웹 서버 인증   
+         - 선택적인 고객 인증   
+         - 새로운 상인이 사업을 하는데 작업의 최소화   
+      - __모든 TCP Application에서 이용가능하다.__   
+      
+   - __SSL과 TCP/IP__   
+      - 일반 Application은 APP, TCP, IP 계층을 가진다.   
+         - HTTP의 메세지를 TCP Socket에 전달   
+      - 보안에 대한 기능 SSL을 추가하면 APP, SSL, TCP, IP 4가지 계층을 가지게 된다.   
+         - HTTP의 메세지를 SLL 라이브러리를 사용하여 암호화하여 TCP Socket에 전달 = HTTPS   
+         - SSL은 실제 계층은 아니다.   
+         - TLS(Transport Layer Security)라고도 불린다.   
+         - Application에 API를 제공한다.   
+         - C and Java SSL libraries/classes를 쉽게 이용할 수 있다.   
+
+   - __Toy SSL: a simple secure channel__   
+      - __Handshake__   
+         - A와 B는 공유된 비밀을 교환하고 서로를 인증하기 위해 자신의 인증서와 Private key를 사용한다.   
+      - __Key Derivation__   
+         - A와 B는 key의 집합을 얻기 위해서 공유된 비밀을 사용한다.   
+      - __Data Transfer__   
+         - 전송되어야 할 데이터는 일련의 레코드에 분산된다.   
+      - __Connection Closure__   
+         - 안전하게 연결을 종료하기 위한 특별한 메세지가 있다.   
+         
+   - __Toy: a simple handshake__   
+      - __A-B사이에 TCP 연결이 된 후의 상황__   
+         - A는 B에게 메세지를 보낸다.   
+         - B는 A에게 자신의 Public key 인증서를 보낸다.   
+         - A는 자신의 Secret을 만들어 B의 Public key로 암호화하여 B에 전송한다.   
+            - Kb+(MS) = EMS   
+            - MS(Master Secret)   
+            - EMS(Encrypted Master Secret)   
+         
+   - __Toy: Key derivation__   
+      - __한번 이상의 암호화 수행에 같은 키를 계속 사용하는 것은 좋지 않다.__   
+         - 키가 유출되었을 때 피해를 최소화하는 것이 좋다.   
+         - MAC(Message Authentication Code)과 암호화를 위해서 다른 Key를 사용해야 한다.   
+      - __4개의 키__   
+         - __Kc__   
+            - Client -> Server로 보낸 데이터에 대한 암호화 키   
+         - __Mc__   
+            - Client -> Server로 보낸 데이터에 대한 MAC 키   
+         - __Ks__   
+            - Server -> Client로 보낸 데이터에 대한 암호화 키   
+         - __Ms__   
+            - Server -> Client로 보낸 데이터에 대한 MAC 키   
+      - __KDF(Key Derivation Function)__   
+         - master secret과 추가적인 random data을 가지고 4개의 키를 생성한다.   
+         
+   - __Toy: data records__   
+      - __data를 TCP에 작성하는 것처럼 일정한 stream로 암호화 하지 않는 이유는?__   
+         - MAC을 맨 끝에 넣을 경우, 모든 데이터가 처리될 때까지 메세지 무결성을 확인할 수 없다.   
+         - 예를 들어, 긴급한 메세지일 경우, 출력하기 전에 모든 바이트에 대한 무결성 확인을 어떻게 할 수 있을까?   
+      - __대신에, stream을 일련의 record로 나눌 경우__   
+         - 각 record는 MAC을 가지고 있어야 한다.   
+         - 수신자는 record가 도착할 때 마다 각 record에 따라 행동할 수도 있다.   
+      - __문제: 수신자는 data로부터 MAC을 구별해야 할 필요가 있다.__   
+         - 가변 길이 record를 사용해야한다.   
+         
+      - __데이터 또는 MAC에 대해서만 hash해서 전송할 경우__   
+         - 해커가 data를 조작하고 공개된 hash함수를 사용하여 새로운 MAC을 생성하여 전송할 수 있다.   
+      - __그러므로 데이터, MAC을 같이 hash하면 어느 누구도 접근할 수 없다.__   
+         - IP Packet(TCP Segment(SSL Record[LEN,DATA,MAC]))   
+         - 출발지, 목적지 등 DATA, MAC 외의 정보는 알 수 있으나 DATA, MAC은 접근을 할 수 없어 내용을 알 수가 없다.   
+         - 내용도 숨기고 목적지도 숨기길 원한다면 TOR 사용   
+         - __그러나 해커는 DATA, MAC을 다른 SSL의 DATA, MAC과 바꿔 record의 순서를 바꾸거나 record를 replay 할 수가 있다.__   
+         
+   - __Toy: Sequence Numbers__   
+      - 해커는 DATA, MAC을 다른 SSL의 DATA, MAC과 바꿔 record의 순서를 바꾸거나 record를 replay 할 수가 있다.   
+      - __그러므로 MAC에 sequence number를 넣는다.__   
+         - TCP의 sequence number가 아니라 SSL의 순서일 뿐이다.   
+         - MAC에 DATA, MAC, Sequenct number를 hash한 값을 넣는다.   
+            - MAC = MAC(Mx, sequence||data)   
+         - header에 담겨있지 않고 count 하는데만 사용된다.(no sequence number field)  
+         - __해커는 여전히 모든 record에 대해 replay 할 수 있다.__   
+            - random nonce를 사용하여 해결할 수 있다.   
+         - __그러나 데이터가 다 전송되지 않은 상태에서 해커가 TCP FIN을 보내 연결을 종료할 수 있다.__   
+         
+   - __Toy: Control information__   
+      - 데이터가 다 전송되지 않은 상태에서 해커가 TCP FIN을 보내 연결을 종료할 수 있다.   
+      - __header에 record type 1 bit를 추가한다.__   
+         - type 0 : data   
+         - type 1 : 종료   
+         - MAC에 DATA, MAC, Sequenct number,type를 hash한 값을 넣는다. 
+            - MAC = MAC(Mx, sequence||type||data)   
             
-   - ____   
-      -   
-   - ____   
-      - 
-   - ____   
-      -   
-   - ____   
-      - 
+### IPsec   
+   - __IPSec service__   
+      - __데이터 무결성(Data integrity)__   
+      - __최초 인증(Origin authentication)__   
+      - __replay attack 방지(Replay attack prevention)__     
+      - __기밀성(Confidentiality)__   
+      - __다른 서비스 모델을 제공하는 두 가지 프로토콜__   
+         - __AH(Authentication Header)__   
+            - 데이터 무결성, source 인증을 제공하지만 기밀성은 제공하지 않는다.   
+         - __ESP(Encapsulation Security Protocol)__   
+            - 데이터 무결성, source 인증, 기밀성을 제공한다.   
+            - AH보다 더 사용된다.   
+            
+   - __IPsec Transport Mode__   
+      - IPSec datagram은 end-system에 의해 발행되고 받아진다.   
+      - 상위 레벨 프로토콜을 보호한다.   
+      
+   - __IPsec – tunneling mode__   
+      - End 라우터는 IPSec을 알고 있다.   
+         - host - Router(IPSec) - Router(IPSec) - host   
+      - 호스트는 IPSec을 알 필요가 없다.   
+      - Tunneling mode   
+         - host - Router(IPSec) - Router - host(IPSec)   
+   - __Four combinations are possible__   
+      - Host mode with AH   
+      - Host mode with ESP   
+      - Tunnel mode with AH   
+      - Tunnel mode with ESP   
+         - 가장 중요하고 가장 흔하다.   
+
+### Firewalls   
+   - __Firewalls: Why__   
+      - __서비스 거부 공격 방지(prevent denial of service attacks)__   
+         - __SYN flooding__   
+            - 해커는 많은 가짜 TCP를 만들 수 있다.   
+            - 실제 연결을 위한 어떠한 자원도 존재하지 않는다.   
+      - __내부 데이터의 부적절한 접근/수정 방지(prevent illegal modification/access of internal data)__   
+         - ex) 해커는 CIA의 홈페이지를 다른 것으로 바꿀 수 있다.   
+      - __내부 네트워크에 오직 인증된 사용자만 접근 허락(allow only authorized access to inside network)__   
+         - 인증된 사용자 또는 호스트들의 집합   
+      - __three types of firewalls__   
+         - __stateless packet filters__   
+         - __stateful packet filters__   
+         - __application gateways__   
+         
+   - __Stateless packet filtering__   
+      - router firewall을 통해 내부 네트워크가 인터넷에 연결   
+      - 라우터는 패킷별로 filter한다.   
+         - TCP/UDP source and destination port numbers   
+         - source IP address, destination IP address   
+         - ICMP message type   
+         - TCP SYN and ACK bits   
+         - __위의 4가지에 근거하여 drop/forward 할 지 결정한다.__   
+         
+      - __Access Control List(ACL)__   
+         - 들어오는 패킷에 적용되는 rule의 table   
+   - __Stateful packet filtering__   
+      - __Stateless packet filtering은 TCP 연결이 되어이지 않아도 packet을 허용한다는 문제점이 있다.__      
+      - __모든 TCP 연결 상태를 추적한 후 연결이 되어 있을 경우에만 packet을 허용한다.__   
+         - SYN, FIN을 추적하여 들어오고 나가는 패킷이 정당한지 확인한다.   
+         - 방화벽에서 활동하지 않는 연결에 대한 timeout을 통해 packet을 더 이상 허용하지 않는다.   
+      - __ACL은 Packet을 허용하기전에 연결 상태 테이블을 확인하기 위해 check conxion을 추가   
+      
+   - __Application gateways__   
+      - IP/TCP/UDP 필드는 물론 Application data에 따라 packet을 filter한다.   
+         
+    
