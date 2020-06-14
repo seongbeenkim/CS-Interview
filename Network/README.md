@@ -38,6 +38,9 @@
 * [7. 멀티미디어 네트워크](#7-멀티미디어-네트워크)   
    - [Multimedia](#multimedia)      
    
+* [8. 네트워크 보안](#8-네트워크-보안)   
+   - [Network security](#network-security)     
+   - [Cryptography](#cryptography)   
    
 ## 1. 컴퓨터 네트워크 기본   
 ### 네트워크 구성 요소   
@@ -1910,3 +1913,211 @@ __UDP__
                   - 고객은 항상 SK, LG U+, KT 같은 네트워크를 거쳐 전달되기 때문에 실질적으로는 SK, LG U+, KT가 DNS query를 보내어 위치를 알 수 있게 된다.   
                - __최소 Hop 수를 가진 CDN에 접근하는게 제일 좋기 때문에 보통 SK, LG U+, KT 같은 네트워크 내의 CDN을 위치시키거나 근처에 위치시킨다.   
                   
+## 8. 네트워크 보안   
+### Network security   
+   - __What is network security?__   
+      - __기밀성(Confidentiality)__   
+         - 오직 송신자와 수신자만 내용을 알아야한다.   
+         - 송신자는 메세지를 암호화한다.   
+         - 수신자는 메세지를 해독한다.   
+         -__암호화가 되어있지 않을 경우 발생할 수 있는 일__   
+            - __도청(eavesdrop)__   
+               - 메세지를 엿볼 수 있다.   
+            - __사칭(impersonation)__   
+               - 패킷의 출발지 주소를 위조할 수 있다.   
+            - __탈취(hijacking)__   
+               - 수신자나 송신자를 제거하고 자신을 넣음으로써 진행중인 연결을 탈취할 수 있다.   
+            - __서비스 거부(denial of service)__   
+               - 서비스가 사용되는 것을 막을 수 있다.   
+      - __인증(Authentication)__   
+         - 송신자와 수신자 모두 서로의 신분을 확인하기를 원한다.   
+      - __메세지 무결성(Message integrity)__   
+         - 송신자가 보낸 메세지가 변형되지 않고 그대로 수신자가 받아야한다.   
+      - __접근과 이용가능성(Access and availability)__   
+         - 서비스를 제공하는 사람은 24시간 내내 접근이 가능해야하고 사용자에게 서비스를 제공할 수 있어야 한다.   
+            
+   - __접근 불가능 사이트__   
+      - 정부가 차단하는 사이트의 목록이 있다.   
+         - 해외로 나가는 위치의 라우터에 app 계층의 기능(filtering)을 넣고 사이트 목록을 넘겨주어 검사하고 유저에게 Warning.html 파일을 보낸다.   
+            - 정부가 패킷을 그냥 Drop시킬경우 사용자의 웹브라우저에는 connection error(Not 404)가 뜨고 사용자는 네트워크의 문제로 인식할 수 있다.   
+            - 이럴경우 정부가 사용자에게 전달하고자 하는 의미를 전달할 수 없기 때문에 Warning.html 파일을 전달한다.   
+            
+      - __해결 방법__   
+         - __Proxy__   
+            - 해외 Proxy 서버를 통해 우회 접근을 한다.   
+            - 기술적으로는 정부가 해외 Proxy 서버에 대한 막을 수 있지만 막지 않고 있다.    
+         - __TOR__   
+            - 분산형 네트워크 기반의 익명 인터넷 통신 시스템   
+            - 익명 인터넷 통신을 위해 오가는 데이터 소스를 추적하기 어렵게 발신자에서 수신자로 가는 도중 랜덤 서버를 통과하도록 해 트래픽을 3회에 걸쳐 전송하는 방식이다.   
+        
+      - __어떻게 사용자에게 경고장을 보낼 수 있을까?__   
+         - HTTP Request의 Host 확인을 통해 보낼 수 있다.   
+         ① 사용자가 서버에 접속을 원할 경우 해당 서버의 IP를 알아오기 위해 DNS를 사용한다.   
+         ② 사용자가 서버에 TCP 연결을 요청   
+            - TCP Segment에 자신의 IP, 목적지 IP를 담아 전송   
+         ③ 서버와의 TCP 연결이 된 후 사용자는 HTTP Request를 요청한다.   
+         ④ 해외로 나가는 위치의 라우터(정부)는 HTTP Request의 Host를 확인한다.   
+         ⑤ Host가 정부에서 차단하는 사이트일 경우 HTTP Response에 Warning.html을 담아 사용자에게 전송한다.   
+            - 출발지 주소는 정부가 아닌 Host, 목적지 주소는 사용자로 설정하여 전송한다.   
+         ⑥ 사용자는 웹 브라우저에 Warning.html을 띄운다.   
+         ⑦ TCP로 연결된 서버는 Time out되어 연결을 종료한다.   
+      
+   
+### Cryptography   
+   - __간단한 암호화 구조(Simple encryption scheme)__   
+      - __substitution cipher__   
+         - 하나의 것을 다른 것으로 대체한다.   
+         - __monoalphabetic cipher__   
+            - 하나의 글자를 다른 글자로 대체한다.   
+            - plaintext: abcdefghijklmnopqrstuvwxyz   
+            - ciphertext: mnbvcxzasdfghjklpoiuytrewq   
+            - __Key__   
+               - 26개의 글자가 26개의 글자로 mapping된다.   
+
+      - __Polyalphabetic encryption__   
+         - n개의 monoalphabetic ciphers   
+            - M1,M2,…,Mn   
+         - __순환 패턴(Cycling pattern)__   
+            - ex) n=4, M1,M3,M4,M3,M2; M1,M3,M4,M3,M2;   
+         - 새로운 각 plaintext 기호에 대해서 cyclic pattern내의 다음의 monoalphabetic pattern을 사용한다.   
+            - ex) dog: d from M1, o from M3, g from M4   
+         - __Key__   
+            - n개의 ciphers, cyclic pattern   
+
+      - __Breaking an encryption scheme__   
+         - __암호문만 공격(Cipher-text only attack)__   
+            - 해커가 분석할 수 있는 ciphertext를 가지고 있는 경우   
+            - __2가지 방법__   
+               - __모든 키 확인(Search through all keys)__   
+                  - 영문 모를 말로부터 plaintext를 식별할 수 있어야만 한다.   
+               - __통계적 분석(Statistical analysis)__   
+
+         - __알려진 Plaintext 공격(Known-plaintext attack)__   
+            - 해커가 일부 암호문과 부합하는 plaintext을 가지고 있는 경우   
+            - ex) monoalphabetic cipher에서 해커는 a,l,i,c,e,b,o에 대한 암호를 알아낼 수 있다.   
+         - __선택된 Plaintext 공격(Chosen-plaintext attack)__   
+            - 해커가 선택된 plaintext에 대한 암호를 얻을 수 있는 경우   
+
+   - __암호화 종류__   
+      - __대칭키 암호화(Symmetric key cryptography)__   
+         - __수신자와 송신자가 암호키를 공유한다.__   
+         - 첫 만남에 같은 키를 공유하기 위한 방법이 까다롭다. 특히 전에 서로 만나지 않았을 때   
+
+      - __공개키 암호화(Public Key Cryptography)__   
+         - __모든 사람은 공개키와 해독키를 가진다.__   
+         - __수신자와 송신자가 암호키를 공유하지 않는다.__   
+         - __공개키는 모두가 알고 있다.(Public)__   
+         - __수신자만 해독키를 알고 있다.(Private)__   
+         - ex) Diffie-Hellman76(수학적 증명 X), __RSA78__   
+         - __Public key encryption algorithms__   
+            - K+(m) = 메세지 암호화 Public, K-(m) = 메시지 복호화 Private      
+            - K-(K+(m)) = m   
+            - K+는 K-를 연산하는 것이 불가능하다.   
+            - RSA(Rivest, Shamir, Adelson algorithm)   
+         - 어떤 키를 먼저 적용시키던간에 결과는 같다.   
+            - K-(K+(m)) = m = K+(K-(m))   
+            - __수학적 연산이 많아 CPU 이용량이 많다. 그러므로 공개키를 사용해 대칭키를 생성하고 대칭키를 통해 메세지 전체를 암호화하여 전송한다.__    
+  
+   - __Authentication__   
+      - __ap4.0__   
+         - __Playback attack__   
+            - 네트워크를 통해 유효한 데이터 전송을 가로 챈 후 반복하는 사이버 공격   
+            - 원래 데이터 (일반적으로 권한이 부여 된 사용자에게서 가로챔)의 유효성으로 인해 네트워크의 보안 프로토콜은 해커의 공격을 유효한 데이터인 전송인 것처럼 여기게 된다.   
+            - 원본 메시지를 가로채어 그대로 재전송하므로 해커는 데이터를 해독하지 않아도 되는 리플레이 공격을 사용합니다.   
+         - playback attack(유효한 데이터 전송을 가로 챈 후 복사하여 재전송하는 것)을 피하기 위해 사용된다.   
+         - nonce R(오직 한번만 사용되는 숫자)와 공개키 암호화를 사용한다.   
+      - __과정__   
+         - A가 B에게 자신이 A라고 전송   
+         - B는 A에게 R 전송   
+         - A는 공유된 대칭키를 통해 R을 암호화하여 B에게 전송   
+            - A만 같은 대칭키를 가지고 nonce를 암호화할 수 있기 때문에 B는 A인것을 확인할 수 있다.   
+      - __A-B 사이에 대칭키를 어떻게 만드는지에 대한 고려가 필요하다.__   
+
+      - __ap5.0__   
+         - ap4.0처럼 대칭키를 사용하지 않고 공개키를 사용하는 방식   
+         - nonce와 공개키를 사용한다.   
+      - __과정__   
+         - A가 B에게 자신이 A라고 전송   
+         - B는 A에게 R 전송   
+         - A는 K-(R)을 통해 암호화 하여 B에게 전송   
+            - B는 K+(K-(R)) = R 연산을 통해 오직 A만 K+(K-(R)) = R 같이 R을 암호화했던 Private key를 가질 수 있다는 것을 알게 된다.   
+         - B는 A에게 공개키를 보내라고 메시지 전송   
+         - A는 K+를 B에게 전송   
+            - B는 A인것을 확인할 수 있다.   
+            
+            
+   - __Message Integrity__   
+      - 수신된 메세지가 믿을만한 것인지 확인하게 할 수 있게 해준다.   
+         - 메세지의 내용이 변경되지 않았는지   
+         - 메세지의 출발지가 내가 생각하는 곳과 같은지   
+         - 메세지가 다시 전송되지 않았는지   
+         - 메세지의 결과가 유지되었는지    
+
+      - __Message Digests__   
+         - 각기 다른 메세지의 길이를 Input, 고정된 문자 길이를 output으로 하는 H() 함수를 사용한다.    
+         - H()는 many-to-1 함수   
+         - H()는 hash 함수이다.   
+         - __특징__   
+            - 계산하기 쉽다.   
+            - __비가역성(Irreversibility)__   
+               - H(m)을 통해 m으로 되돌릴 수 없다.   
+            - __충돌 저항(Collision resistance)__   
+               - m 과 m'에 대한 H(m) = H(m')같은 결과를 만들어내기 어렵다.   
+            - __random output처럼 보인다.__   
+            
+         - __Internet checksum은 hash fuction의 특성(many-to-one, 16-bit 고정된 길이의 sum을 산출)을 가지고 있지만 특정 hash 값을 가진 메세지가 있을 경우 같은 hash 값을 가진 다른 메세지를 찾을 가능성이 높다.   
+         
+         - __Hash Function Algorithms__   
+            - __MD5 hash function(RFC 1321)__   
+               - 128-bit 메세지를 4단계 프로세스에 거쳐 요약한다.   
+            - __SHA-1__   
+               - US 표준[NIST, FIPS PUB 180-1]   
+               - 160-bit 메세지를 요약한다.   
+          
+         - __Message Authentication Code (MAC)__   
+            - 송신자를 인증한다.   
+            - 메세지 무결성을 증명한다.   
+            - 암호화가 필요없다.   
+            - "keyed hash"라고도 불린다.   
+            - __HMAC__    
+               - 많이 사용되는 MAC 표준   
+               - 포착하기 어려운 보안 결함들을 다룬다.   
+               - __과정__   
+                  ① 메세지의 앞부분을 암호와 연관시킨다.   
+                  ② 1을 Hash한다.   
+                  ③ 2의 앞부분을 암호와 연관시킨다.   
+                  ④ 3을 Hash한다.   
+               - ex) intra-AS routing protocol인 OSPF, End-point   
+
+         - __디지털 서명(Digital Signatures)__   
+            - 송신자는 디지털 방식으로 서류에 서명한다.   
+            - MAC의 목표와 같지만 공개키 암호화 사용   
+            - __간단한 서명 방식(= Digital signing)__   
+               - 송신자는 메세지를 자신의 private 키로 암호화하여 전송한다.   
+               - __but 메세지 전체를 암호화하기에 시간이 오래 걸리기 때문에 메세지의 hash 값을 private 키로 암호화하여 전송한다.__    
+               
+            - __공개키는 어떻게 인증을 받는가?__   
+               - 공인 기관으로부터 발행된 인증서를 사용한다.   
+               - __Certification authority(CA)__   
+                  - 특정 개체(라우터, 사람)와, 개체의 Public key를 연결한다.   
+                  - 개체는 CA를 가지고 자신의 Public key를 등록해야 한다.   
+                     - 개체는 CA에 자신 신원의 증거를 제공해야 한다.   
+                     - CA는 개체와 개체의 Public key를 연결하는 인증서를 생성한다.   
+                     - 인증서는 CA에 의해 디지털 방식으로 서명된 개체의 Public key를 포함한다.   
+                        - 인증서는 CA의 Private key로 암호화 되어 있다.   
+                        
+                  - __A가 B의 공개키를 알고 싶은 경우__   
+                     - B의 인증서를 얻는다.(B나 다른 곳으로부터)   
+                     - CA의 Public key를 B의 인증서에 적용하여 B의 Public key를 얻는다.   
+                     
+               - __인증기관의 키는 어떻게 인증을 받는가?__   
+                  - root로 생각하고 인증기관은 그냥 인증되어있다고 가정하고 이용한다.   
+            
+   - ____   
+      -   
+   - ____   
+      - 
+   - ____   
+      -   
+   - ____   
+      - 
