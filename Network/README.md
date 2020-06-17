@@ -2068,7 +2068,7 @@ __UDP__
                - m 과 m'에 대한 H(m) = H(m')같은 결과를 만들어내기 어렵다.   
             - __random output처럼 보인다.__   
             
-         - __Internet checksum은 hash fuction의 특성(many-to-one, 16-bit 고정된 길이의 sum을 산출)을 가지고 있지만 특정 hash 값을 가진 메세지가 있을 경우 같은 hash 값을 가진 다른 메세지를 찾을 가능성이 높다.   
+         - __Internet checksum은 hash fuction의 특성(many-to-one, 16-bit 고정된 길이의 sum을 산출)을 가지고 있지만 특정 hash 값을 가진 메세지가 있을 경우 같은 hash 값을 가진 다른 메세지를 찾을 가능성이 높다.__   
          
          - __Hash Function Algorithms__   
             - __MD5 hash function(RFC 1321)__   
