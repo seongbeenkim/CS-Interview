@@ -45,7 +45,7 @@
     - Create(생성), Read(조회), Update(수정), Delete(삭제)   
 
   - __서버에 REST API로 요청을 보낼 경우 HTTP 규약에 따라 신호를 전송한다.__    
-    - HTTP로 요청을 보낼 경우 여러 메소드들이 사용되는데 __REST API는 GET, POST, PUT(또는 PATCH), DELETE를 사용__한다.   
+    - HTTP로 요청을 보낼 경우 여러 메소드들이 사용되는데 __REST API는 GET, POST, PUT(또는 PATCH), DELETE를 사용__ 한다.   
     - __POST, PUT, PATCH에는 body라는 컨테이너가 있어 GET이나 DELETE보다 비교적 안전하게 데이터를 감춰서 실어보낼 수 있다.__   
     - __이 기능들은 특정 용도에 제한되어 있지는 않다.__   
       - Ex) POST로 데이터를 CRUD를 모두 다 할 수 있다. 용량이 적고 중요도가 낮은 정보들은 GET으로 CRUD 모두 할 수 있다.   
@@ -397,14 +397,13 @@
    - __유니캐스트__    
       - __TCP 기반으로 1:1로 데이터를 전달하는 통신 방식__   
       - __MAC 기반으로 수신자 IP 주소를 목적지로 하는 일대일 통신 방식__   
-         - 
       - __구체적으로 데이터를 보내는 PC는 자신의 MAC 주소를 적고 받는 쪽 PC의 MAC 주소도 적어 프레임에 감싸 데이터를 전달한다.__   
       
       
  ## 도메인과 DNS   
    - __도메인__   
-      - __식별하기 어려운 IP 주소(예:240.10.20.1)를 example.com 처럼 기억하기 쉽게 만들어주는 네트워크 호스트 이름__을 의미   
-      - __보통 루트 네임 서버(최상위 DNS서버 이며 IANA 에서 관리한다)에 등록된 최상위 호스트 네임 및 각 최상위 호스트 네임을 관리하는 도메인 레지스트리에서 관리하는 하위 호스트 네임__을 뜻한다.      
+      - __식별하기 어려운 IP 주소(예:240.10.20.1)를 example.com 처럼 기억하기 쉽게 만들어주는 네트워크 호스트 이름__ 을 의미   
+      - __보통 루트 네임 서버(최상위 DNS서버 이며 IANA 에서 관리한다)에 등록된 최상위 호스트 네임 및 각 최상위 호스트 네임을 관리하는 도메인 레지스트리에서 관리하는 하위 호스트 네임__ 을 뜻한다.      
       - __최상위 호스트 네임은 최상위 도메인 이라고 부르며 해당 레지스트리에 등록된 하위 호스트 네임들은 '.'으로 구분 된 호스트가 얼마나 붙었는지에 따라 2차 도메인, 3차 도메인__ 등으로 불린다.   
       - ex) `krnic.co.kr` 이라는 도메인   
          - kr은 최상위 도메인(또는 1차 도메인)   
@@ -452,7 +451,7 @@
       - __Distributed hierarchical database__   
          - __Client가 IP 찾는 과정__   
             1 - Client가 `www.amazon.com`의 IP를 원한다.   
-            2 - Client가 __Local DNS Server__에 쿼리하여 `www.amazon.com`의 IP 주소를 가지고 있는지 확인(없다면 다음 단계 진행)   
+            2 - Client가 __Local DNS Server__ 에 쿼리하여 `www.amazon.com`의 IP 주소를 가지고 있는지 확인(없다면 다음 단계 진행)   
             3 - Client가 __Root server__ 에 쿼리하여 __.com DNS server(TLD)__ 를 찾는다.   
             4 - Client가 __.com DNS server__ 에 쿼리하여 __amazon.com DNS server(Authoritative)__ 를 찾는다.   
             5 - Client는 __amazon.com DNS server__ 에 쿼리하여 __`www.amazon.com`의 IP 주소__ 를 얻는다.      
@@ -534,7 +533,7 @@
                - 질의된 도메인의 네임서버에서 직접 찾은 결과   
             - __Non-authoritive Answer__    
                - 질의를 위임받은 local name server의 캐시에서 찾은 결과 응답   
-         __ 다수의 name server가 있을 경우 RTT가 가장 짧은 name server에 DNS 질의 메세지를 보낸다.   
+         - 다수의 name server가 있을 경우 RTT가 가장 짧은 name server에 DNS 질의 메세지를 보낸다.   
 
 
 
