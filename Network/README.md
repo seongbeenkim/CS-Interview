@@ -367,9 +367,9 @@ __User-server state: cookies__
                5 - 모를 경우 에러 메세지 반환   
                5-1 - 찾을 경우 authoritative response 반환하고 local DNS server는 도메인 IP 주소를 캐싱하고 Client server에 도메인의 IP 주소 전달   
                - __장점__   
-                  - local DNS가 바쁘다.   
+                  - local DNS가 데이터를 많이 가지고 있어 빠르게 받을 수 있다.   local DNS가 바쁘다.   
                - __단점__   
-                  - local DNS가 데이터를 많이 가지고 있어 빠르게 받을 수 있다.   
+                  - local DNS가 바쁘다.   
                   
             - __재귀적 질의(recursive query)__   
                - 질의된 도메인에 대해 즉각 응답하거나, 다른 DNS 서버에게 질의한 결과로 응답하거나, 찾고 있는 정보가 없다는 에러 메시지를 보내준다.         
@@ -383,7 +383,7 @@ __User-server state: cookies__
                5-1 - 찾을 경우 authoritative response 반환하고 local DNS server는 도메인 IP 주소를 캐싱하고 Client server에 도메인의 IP 주소 전달   
                - __단점__   
                   - 상위 DNS 계층 서버에 많은 부담을 준다.   
-            - 재귀적 질의 및 반복적 질의 선택은 DNS 해석기가 요청할 때 이를 결정한다.   
+            - __재귀적 질의 및 반복적 질의 선택은 DNS 해석기가 요청할 때 이를 결정한다.__   
                - DNS header 내 flag 필드에 표시를 한다.   
             
       - __Root name servers__   
@@ -408,6 +408,7 @@ __User-server state: cookies__
                - proxy 역할을 하며 쿼리를 계층으로 전달   
       - __DNS caching__   
          - __DNS name server가 한 번 요청된 DNS 요청을 일정 시간(TTL)만큼 메모리에 저장하여 뒀다가, 똑같은 요청이 들어오면 신속히 처리할 수 있도록 하는 기능__   
+            - 사실상 모든 Name server가 cache를 할 수 있다.   
          - __TTL(Time-to-Live)__
             - 컴퓨터나 네트워크에서 데이터의 유효 기간을 나타내기 위한 방법   
             - Counter나 타임스탬프의 형태로 데이터에 포함되며, 정해진 유효기간이 지나면 데이터는 폐기된다.   
