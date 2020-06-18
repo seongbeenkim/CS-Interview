@@ -385,6 +385,13 @@ __User-server state: cookies__
                   - 상위 DNS 계층 서버에 많은 부담을 준다.   
             - __재귀적 질의 및 반복적 질의 선택은 DNS 해석기가 요청할 때 이를 결정한다.__   
                - DNS header 내 flag 필드에 표시를 한다.   
+               
+      - __Local DNS name server__   
+         - DNS 계층에 속하지 않는다.   
+         - 각 ISP(가정 ISP, 회사, 대학)는 local DNS 서버(default name server)를 가진다.   
+         - 호스트가 DNS 쿼리를 만들면 쿼리가 로컬 DNS 서버로 전송된다.   
+            - 최근 name-address 변환 쌍인 local 캐시를 가짐   
+            - proxy 역할을 하며 쿼리를 계층으로 전달   
             
       - __Root name servers__   
          - 번역되지 않는 name을 root name server에 질의   
@@ -400,12 +407,7 @@ __User-server state: cookies__
             - 조직 자체의 DNS server, 조직의 명명된 호스트에 대한 권한있는 호스트 이름 대 IP 매핑 제공   
             - 조직이나 서비스 제공 업체가 유지할 수 있다.   
             - 권한있는 server는 해당 영역의 권한이다. DNS의 다른 name server에서 쿼리   
-         - __Local DNS name server__   
-            - DNS 계층에 속하지 않는다.   
-            - 각 ISP(가정 ISP, 회사, 대학)는 local DNS 서버(default name server)를 가진다.   
-            - 호스트가 DNS 쿼리를 만들면 쿼리가 로컬 DNS 서버로 전송된다.   
-               - 최근 name-address 변환 쌍인 local 캐시를 가짐   
-               - proxy 역할을 하며 쿼리를 계층으로 전달   
+
       - __DNS caching__   
          - __DNS name server가 한 번 요청된 DNS 요청을 일정 시간(TTL)만큼 메모리에 저장하여 뒀다가, 똑같은 요청이 들어오면 신속히 처리할 수 있도록 하는 기능__   
             - 사실상 모든 Name server가 cache를 할 수 있다.   
