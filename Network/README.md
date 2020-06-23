@@ -292,7 +292,7 @@ __User-server state: cookies__
 
 ### FTP   
    - File Transfer Protocol
-   - TCP/IP 프로토콜을 가지고 서버와 클라이언트 사이의 __파일 전송__을 하기 위한 프로토콜이다.   
+   - TCP/IP 프로토콜을 가지고 서버와 클라이언트 사이의 __파일 전송__ 을 하기 위한 프로토콜이다.   
    - client/server model   
       - client: 전송을 시작하는 쪽   
       - server: 원격 호스트   
@@ -426,7 +426,7 @@ __User-server state: cookies__
             - 질의된 도메인의 네임서버에서 직접 찾은 결과   
          - __Non-authoritive Answer__    
             - 질의를 위임받은 local name server의 캐시에서 찾은 결과 응답   
-      __ 다수의 name server가 있을 경우 RTT가 가장 짧은 name server에 DNS 질의 메세지를 보낸다.   
+      __다수의 name server가 있을 경우 RTT가 가장 짧은 name server에 DNS 질의 메세지를 보낸다.__   
 
 
 
@@ -584,7 +584,7 @@ __UDP__
             - __Retransmission__   
                - 송신자가 NAK를 보낸 곳에 Packet을 재전송한다.   
       - __ACK 또는 NAK에 Error가 있을 경우 필요한 메카니즘(RDT2.1)__   
-         - 송신자가 ACK 또는 NAK을 제대로 받지 못하게 되기 때문에 보냈던 데이터를 다시 수신자에게 보내게 된다. 이러한 경우 수신자는 다시 받은 데이터가 새로운 데이터인지 아니면 중복된 데이터인지 알 수 없기 때문에 __Sequence Number를 사용하여 Packet을 구분__하게 할 수 있다.   
+         - 송신자가 ACK 또는 NAK을 제대로 받지 못하게 되기 때문에 보냈던 데이터를 다시 수신자에게 보내게 된다. 이러한 경우 수신자는 다시 받은 데이터가 새로운 데이터인지 아니면 중복된 데이터인지 알 수 없기 때문에 __Sequence Number를 사용하여 Packet을 구분__ 하게 할 수 있다.   
          - 송신자는 Sequence Number를 각 Packet에 추가   
          - 송신자는 ACK 또는 NAK을 제대로 받지 못할 경우 현재 Packet 재전송   
          - 수신자는 중복된 Packet 무시   
@@ -635,7 +635,7 @@ __UDP__
                      - But, Sequence number가 계속 증가하는데 Sequence number의 값의 크기는 최대한 작게 하는 것이 좋다.   
                         - __그러므로 Window size가 n일 경우 Sequence number의 범위를 2n으로 할 경우 재전송할 Packet에 대한 혼선없이 전송이 가능하다.__   
                      - __문제점은 모든 Packet이 Timer를 가져야하기 때문에 Window size가 클 경우 복잡해지기 때문에 잘 사용하지 않는다.__   
-                        - 그래서 __보통 Window를 대표하는 Timer를 하나__를 가지고 사용한다.   
+                        - 그래서 __보통 Window를 대표하는 Timer를 하나__ 를 가지고 사용한다.   
 
 ### TCP   
    - __point-to-point__   
@@ -727,7 +727,7 @@ __UDP__
          - ACK n: 다음으로 받아야 할 byte의 Sequence Number, 받은 Seq n + 1을 보낸다.   
          - __데이터를 받을 경우 ACK을 바로 보내지 않는다. 일정 시간을 기다린 후 ACK를 보내는 이유(pending)__   
             1. 내가 보내고자 하는 데이터를 같이 보낼수도 있다.   
-            2. pipelining 방식으로 데이터가 오기 때문에 일일이 ACK을 하지 않고 __현재까지 수신된 byte들을 단 하나의 ACK로 일괄 확인 응답하는 Cumulative ACK__을 한다.   
+            2. pipelining 방식으로 데이터가 오기 때문에 일일이 ACK을 하지 않고 __현재까지 수신된 byte들을 단 하나의 ACK로 일괄 확인 응답하는 Cumulative ACK__ 을 한다.   
          - __Timeout 값을 RTT의 값에 따라 조절할 경우__   
             - RTT는 Segment가 지나가는 경로가 다르기 때문에 항상 값이 다르고 만약 같은 경로로 지나간다해도 Segment의 Queuing delay 때문에 값이 다르다.   
             - 그러므로 Estimated RTT값을 사용하여 빠르게 반응할 수 있게 한다.   
@@ -801,7 +801,7 @@ __UDP__
                         - 어떤 목적지로 가는 도중 중간에 거쳐가는 노드에게도 Distance vector값을 전달할 경우 자기 자신을 다시 거쳐가는 경우를 모르기 때문에 Distance Vector 값이 계속해서 변경될 가능성이 있다.   
                            - z가 x로 갈 때, y를 통한 경로보다 x로 바로 가는 것이 cheap하다는 것을 깨달을 때까지 44번의 반복이 발생 -> 'count to infinity' 문제   
                         - 그러므로 중간에 거쳐가는 노드에는 변경된 값을 넘겨주지 않고 무한대 값을 넘겨준다.   
-                        - __poison reverse__를 이용해 문제 해결  
+                        - __poison reverse__ 를 이용해 문제 해결  
                            - 만약 Z가 X를 얻기 위해 Y를 통해 간다면 z에서 y 거리를 ∞ 주고 업데이트 하도록 함   
                            - 그 이후 다음 단계에서 Distance vector를 검사한다.   
                            - 즉, 업데이트된 곳 반대를 ∞로 설정해주고 업데이트하면 빠르다.   
@@ -1004,7 +1004,7 @@ __UDP__
 
    - __IPv4의 문제점을 해결하기 위해 나온 방법__   
       - __IPv6__   
-         - 1996년에 __IPv4의 주소 공간 부족 문제점을 해결__하기 위해서 나왔다.        
+         - 1996년에 __IPv4의 주소 공간 부족 문제점을 해결__ 하기 위해서 나왔다.        
          - __128 bit__   
          - __IPv6 datagram 구조__    
             - ver, priority, flow lable   
@@ -1411,7 +1411,7 @@ __UDP__
                - A'는 flood를 통해 받은 정보를 확인하고 Switch에 응답한다.   
                - Switch는 A'에 대한 정보를 Switch forwarding table에 업데이트한다.   
                   - ex) A', Port 번호: 4, TTL: 60초  
-               - __Switch forwarding table에 목적지에 대한 정보가 들어있다면 정보를 통해 데이터를 바로 전송하고 없을 경우 self-learning을 통해 table을 업데이트하면서 데이터를 보낸다.  
+               - __Switch forwarding table에 목적지에 대한 정보가 들어있다면 정보를 통해 데이터를 바로 전송하고 없을 경우 self-learning을 통해 table을 업데이트하면서 데이터를 보낸다.__  
                   
          - __Interconnecting switches__   
             - Switch끼리 연결 될 수 있다.   
@@ -1769,7 +1769,7 @@ __UDP__
       - __단점__   
          - 여러 번 거쳐 전송이 된다.   
       
-      - __Indirect routing: moving between networks __   
+      - __Indirect routing: moving between networks__   
          - mobile이 다른 네트워크로 이동한다고 가정   
             - 새로운 foreign agent 등록   
             - 새로운 foreign agent를 home agent에 등록   
@@ -1920,7 +1920,7 @@ __UDP__
                      
                - __하지만 고객의 IP는 NAT 등으로 인해 실제 IP가 아닐수도 있다. 어떻게 위치를 판별할 수 있는가?__    
                   - 고객은 항상 SK, LG U+, KT 같은 네트워크를 거쳐 전달되기 때문에 실질적으로는 SK, LG U+, KT가 DNS query를 보내어 위치를 알 수 있게 된다.   
-               - __최소 Hop 수를 가진 CDN에 접근하는게 제일 좋기 때문에 보통 SK, LG U+, KT 같은 네트워크 내의 CDN을 위치시키거나 근처에 위치시킨다.   
+               - __최소 Hop 수를 가진 CDN에 접근하는게 제일 좋기 때문에 보통 SK, LG U+, KT 같은 네트워크 내의 CDN을 위치시키거나 근처에 위치시킨다.__   
                   
 ## 8. 네트워크 보안   
 ### Network security   
@@ -2283,7 +2283,7 @@ __UDP__
       - __모든 TCP 연결 상태를 추적한 후 연결이 되어 있을 경우에만 packet을 허용한다.__   
          - SYN, FIN을 추적하여 들어오고 나가는 패킷이 정당한지 확인한다.   
          - 방화벽에서 활동하지 않는 연결에 대한 timeout을 통해 packet을 더 이상 허용하지 않는다.   
-      - __ACL은 Packet을 허용하기전에 연결 상태 테이블을 확인하기 위해 check conxion을 추가   
+      - __ACL은 Packet을 허용하기전에 연결 상태 테이블을 확인하기 위해 check conxion을 추가__   
       
    - __Application gateways__   
       - IP/TCP/UDP 필드는 물론 Application data에 따라 packet을 filter한다.   
