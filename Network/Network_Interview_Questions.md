@@ -4,10 +4,18 @@
 * [라우터에서 발생하는 Packet delay](#라우터에서-패킷-교환간-발생하는-delay)   
 * [쿠키,세션,캐시](#쿠키세션캐시)   
 * [HTTP와 HTTPS](#http와-https)   
+* [TCP 3-way-handshake와 4-way-handshake](#tcp-3-way-handshake와-4-way-handshake)   
 * [브로드캐스트, 멀티캐스트, 유니캐스트](#브로드캐스트-멀티캐스트-유니캐스트)   
 * [도메인과 DNS](#도메인과-dns)      
-* [](#)   
-* [](#)   
+* [정적 라우팅, 동적 라우팅](#정적-라우팅-동적-라우팅)    
+* [TCP와 UDP의 차이점](#tcp와-udp의-차이점)   
+* [OSI 7 Layer](#osi-7-layer)   
+* [라우팅과 포워딩](#라우팅과-포워딩)   
+* [ARQ](#arq)   
+* [TCP 흐름제어, 혼잡제어](#tcp-흐름제어-혼잡제어)   
+* [TCP 타이머 종류](#tcp-타이머-종류)   
+* [GET, POST](get-post)   
+* [:star:네트워크 주소 체계 - Line, Naver](#네트워크-주소-체계)   
 * [](#)   
 * [](#)   
 * [](#)   
@@ -274,7 +282,7 @@
          - 링크를 가진 text   
       - Web의 어플리케이션 계층의 프로토콜   
          - 웹브라우저(Client)와 서버(Server)간의 웹페이지 같은 자원을 주고 받을 때 쓰는 통신 규약   
-         - http는 텍스트 교환이다. html 페이지도 텍스트다. 바이너리 데이터로 되어있는 것도 아니고 단순 텍스트를 주고 받기 때문에 누군가 네트워크에서 신호를 가로채어 본다면 내용이 노출된다.   
+         - 누군가 네트워크에서 신호를 가로채어 본다면 내용이 노출된다.   
       - __Client/Server 모델__   
          - Client: HTTP를 사용하여 request, receive하는 browser이며 Web의 객체들을 보여준다.   
          - Server: Web Server가 HTTP를 사용하여 request에 응답하는 객체를 보낸다.   
@@ -348,6 +356,7 @@
 ## TCP 3-way-handshake와 4-way-handshake   
    - __TCP 3-way-handshake__   
       - TCP 통신을 이용하여 데이터를 전송하기 위해 서버와 클라이언트를 연결하는 과정   
+         - 3번의 패킷 교환을 한다.   
       - __동작 과정__   
          1. __Client -> Server : SYN__
             - Client가 TCP header의 SYN에 시퀀스 번호를 임의적으로 설정하고 Server에 전송   
@@ -534,6 +543,627 @@
             - __Non-authoritive Answer__    
                - 질의를 위임받은 local name server의 캐시에서 찾은 결과 응답   
          - 다수의 name server가 있을 경우 RTT가 가장 짧은 name server에 DNS 질의 메세지를 보낸다.   
+
+
+## 정적 라우팅, 동적 라우팅   
+   - __라우팅__   
+      - __한 네트워크에서 다른 네트워크로 최적의 경로를 선택하여 패킷을 전달하기 위해 네트워크 계층 장치에 의해 수행되는 프로세스__   
+   - __정적 라우팅 (Static Routing)__   
+      - __관리자가 라우팅 테이블에 경로를 수동으로 추가__   
+         - 소규모 네트워크에 적합   
+      - __장점__   
+         - 라우터 CPU에 라우팅 오버 헤드가 없으므로 더 저렴한 라우터를 사용하여 라우팅을 수행 할 수 있다.   
+         - 관리자만 특정 네트워크로의 라우팅 만 허용하므로 보안이 추가된다.   
+         - 라우터간에 대역폭 사용이 없다.   
+         
+      - __단점__   
+         - 대규모 네트워크의 경우 관리자가 각 라우터의 라우팅 테이블에서 네트워크에 대한 각 경로를 수동으로 추가하는 것은 리소스가 많이 투입되는 작업   
+         - 관리자는 토폴로지에 대해 잘 알고 있어야합니다. 새 관리자가 오면 각 경로를 수동으로 추가해야하므로 토폴로지 경로에 대해 잘 알고 있어야한다.   
+         - 네트워크의 변화가 빈번한 경우, 등록해야 할 네트워크의 수가 많을 경우에는 능동적으로 경로 설정을 변경하기 어렵고, 관리자의 네트워크에 대한 설정 및 운영지식을 습득해야 함   
+         
+   - __동적 라우팅 (Dynamic Routing)__   
+      - __라우팅 테이블에서 경로의 현재 상태에 따라 경로를 자동으로 조정__   
+         - 중간 ~ 대규모 네트워크에 적합   
+         - 하나의 경로가 다운되면 네트워크 대상에 도달하도록 자동 조정   
+         - ex) RIP 및 OSPF   
+      - __라우터는 경로를 교환하기 위해 동일한 동적 프로토콜을 실행해야한다.__   
+      - __라우터가 토폴로지에서 변경 사항을 찾으면 라우터는 이를 다른 모든 라우터에 알린다.__   
+      - __장점__   
+         - 라우터 간에 서로 Routing 정보를 주고 받아 Routing Table을 라우터가 자동으로 작성하기 때문에 Network 관리자는 초기 설정만 해주면 되므로 구성이 쉽다.      
+         - 대상 원격 네트워크에 대한 최상의 경로를 선택하고 원격 네트워크를 검색하는 데 더 효과적입니다.   
+         - Network의 변화에 능동적으로 대처할 수 있다.  
+      - __단점__   
+         - 다른 장비들과 통신하기 위해 더 많은 대역폭을 소비   
+         - 정적 라우팅보다 안전하지 않다.   
+
+
+## TCP와 UDP의 차이점   
+   - __TCP__    
+      - 소켓 1:1 연결 O   
+      - 신뢰성있고 순서대로 데이터 전달   
+      - 데이터 손실시 재전송   
+      - 데이터의 경계 존재 X   
+      - 흐름 제어(슬라이딩 윈도우) - 수신자의 수신 속도에 맞춰 송신자가 데이터 전달   
+      - 혼잡 제어 - 네트워크 혼잡 시 송신자의 데이터 전송률을 줄임    
+      - 3-way handshaking   
+      - 신뢰성있게 데이터를 송신해야 하는 대부분의 프로토콜과 어플리케이션    
+         - 파일/메시지 전송 프로토콜 포함   
+      - 소형 ~ 초대형 데이터(최대 수 기가 바이트)   
+      - ex) 멀티미디어 app, DNS, BOOTP, DHCP, TFTP, SNMP, RIP, NFS(초기버전)   
+      
+   - __UDP__   
+      - 소켓 1:N 방식, 연결 X   
+      - no 신뢰성, 순서, 흐름 제어, 혼잡 제어, 재전송   
+      - 데이터의 경계 존재 O, 한번의 전송할 수 있는 데이터 크기 제한   
+         - 전달 속도가 중요하고, 소량의 데이터를 송신하고 멀티캐스트/브로드캐스트를 사용하는 어플리케이션   
+      - 소형 ~ 중형 데이터(최대 수백 바이트)   
+      - ex) FTP, Telnet, SMTP, DNS, HTTP, POP, NNTP, IMAP, BGP, IRC, NFS(나중버전)   
+
+### 관련 내용   
+
+   - __TCP__   
+      - __point-to-point__   
+         - 수신자 1 : 송신자 1   
+      - __신뢰성있고, 순차적인 byte stream__    
+         - message의 경계가 없다.   
+         - GO-BACK-N과 같이 Timer를 하나 사용하지만 하나의 Segment만 재전송한다.   
+         - IP의 unreliable service의 상위에서 RDT 서비스를 생성하여 reliable전송 할 수 있게 한다.   
+         - Pipelined Segments   
+      - __pipelined__   
+         - TCP 혼잡, 흐름제어, window 크기 설정   
+      - __send & receive buffer__   
+         - 수신자와 송신자 모두 window 크기 만큼 고유의 send, receive buffer 2개를 가지고 있다.   
+      - __full duplex data__   
+         - 같은 연결에서 데이터가 양방향으로 갈 수 있다.   
+         - MSS(Maximum Segment Size)   
+      - __연결지향형__   
+         - 3 way handshaking을 통해 데이터 교환전에 송신자와 수신자 연결   
+            - Client가 TCP header의 SYN에 1을 세팅하고 자신의 Seq를 Server에 전송   
+            - Server는 SYN에 1, SYN에 대한 ACK 1로 세팅하고, Client의 Seq에 대한 ACK(Client의 Seq + 1), 자신의 Seq를 Client에 전송   
+            - Client는 SYN에 대한 ACK 1, Server의 Seq에 대한 ACK(Server의 Seq + 1)을 Server에 전송   
+            __마지막 3번째 과정에서 Segment에 데이터를 넣어 같이 전송할 수도 있다.__   
+         - 연결 해제 과정   
+            - Close를 원하는 Client가 FIN 1을 세팅하여 Server에 전송   
+            - Server가 FIN에 대한 ACK를 Client에 전송하고 보내야 할 데이터가 있을 경우 모두 보내고 연결 해제 후 FIN 1을 세팅하여 Client에 전송   
+            - Client는 FIN을 받으면 time wait을 실행하고 FIN에 대한 ACK를 Server에 전송   
+            __Server에 보낸 ACK가 유실될 경우 Server는 ACK을 받지 못하고 time out이 되어 Client에 FIN을 다시 전송할 수 있는데 Client가 연결 해제되어있을 경우 Server는 계속해서 FIN을 보내게 될 수도 있기 때문에 ACK가 확실히 전달되기 위해서 Client는 바로 연결 해제 하지 않고 time wait을 한다.__   
+            
+      - __TCP Segment(32bit) 구조__   
+         - __출발지 Port번호(16bit), 도착지 Port번호(16bit)__    
+            - 2^16-1 대략 6만개 정도의 Port 번호가 존재   
+         - __Sequence Number(32bit)__   
+            - Seq n: data의 첫번째 byte의 number   
+         - __Acknowledgement Number(32bit)__   
+            - ACK n: 다음으로 받아야 할 byte의 Sequence Number, 받은 Seq n + 1을 보낸다.   
+            - __데이터를 받을 경우 ACK을 바로 보내지 않는다. 일정 시간을 기다린 후 ACK를 보내는 이유(pending)__   
+               1. 내가 보내고자 하는 데이터를 같이 보낼수도 있다.   
+               2. pipelining 방식으로 데이터가 오기 때문에 일일이 ACK을 하지 않고 __현재까지 수신된 byte들을 단 하나의 ACK로 일괄 확인 응답하는 Cumulative ACK__을 한다.   
+            - __Timeout 값을 RTT의 값에 따라 조절할 경우__   
+               - RTT는 Segment가 지나가는 경로가 다르기 때문에 항상 값이 다르고 만약 같은 경로로 지나간다해도 Segment의 Queuing delay 때문에 값이 다르다.   
+               - 그러므로 Estimated RTT값을 사용하여 빠르게 반응할 수 있게 한다.   
+                  - Sample RTT: 실제로 ACK을 받을 때까지 걸린 측정된 시간   
+                  - Estimated RTT: 최근 RTT들의 평균   
+                  - 이럴 경우 실제 RTT가 김에도 Estimated RTT가 짧아서 데이터 유실할 가능성이 높아진다.   
+               - __그러므로 Estimated RTT * 4 * DevRTT(편차)를 사용하여 Timeout을 설정한다.__   
+            - __Fast retransmit__   
+               - TCP는 같은 ACK를 4번 받을 경우 유실됐다고 생각하고 Timeout 되기 전에 해당 데이터를 재전송하도록 권고한다.   
+         - __header 길이, (U,A,P,R,S,F), Receive window__   
+         - __checksum(16bit), URG data pointer(16bit)__   
+         - __옵션(32bit)__   
+         - __어플리케이션 데이터__   
+         
+   - __UDP__   
+      - __UDP는 전송 계층이 할 수 있는 최소 기능인 Multiplexing/Demultiplexing, checksum을 통한 오류 검사만 한다.__   
+      - __UDP Segment 헤더는 16bit씩 구성된 4개의 필드를 가진다.__   
+         - 출발지 Port 번호   
+         - 목적지 Port 번호   
+         - UDP 세그먼트 길이   
+         - __checksum - Segment안의 비트에 대한 변경사항이 있는지 검사를 통한 오류 검출__   
+            - 송신측에서 UDP는 세그먼트 안에 있는 모든 16비트 워드 단위로 더하고 이에 대하여 1의 보수(0->1, 1->0)를 수행하며, 덧셈과정에서 발생하는 오버플로우는 Wrap around(가장 하위 비트에 더해줌) 윤회식 자리올림을 합니다. 이 결과는 UDP 세그먼트의 체크섬 필드에 삽입됩니다.   
+            - 수신자에서는 체크섬을 포함한 모든 16비트 워드를 더합니다. 만약 패킷에 어떤 오류도 있지 않다면, 수신자에서의 합은 1111 1111 1111 1111 이 될 것입니다. 만약 비트 중에서 하나라도 0이 있다면 패킷에 오류가 발생했음을 알 수 있습니다.   
+            - 링크계층 프로토콜(이더넷 프로토콜 포함)이 오류검사를 제공하는데, 굳이 왜 UDP가 체크섬을 제공하는가?   
+               - 모든 링크가 오류검사를 제공한다는 보장이 없기 때문입니다. 즉, 링크 중에서 하나가 오류검사를 제공하지 않는 프로토콜을 사용할 수도 있는 것입니다. 그러므로 주어진 링크 간의 신뢰성과 메모리 오류검사가 완벽히 보장되지 않기 때문에, 종단간의 데이터 전송 서비스가 오류검사를 제공한다면, UDP는 종단간의 트랜스포트 계층에서 오류검사를 제공해야만 합니다.   
+               - UDP는 오류검사를 제공하지만, 오류를 회복하기 위한 어떤 일도 하지 않습니다.   
+
+      - __DNS가 UDP를 사용하는 어플리케이션 계층 프로토콜의 예__      
+         1. DNS 질의(Query)를 생성할 때, DNS 질의 메시지를 작성하고 UDP에게 메시지를 넘겨줍니다.   
+         2. 목적지 쪽에서 동작하는 UDP와 송신 측 UDP는 어떠한 Handshake도 수행하지 않고 메시지에 헤더 필드만 추가한 후 최종 세그먼트를 네트워크 계층에 넘겨준다.   
+         3. 네트워크 계층은 UDP 세그먼트를 데이터그램으로 캡슐화하고 네임(name)서버에 데이터그램을 송신합니다.   
+         4. 이 때 질의하는 호스트(송신쪽)에서의 DNS 애플리케이션은 질의에 대한 응답을 기다립니다.   
+         5. 만약 질의 호스트가 응답을 수신하지 못하면, 질의를 다른 네임서버로 송신하거나 요청한 애플리케이션으로 응답할 수 없다는 것을 통보   
+
+      - __TCP보다 UDP 방식으로 어플리케이션 개발하는 이유__   
+         - __애플리케이션 레벨이 데이터 송신에 대해서 정교한 제어를 할 수 있습니다.__   
+            UDP 하에서는 데이터를 UDP에게 전달되자 마자 UDP가 데이터를 세그먼트로 만들고, 즉시 그 세그먼트를 네트워크 계층으로 전달합니다. 이에 반해서 TCP는 혼잡제어 메커니즘(Congestion Control)을 가지고 있습니다. Congestion Control 기능은 호스트들 사이에 링크가 과도하게 혼잡해지면 TCP 송신자를 조절합니다. 또한 목적지가 세그먼트의 수신여부를 확인응답(ACK)할 때까지 총 시간이 얼마나 걸리든 상관없이 신뢰적인 전달을 보장하기 위해 세그먼트 재전송을 계속할 것입니다. 그러나 실시간(Real-time) 애플리케이션은 종종 최소전송률만을 요구하고, 지나치게 지연되는 세그먼트 전송을 원하지 않습니다. 또한 조금의 데이터 손실은 허용할 수 있으므로 TCP의 서비스 모델은 이들 애플리케이션의 요구와 맞지 않습니다.   
+
+         - __연결 설정 X__      
+            TCP는 3-way handshake를 사용하는 반면에 UDP는 형식적인 예비동작이 없습니다. 그러므로 UDP는 연결을 설정하기 위한 어떤 지연도 없습니다.   
+         - __연결 상태 X__   
+            TCP는 연결 상태를 유지하기 위한 수신버퍼, 송신버퍼, congestion control 파라미터, sequence number, ACK number 파라미터를 포함   
+            UDP는 연결상태를 유지하지 않으므로 이 파라미터 중의 어떤 것도 기록하지 않습니다.   
+            그래서 일반적으로 특정 애플리케이션에 할당된 서버는 애플리케이션이 TCP보다 UDP에서 동작할 때 좀 더 많은 클라이언트를 수용할 수 있습니다.   
+         - __작은 패킷 헤더 오베헤드__   
+            TCP는 20바이트의 헤더 오버헤드   
+            UDP는 8바이트의 헤더 오버헤드   
+            
+## OSI 7 Layer    
+   - 네트워크 통신에서 생기는 여러가지 충돌 문제를 완화하기 위하여, 국제표준기구(ISO)에서 표준화된 네트워크 구조를 제시한 기본 모델로 통신망을 통한 상호접속에 필요한 제반 통신절차를 정의하고 이 가운데 비슷한 기능을 제공하는 모듈을 동일계층으로 분할하여 모두 7계층으로 분할한 것   
+   - __Application 계층(7-응용 계층)__   
+      - __프로토콜__   
+         - DHCP, DNS, FTP, HTTP    
+         - 서비스 제공   
+      - __기능__   
+         - __Message = head + data(원하는 요청)__   
+         - 사용자가 네트워크에 접근할 수 있도록 해주는 계층   
+         - 사용자 인터페이스, 전자 우편, 데이터베이스 관리 등 서비스 제공   
+         - ex) HTTP, SSH, SMTP, FTP, Telnet   
+         
+   - __Presentation 계층(6-표현 계층)__   
+      - __프로토콜__   
+         - JPEG, MPEG, SMB, AFP   
+         - 이해할 수 있는 포맷으로 변환   
+      - __기능__   
+         - 입력 또는 출력되는 데이터를 하나의 표현 형태로 변환한다.   
+         - 필요한 번역을 수행하여 두 장치가 일관되게 전송 데이터를 서로 이해할 수 있게 한다. = 확장자(jpg, gif, mpg...)   
+         - 코드 변환, 데이터 암호화, 데이터 압축, 정보 형식 변환, 문맥 관리 기능   
+         
+   - __Session 계층(5-세션 계층)__   
+      - __프로토콜__   
+         - SSH, TLS   
+      - __기능__   
+         - Port 연결   
+         - 통신장치 간 상호작용 설정을 유지하며 동기화한다.   
+         - 사용자간 포트연결(세션)이 유효한지 확인하고 설정한다.   
+         - 체크점(= 동기점) : 오류가 있는 데이터의 회복을 위해 사용하는 것으로 소동기점과 대동기점이 있다.   
+         
+   - __Transport 계층(4-전송 계층)__   
+      - __프로토콜__   
+         - TCP, UDP, ARP   
+         - 장비 : 게이트웨이   
+      - __기능__   
+         - __Segment = head(출발지 port, 목적지 port 필드 등) + data(Message)__   
+         - 전체 메세지에 대한 end-to-end 간 제어와 에러 관리   
+         - 패킷들의 전송이 유효한지 확인하고 실패한 패킷은 다시 보내는 등 신뢰성있는 통신 보장   
+         - 전송 연결 설정/해제, 데이터 전송    
+         - 주소 설정, 다중화, 오류제어, 흐름제어   
+         - ex) TCP, UDP   
+         
+   - __Network 계층(3-네트워크 계층)__   
+      - __프로토콜__   
+         - IP, ICMP, IGMP   
+         - 장비 : 라우터   
+      - __기능__   
+         - __Packet = head(IP) + data(Segment)__   
+         - 각 Packet이 시작 지점에서 최종 목적지까지 성공적으로 전달된다.   
+         - 네트워크 연결 관리, 데이터의 교환 및 중계   
+         - 경로 설정, 트래픽 제어, 패킷 전송   
+         - ex) IP   
+         
+   - __Data link 계층(2-데이터링크 계층)__   
+      - __프로토콜__   
+         - MAC, PPP   
+         - 장비 : 브리지, 스위치   
+      - __기능__   
+         - __Frame = head + data(Packet)__   
+         - 3계층(네트워크 계층)에서 정보를 받아 MAC 주소와 제어정보를 시작과 끝에 추가   
+         - 오류없이 한 장치에서 다른 장치로 Frame 전달   
+         - MAC 주소를 이용하여 정확한 장치로 정보 전달   
+         
+   - __Physical 계층(1-물리 계층)__   
+      - __프로토콜__   
+         - Ethernet, RS-232C       
+         - 장비 : 허브, 리피터   
+      - __기능__   
+         - 물리적 매체를 통해 비트흐름을 전송하기 위해 요구되는 기능들을 조정   
+         - 네트워크의 두 노드를 물리적으로 연결시켜주는 신호방식을 다룬다.   
+         - 케이블, 연결 장치 등과 같은 기본적인 물리적 연결기기의 전기적 명세를 정한다.   
+
+ ## 라우팅과 포워딩     
+   - __라우팅__   
+      - __포워딩 테이블을 만들어 주는 것__   
+      - __송수신 측 간의 전송 경로 중에서 최적 패킷 교환 경로를 설정하는 기능__   
+      
+   - __포워딩(Forwarding)__   
+      - __Packet header에 들어있는 목적지 주소가 라우터 테이블(포워딩 테이블)을 참조하여 올바른 목적지를 찾아 전달하는 것__    
+
+### 관련 내용         
+
+  - __Routing__   
+      - __포워딩 테이블을 만들어 주는 것__   
+      - __포워딩 테이블에 모든 주소를 넣을 경우 검색하기도 복잡하고 관리하기도 힘들기 때문에 주소 범위를 정하여 관리한다.__   
+      - __Hop__   
+         - 패킷이 하나의 라우터에서 다른 라우터로 이동하는 한 구간   
+      - __포워딩 테이블 종류__   
+         - __Longest prefix matching__   
+            - 목적지 주소와 매칭되는 가장 긴 prefix 주소에 따라 링크를 연결한다.   
+
+      - __Routing 알고리즘__   
+         - __목적지까지 최소 비용 경로를 찾는 알고리즘__   
+         - __접근 방식 2가지__   
+            - __Link state 알고리즘__   
+               - OSPF를 구현할 수 있다.   
+               - 각 라우터가 모든 네트워크 정보를 알고 있는 경우(Global)   
+                  - 모든 라우터가 자신의 Link state를 broadcast 하여 서로 같은 모든 정보를 알 수 있게 한다.   
+                     - 모든 네트워크가 아닌 자신이 속해있는 네트워크에만 broadcast를 한다.   
+
+                  - 메인 서버가 아니라 각 라우터들이 다익스트라 알고리즘을 사용하여 출발지부터 모든 라우터에 대한 최단경로를 찾아내기 위한 자신 고유의 포워딩 테이블을 만들어낸다.   
+                     - n개의 노드가 있을 때, 모든 노드를 확인해야하기 때문에 n(n+1)/2번의 비교가 필요하므로 O(n^2)의 시간이 걸린다.   
+                     - 더 효율적으로 구현하면 O(nlogn)이 가능하다.   
+                     - oscillation possible   
+                        - 주어진 트래픽의 양의 따라 새로운 경로를 찾아내는 과정을 반복하면서 링크를 계속 변경한다.   
+
+            - __Distance vector 알고리즘__   
+               - RIP를 구현할 수 있다.   
+               - 이웃해있는 라우터에 대해서만 정보 교환을 통해 알고 있는 경우(Decentralized)    
+                  - __벨만포드 알고리즘을 사용하여 최단 경로를 찾아낸다.__   
+                     - 자신의 distance vector estimate를 이웃들에게 보낸다.   
+
+                  - __iterative, asynchronous__   
+                     - local iteration이 발생   
+                        - local link cost가 변경될 경우   
+                        - 이웃으로부터 Distance Vector 업데이트 메세지 받을 경우   
+                           - 이웃으로부터 Distance Vector 업데이트 메세지 받으면, B-F equation을 이용하여 자신의 Distance Vector 업데이트   
+                  - __distributed__   
+                     - 각 노드들은 자신의 Distance Vector가 변경될 때 이웃에게 알린다.      
+                  - __link cost changes__   
+                     - __x-y : 4, y-z : 1, x-z : 50일 경우__
+                     - __link cost가 감소한 경우 업데이트가 빠름__   
+                        - x-y : 4 -> 1, y-z : 1, x-z : 50   
+                        - 변경된 link cost값을 Distance vector에서 변경해주면서 업데이트 하면 된다.   
+                        - t0 : y가 link cost 변화를 탐지하고 자신의 DV를 업데이트한 후, 이웃들에게 이를 알림   
+                        - t1 : z가 y로부터 업데이트 정보를 받고, 자신의 테이블을 업데이트. x로의 최소 비용을 업데이트 한 후, 이웃들에게 자신의 DV 보냄   
+                        - t2 : y가 z로부터 업데이트된 정보로를 받고, 자신의 테이블을 업데이트. y의 최소 비용 테이블은 변하지 않았으므로 z에게 메시지를 보내지 않음 => 업데이트 끝!   
+
+                     - __link cost가 증가한 경우 업데이트가 느림__   
+                        - x-y : 4 -> 60, y-z : 1, x-z : 50   
+                        - 어떤 목적지로 가는 도중 중간에 거쳐가는 노드에게도 Distance vector값을 전달할 경우 자기 자신을 다시 거쳐가는 경우를 모르기 때문에 Distance Vector 값이 계속해서 변경될 가능성이 있다.   
+                           - z가 x로 갈 때, y를 통한 경로보다 x로 바로 가는 것이 cheap하다는 것을 깨달을 때까지 44번의 반복이 발생 -> 'count to infinity' 문제   
+                        - 그러므로 중간에 거쳐가는 노드에는 변경된 값을 넘겨주지 않고 무한대 값을 넘겨준다.   
+                        - __poison reverse__를 이용해 문제 해결  
+                           - 만약 Z가 X를 얻기 위해 Y를 통해 간다면 z에서 y 거리를 ∞ 주고 업데이트 하도록 함   
+                           - 그 이후 다음 단계에서 Distance vector를 검사한다.   
+                           - 즉, 업데이트된 곳 반대를 ∞로 설정해주고 업데이트하면 빠르다.   
+                           - poisoned reverse가 infinity problem을 대부분 해결하기는 하나, 세 개 이상의 이웃 노드를 포함한 루프인 경우 감지하지 못한다.   
+                  - __즉, 이웃으로부터 Distance Vector list를 받거나 링크 cost값이 변경되면 B-F equation을 이용하여 자신의 Distance Vector 계산한 뒤 업데이트가 되었다면 이웃에게 전달한다.__   
+            - __Link state , Distance vector 알고리즘 둘 다 하나의 네트워크에 국한되었을때 내부를 위한 라우팅 알고리즘이다.__   
+
+         - __Hierarchical routing 알고리즘__   
+            - 6억개의 목적지가 있다면?   
+               - 모든 목적지를 라우팅 테이블에 저장할 수 없음   
+               - 라우팅 테이블의 변경은 링크를 벅차게 함   
+
+            - __Administrative Autonomy__   
+               - internet = network of networks   
+               - 각 네트워크 admin은 자신의 네트워크 내에서 라우팅을 컨트롤하기를 원한다.   
+
+            - __Autonomous Systems(ASes)__
+               - __AS: LG U+, SKT, KT와 같은 자치권을 가진 시스템으로 각자 고유의 AS 번호를 가진다.__   
+                  - AS Numbers(ASNs)   
+                     - 16 bit 값   
+                     - 64512 ~ 65535는 private   
+                     - 현재 11000개 이상이 사용되고 있다.   
+               - __AS간 관계가 존재__   
+                  - 비용과 관련   
+                  - __Cutomers and Providers Relationship__   
+                     - Customer는 인터넷 접속을 위해 Provider에게 비용 지불하고 Privider는 Customer에게 서비스 제공      
+                     - ex) 학생 등록금 <-> 대학교 AS <-> SKT   
+                  - __Peering Relationship__   
+                     - 비슷한 계층 AS가 있을 경우에는 서로 비용을 지불하지 않는다.   
+
+               - 같은 AS 내의 라우터는 같은 라우팅 알고리즘을 사용
+               - 라우터를 영역으로 통합   
+               - __Inter-AS 라우팅 프로토콜__   
+                  - AS 사이의 라우팅 알고리즘   
+                     - __BGP__   
+                        - Routing Gateway Protocol   
+                        - AS 정책에 기반   
+                  - __ASPATH__   
+                     - 자신의 Prefix(AS 번호)를 다른 AS에 광고하면서 목적지까지 전달됨   
+                     - 각 AS를 거칠때마다 자신의 AS 번호를 ASPATH 추가시키고 목적지에서는 경로 횟수 또는 비용 등 정책에 따라 경로를 선택할 수 있다. 일반적으로 AS는 자신이 갑이 되는 위치 즉, 자신이 비용을 제일 많이 받을 수 있는 경로를 선택한다.   
+
+               - __Intra-AS 라우팅 프로토콜__   
+                  - Interior Gateway Protocols (IGP)라고도 알려짐   
+                  - AS 내의 라우팅 알고리즘   
+                     - 최단경로가 목적   
+                     - __RIP__   
+                        - Routing Information Protocol   
+                        - Distance vector 알고리즘 : 이웃의 더 좋은 정보를 이용하여 업데이트    
+                        - RIP table processing   
+                           - RIP 라우팅 테이블은 route-d라 불리는 application 계층 프로세스에 의해 관리된다.   
+                           - advertisement는 주기적으로 반복해서 UDP 패킷을 보냄   
+
+                     - __OSPF__   
+                        - Open Shortest Path First  => 빠르고 정확   
+                        - Link state 알고리즘 : 다익스트라 알고리즘으로 경로 연산   
+                        - OSPF advertisement는 이웃 당 하나의 엔트리를 전달   
+                        - advertisements는 전체 AS에게 flood   
+                           - TCP나 UDP 대신에 IP로 직접 OSPF 메시지 전달   
+                        - IS-IS routing protocol: OSPF와 거의 동일   
+                        - OSPF "advanced" features (not in RIP)   
+                           - security: 모든 OSPF 메시지는 인증됨(authenticated) -> 악의적인 침입을 막기 위해   
+                           - 여러개의 같은 cost 경로를 허용 (RIP는 하나의 경로만 허용)   
+                              - cost가 같은 경로 여러 개가 있으면 나눠서 보냄 => 속도↑   
+                           - 각 link에 대해 서로 다른 TOS에 대한 여러 cost 행렬 (예: best effort ToS에 대해 낮음으로 설정된 위성 링크 비용, 실시간 ToS에 대해 높음)   
+                           - 통합된 uni-cast 와 multicast 지원   
+                              - Multicast OSPF (MOSPF)는 OSPF 기반의 동일한 토포로지 데이터를 사용한다   
+                           - 계층적인 OSPF in large domains   
+                        - __Hierarchical OSPF__   
+                           - two-level hierarchy: local area, backbone   
+                              - link-state advertisements는 영역 안에서만 일어남   
+                              - 각 노드에는 자세한 영역 토폴로지가 있다.   
+                              - 다른 지역은 net로 가는 방향(최단 경로)만 안다   
+                              - __area border routers__   
+                                 - 자신의 영역 안의 nets까지의 거리를 요약하여 다른 영역 경계 라우터에게 알린다.   
+                                 - __backbone routers__    
+                                    - 백본으로 제한된 OSPF 라우팅을 실행   
+                                    - __boundary routers__   
+                                       - 다른 AS에 연결   
+
+         - __Broadcast, Multicast routing__   
+            - 출발지에서 모든 다른 노드에게 패킷 전달   
+            - source 중복은 비효율적이다.   
+
+            - __In-network duplication__   
+               - __Flooding__   
+                  - 노드가 broadcast 패킷을 받으면, 복사본을 모든 이웃에게 보낸다.   
+                     - 문제점: cycles & broadcast storm   
+                  - 즉, 나를 제외한 나머지한테 보냄   
+               - __Controlled flooding__   
+                  - 이전에 같은 패킷을 broadcast한 적이 없는 경우에만 패킷을 broadcast한다.   
+                     - 노드는 이미 broadcast한 패킷의 트랙을 저장한다.   
+                     - 또는 reverse path forwarding (RPF): 출발지와 노드 사이의 최단 경로에 도달한 경우에만 패킷 forward   
+                  - 즉, 나와 이전에 보낸 사람 제외하고 보냄 = broadcasting   
+               - __Spanning tree__   
+                  - 어떤 노드로부터 중복된 패킷을 받지 않는다.   
+                  - 노드는 스패닝 트리를 따라서만 카피하고 forward한다.   
+ 
+## ARQ   
+   - __ARQ(Automatic Repeat reQuest) protocol__   
+      - __에러 검출 부호를 사용하여 데이터의 에러를 자동적으로 발견하여 그 재송을 요구하는 방식__   
+      - __Error 검사__
+         - checksum bits를 추가   
+      - __Feedback__   
+         - ACKs(Acknowledgements): 수신자가 Packet을 정확하게 받았다고 송신자에게 알려줌   
+         - NAKs(Negative acknowledgements): 수신자가 Packet에 Error가 있다고 송신자에게 알려줌   
+      - __Re-transmission__   
+         - 송신자가 NAK를 보낸 곳에 Packet을 재전송한다.   
+         
+   - __ARQ 방식__   
+      - __Stop and wait ARQ__   
+         - 하나의 Packet 송신할 때마다 수신자로부터 ACK 또는 NAK을 받는데 ACK을 받을 경우 다음 Packet 전송하고 NAK일 경우 현재 Packet 재전송   
+            - 송신자가 ACK 또는 NAK을 제대로 받지 못하게 되기 때문에 보냈던 데이터를 다시 수신자에게 보내게 된다. 이러한 경우 수신자는 다시 받은 데이터가 새로운 데이터인지 아니면 중복된 데이터인지 알 수 없기 때문에 __Sequence Number를 사용하여 Packet을 구분__ 하게 할 수 있다.    
+               - 송신자는 Sequence Number를 각 Packet에 추가   
+               - 수신자는 중복된 Packet 무시   
+      - __Continuous ARQ__   
+         - 여러 Packet을 연속하여 송신하고 수신자는 error가 있는 Packet을 받은 경우 해당 Packet에 대한 Sequence Number와 NAK을 전송한다.   
+            - 송신자는 Error에 해당하는 Packet만 재전송하거나 또는 Error Packet부터 그 뒤에 Packet들까지 다시 연속하여 모두 재전송한다.   
+   - __ARQ Pipelining 방식__     
+      - __송신자의 이용률을 증가시킬 수 있다.__   
+      - __GO-Back-N__    
+         - Window size n만큼 feedback받지 않고 전송할 수 있다.   
+            - Window size n만큼 전송시 하나의 Timer가 켜지고 제한 시간 내 ACK을 받지 못할 경우 모두 다시 재전송한다.     
+            - ex) Timer를 켜고 0,1,2,3,4,5 중 앞 Packet 4개를 보냈는데 0,1이 제대로 전송되어 ACK 0, 1을 받아 4,5를 전송하고 2는 제대로 전송이 안되어 ACK 1을 보내 2를 제대로 받지 못한 것을 알리고 3은 제대로 전송이 됐을 경우에도 3에 대한 값은 무시하고 ACK 1을 보내 2를 제대로 받지 못한 것을 송신자에게 알린다. 이후 4,5도 제대로 전송이 됐을 경우에도 마찬가지로 4,5에 대한 값은 무시하고 ACK 1을 보내 2를 제대로 받지 못한 것을 송신자에게 알린다. 이 과정에서 Time 제한 시간이 다 되면 송신자는 2,3,4,5를 전송한다.   
+            - __즉 Packet loss 일어날 시 n만큼 돌아와서 전부 다시 보낸다.__    
+
+      - __Selective Repeat__   
+         - Window size n만큼 Feedback받지 않고 전송할 수 있다.    
+            - GBN의 전부 재전송하는 비효율을 해결하기 위한 방식   
+            - Window size n만큼 전송시 각 Packet의 Timer가 켜지고 각 Packet의 제한 시간 내 ACK을 받지 못할 경우 ACK을 받지 못한 Packet만 재전송한다.   
+            - ex) 0,1,2,3 Packet 4개를 보냈는데 0에 대한 ACK를 받을 경우 1,2,3,4로의 범위로 바뀌고 4에 대해서 전송하고 Timer를 켜고 1에 대한 ACK를 받을 경우 2,3,4,5의 범위로 바꾸고 5를 전송하고 Timer를 키는데 2에 대한 ACK을 받지 못하고 2에 대한 Timer 제한 시간이 다 된 경우 2를 다시 재전송한다.    
+            - __즉 Packet loss 일어난 Packet만 다시 보낸다.__    
+      
+         
+   - __ARQ를 사용하는 이유__   
+      - 네트워크 계층은 Unreliable Channel이기 때문에 Message error(Packet error), Message loss(Packet loss)가 발생할 수 있는데 전송 계층 네트워크 계층 사이에 RDT(Reliable Data Transfer) protocol을 구현함으로써 데이터를 Reliable하게 전송할 수 있게 하기 위해서이다.   
+         - RDT 내에 ARQ가 있다.   
+         - 전송 계층의 TCP가 Reliable Channel로 데이터를 잘 전송하는 것 같이 보이지만, 실제적으로는 네트워크 계층의 Unreliable Channel 위에 RDT protocol을 구현함으로써 데이터를 Reliable하게 전송할 수 있는 것이다.   
+
+### 관련 내용   
+- __네트워크 계층은 Unreliable Channel이다.__   
+   - __Unreliable을 통해 발생할 수 있는 것__   
+      - Message error(Packet error)   
+      - Message loss(Packet loss)   
+   - __전송 계층의 TCP가 Reliable Channel로 데이터를 잘 전송하는 것 같이 보이지만, 네트워크 계층의 Unreliable Channel 위에 RDT(Reliable Data Transfer) protocol을 구현함으로써 데이터를 Reliable하게 전송할 수 있는 것이다.__   
+   - __stop-and-wait protocol__   
+   - __수신자와 송신자를 명시하기 위해 FSM(Finite State Machines)를 사용__   
+   - __하위 채널이 완벽히 reliable할 경우(RDT1.0)__   
+      - reliable transfer를 위한 어떠한 메카니즘도 필요없다.   
+   - __하위 채널이 packet error(손실 X)를 가질 경우 필요한 메카니즘(RDT2.0)__   
+      - __ARQ(Automatic Repeat reQuest) protocol__   
+         - __Error 검사__
+            - checksum bits를 추가   
+         - __Feedback__   
+            - ACKs(Acknowledgements): 수신자가 Packet을 정확하게 받았다고 송신자에게 알려줌   
+            - NAKs(Negative acknowledgements): 수신자가 Packet에 Error가 있다고 송신자에게 알려줌   
+         - __Retransmission__   
+            - 송신자가 NAK를 보낸 곳에 Packet을 재전송한다.   
+   - __ACK 또는 NAK에 Error가 있을 경우 필요한 메카니즘(RDT2.1)__   
+      - 송신자가 ACK 또는 NAK을 제대로 받지 못하게 되기 때문에 보냈던 데이터를 다시 수신자에게 보내게 된다. 이러한 경우 수신자는 다시 받은 데이터가 새로운 데이터인지 아니면 중복된 데이터인지 알 수 없기 때문에 __Sequence Number를 사용하여 Packet을 구분__ 하게 할 수 있다.   
+      - 송신자는 Sequence Number를 각 Packet에 추가   
+      - 송신자는 ACK 또는 NAK을 제대로 받지 못할 경우 현재 Packet 재전송   
+      - 수신자는 중복된 Packet 무시   
+      - __Packet header에 sequence number를 계속 추가할 경우__   
+         - header의 크기가 커지기 때문에 좋지 않다. header에는 최소한의 필요한 필드로만 구성되야하고 구성되는 필드들도 최소의 크기를 가지는 것이 좋다.   
+         - sequence number를 최소화 시키기 위해서 0, 1 두개만 사용한다.  
+   - __RDT2.1과 같은 기능을 가지지만 NAK을 사용하지 않는 메카니즘(RDT2.2)__   
+      - 수신자가 마지막으로 제대로 받은 Packet의 sequence number를 ACK에 추가하여 송신자에게 전달함으로써 송신자는 ACK의 sequence number를 통해 보낸 Packet의 재전송 또는 새로운 Packet 전송을 한다.   
+   - __Packet loss와 error 둘 다 있을 경우 필요한 메카니즘(RDT3.0)__   
+      - __Timer__   
+         - 일정 시간내에 ACK를 받지 못할 경우 Packet 재전송   
+         - __Timer 짧은 경우__   
+            - loss가 일어날 경우 재전송이 빠르다
+            - Packet 전송이 되는 중이거나 ACK 오고 있음에도 다시 전송하여 중복된 Packet을 다시 보내어 네트워크 오버헤드가 커질 수 있다.   
+            - Sequence number를 통해 수신자가 같은 Packet일 경우 무시(RDT2.2)해버리지만 송신자는 계속 다시 보낼 수 있기 때문에 네트워크에 문제가 생길 수 있다.   
+         - __Timer 길 경우__   
+            - 기다리는 시간이 길기 때문에 네트워크의 오버헤드가 적다.    
+            - loss가 일어날 경우 반응이 느리다.
+   __RDT3.0은 신뢰적인 데이터 전송의 완벽한 기능을 가지지만 Stop-and-wait 방식이기 때문에 고속 네트워크에서 좋은 성능을 보여주지 못한다.__   
+      - __ACK을 기다리지 않고 여러 Packet을 보내는 방식을 사용함으로써 문제 해결 가능__   
+      - __Pipelining__   
+         - __송신자의 이용률을 증가시킬 수 있다.__   
+         - __3가지 고려사항__   
+            - 여러 Packet을 보내기 때문에 0,1이 아닌 __sequence number 범위 증가 필요__   
+            - 여러 Packet을 담을 수 있는 __버퍼 필요__   
+            - Pipelining Packet loss와 delayed Packet에 대한 __오류 회복 방법__   
+         - __2가지 기본적인 방법__   
+            - __GO-Back-N__   
+               - Window size n만큼 feedback받지 않고 전송할 수 있다.   
+                  - Window size n만큼 전송시 하나의 Timer가 켜지고 제한 시간 내 ACK을 받지 못할 경우 모두 다시 재전송한다.  
+                      - Window 안에 있는 Packet들은 수신자가 제대로 Packet을 못받을 경우 재전송해야하기 때문에 송신자 send 버퍼에 반드시 저장되어있어야 한다.   
+               - ACK N: N까지 모두 잘 수신했다는 의미   
+               - 수신자는 순서대로 항상 정확하게 수신한 Packet의 가장 큰 seqence number를 ACK로 송신자에게 보낸다.   
+                  - 잘못된 순서의 Packet을 받을 경우 무시하고 이전에 정확하게 받은 Packet의 가장 큰 seqence number를 ACK로 송신자에게 보낸다.   
+                  - ex) Timer를 켜고 0,1,2,3,4,5 중 앞 Packet 4개를 보냈는데 0,1이 제대로 전송되어 ACK 0, 1을 받아 4,5를 전송하고 2는 제대로 전송이 안되고 ACK 2를 받지 못하고 3는 제대로 전송이 됐을 경우 3에 대한 값은 무시하고 ACK 1을 보내 2를 제대로 받지 못한 것을 송신자에게 알린다. 이후 4,5도 제대로 전송이 됐을 경우에도 마찬가지로 4,5에 대한 값은 무시하고 ACK 1을 보내 2를 제대로 받지 못한 것을 송신자에게 알린다. 이 과정에서 Time 제한 시간이 다 되면 송신자는 2,3,4,5를 전송한다.   
+                  - __즉 Packet loss 일어날 시 n만큼 돌아와서 전부 다시 보낸다.__    
+
+            - __Selective Repeat__   
+               - Window size n만큼 Feedback받지 않고 전송할 수 있다.   
+                  - Window size n만큼 전송시 각 Packet의 Timer가 켜지고 각 Packet의 제한 시간 내 ACK을 받지 못할 경우 ACK을 받지 못한 Packet만 재전송한다.   
+               - ACK N: N을 잘 수신했다는 의미   
+               - 수신자는 정확히 받은 각 Packet에 대해서만 ACK을 송신자에게 보낸다.   
+                  - 받은 Packet은 버퍼에 반드시 저장해야한다.   
+                     - 손실된 패킷 이후 정확히 받은 다른 패킷들은 수신자의 손실된 패킷 자리를 비워놓고 recv 버퍼에 저장해놓은다.   
+                     - 버퍼가 순서대로 꽉 차게 되면 어플리케이션 계층에 넘겨주고 마지막 받은 Packet에 대한 ACK을 송신자에게 보내고 버퍼를 비운다.   
+                  - 0,1,2,3 Packet 4개를 보냈는데 0에 대한 ACK를 받을 경우 1,2,3,4로의 범위로 바뀌고 4에 대해서 전송하고 Timer를 켜고 1에 대한 ACK를 받을 경우 2,3,4,5의 범위로 바꾸고 5를 전송하고 Timer를 키는데 2에 대한 ACK을 받지 못하고 2에 대한 Timer 제한 시간이 다 된 경우 2를 다시 재전송한다.   
+                  - __즉 Packet loss 일어난 Packet만 다시 보낸다.__   
+                  - But, Sequence number가 계속 증가하는데 Sequence number의 값의 크기는 최대한 작게 하는 것이 좋다.   
+                     - __그러므로 Window size가 n일 경우 Sequence number의 범위를 2n으로 할 경우 재전송할 Packet에 대한 혼선없이 전송이 가능하다.__   
+                  - __문제점은 모든 Packet이 Timer를 가져야하기 때문에 Window size가 클 경우 복잡해지기 때문에 잘 사용하지 않는다.__   
+                     - 그래서 __보통 Window를 대표하는 Timer를 하나__ 를 가지고 사용한다.   
+
+## TCP 흐름제어, 혼잡제어   
+   - __흐름 제어__   
+      - __수신자가 받을 수 있는 만큼만 송신자가 데이터 전송하기 위한 제어__   
+      - __수신자의 버퍼가 얼마만큼 비어있는지 송신자에게 알려줘야한다.__   
+         - __Sliding Window__   
+            - 설정한 윈도우 크기만큼 송신 측에서 확인 응답 없이 세그먼트를 전송할 수 있게 하여 데이터 흐름을 동적으로 조절하는 제어 기법   
+            - TCP header의 recv_buff 필드에 저장해서 전송한다.   
+            - 송신자는 수신자의 recv_buff가 비어있는만큼 데이터를 전송한다.   
+               - 보내는 양이 많으면 보내는 속도가 빠르고 보내는 양이 적으면 보내는 속도가 느리다.   
+            - 수신자의 app에서 읽기 버퍼로부터 데이터를 읽지 않을 경우 계속해서 쌓인다.   
+               - 빈 공간이 하나도 없게될 경우 TCP header의 recv_buff에 0 byte를 저장해서 전송한다.   
+               - 송신자는 기다리지 않고 주기적으로 데이터 없이 또는 1 byte를 넣어 의미없는 Segment를 보내어 수신자의 ACK를 받아 수신자의 읽기 버퍼 상태를 확인한다.   
+            - __Window size__   
+               - 한번에 전송할 수 있는 최대 프레임 크기(통상, `바이트 갯수` N)를 의미   
+               - 호스트들은 실제 데이터를 보내기 전에 먼저 “TCP-3-way handshaking”을 통하여 수신컴퓨터의 receive window size에 자신의 send window size를 맞추게 된다.   
+               - 송신측은 순서번호, 수신측은 승인번호(확인응답번호)로 관리   
+               - __수신 Window size(rwnd, Receiving Window)__   
+                  - 수신 버퍼의 여유 용량   
+               - __혼잡 윈도우 크기 (cwnd, Congestion Window)__   
+                  - 네트워크 혼잡을 초래하지 않도록 송신율을 제한하는 (송신) 윈도우 크기   
+               - __TCP에서는 윈도우 크기를 TCP 최대 세그먼트 크기(MSS) 보다 크게 할 수 없다.__   
+               - __실제 윈도우 크기__   
+                  - 실제 송신 윈도우 크기 = min ( cwnd, rwnd )   
+                  - 즉, cwnd 및 rwnd 중 작은 값을 취함   
+               - __흐름 제어__   
+                  - 수신측이 주도적으로 rwnd 값 결정   
+                  - 수신측은 ACK(확인응답)을 보내면서 현재의 수신 윈도우 크기를 함께 보내게 된다.   
+               - __혼잡 제어__   
+                  - 네트워크 혼잡 상황에 따라 cwnd 값 결정   
+            
+   - __혼잡 제어__   
+      - __송신자와 수신자 사이의 네트워크가 수용할 수 있는 만큼만 데이터 전송하기 위한 제어__   
+      __네트워크가 막힐 경우 TCP 데이터가 제대로 전달되지 않아 재전송을 하는 특성 때문에 네트워크를 더 막히게 하여 TCP는 무너지게 된다.__   
+      - 어떻게 Public 네트워크 막히지 않게 할 수 있을까?   
+         - 네트워크가 혼잡할 경우 보내는 데이터의 양을 줄이고 한가할 경우 보내는 데이터의 양을 늘린다.   
+         - 네트워크의 상태를 확인하는 방법   
+            - __Network-assisted__   
+               - 네트워크의 라우터들이 상태를 알려준다.   
+               __라우터들은 데이터를 전송하느라 바쁘기 때문에 이 방법은 이상적인 방법이다.__   
+            - __End-end__   
+               - __현재 인터넷의 구현 방식__   
+               - 호스트가 서로 TCP Segment를 전송하면서 유추하는 방법   
+               - TCP Segment의 ACK를 통해 유추하기 때문에 정확하지 않다.
+      - __Slow start__   
+         - 1개, 2개, 4개 .... 2n개 즉, 수신자로부터 ACK을 받을 경우 보내는 Segment를 2배씩 증가시킨다.   
+      - __Additive increase__   
+         - threshold(한계점)을 넘을 경우 2배씩이 아니라 1씩 증가시켜서 보낸다.   
+      - __Multipicative decrease__   
+         - Packet loss가 일어날경우 window size를 2배 줄이고 Slow start를 다시 처음부터 시작한다.   
+            1. __TCP Tahoe__   
+               - 80년대의 TCP로 첫번째 TCP 버전   
+               - threshold를 Window size/2로 설정   
+            2. __TCP Reno__   
+               - TCP 두번째 버전으로 __현재 인터넷에서 사용__   
+               - Packet loss이 일어나는 상황   
+                  1. timeout   
+                     - threshold를 Window size/2로 설정하고 Window size를 threshold로 설정 후 1씩 증가하며 다시 시작   
+                  2. Fast Retransmit(같은 ACK를 4번 받을 경우)   
+                     - threshold를 Window size/2로 설정하고 Window size를 1 MSS로 설정 후 시작. 즉, Slow start부터 다시 시작   
+                  - __timeout 상황이 더 위험한 상황이다.__      
+         - __네트워크는 공유 자원이기 때문에 해당 네트워크에 접근하는 모든 호스트는 window size를 2배 줄여야 하고 threshold 이후에는 항상 1씩 증가한다.__   
+      
+      - __TCP Fairness__   
+         - 같은 네트워크를 사용하는 아주 많은 TCP 세션들이 존재한다. (같은 라우터를 사용)   
+         - K개의 TCP 세션이 대역폭 R의 같은 라우터를 사용한다면, 각각의 세션은 R/K의 평균 전송률을 가진다.   
+            - K개의 TCP가 Additive increase를 증가시켜 전송량을 늘리고 R을 초과할 경우 Multipicative decrease하고 다시 Additive increase를 하는 과정을 반복함으로써 각각의 TCP 세션이 공평한 전송률은 가지게 된다.   
+         - TCP끼리의 경쟁이기 때문에 TCP를 많이 연 사람이 더 높은 전송률을 가지게 된다.    
+
+      - __MSS(Maximum Segment Size)__   
+         - 500 Byte   
+         - Window size가 1 MSS로 설정되어있다. 그러므로 처음에는 하나의 Segment만 전송할 수 있고 이에 대한 ACK를 받을 시 2배씩 증가한다.   
+      - __전송률 = Window size / RTT__     
+         - Window size가 더 변동이 심하기 때문에 전송률은 Window size(CongWin)에 좌우된다.   
+         
+      __즉 송신자가 보내는 속도는 수신자의 버퍼 상태와 네트워크 상태에 의해 결정되는데 더 좋지 않은 쪽에 맞춰서 데이터를 전송해야 한다.__      
+
+## TCP 타이머 종류   
+   - __재전송 타이머(Retransmission timer)__   
+      - 손실된 세그먼트를 재전송하기 위해서, 한 세그먼트를 보내고 그 세그먼트의 ACK을 기다리는 시간에 대한 타이머   
+      - 매 세그먼트 전송 시 마다 가동   
+         - 보통 3~6초, 권고 1초   
+      - 시간 내에 ACK을 받지 못할 경우 재전송   
+      - RTT(Round Trip Time) 통해 RTO(Retransmission Timeout) 도출(RTO = RTTs + 4*RTTd)   
+         - RTO 값은 상황에 따라 유동적    
+         - ICMP 통해 RTT 값 측정 가능   
+      
+   - __영속 타이머(Persistent timer)__   
+      - 송신자가 Packet을 보냈는데 수신자의 receive buffer가 Full인 상태일 경우 수신 TCP의 Window size = 0으로 하여 ACK를 보내 송신자가 수신자의 receive buffer 상태를 확인하는데 사용하는 타이머    
+      - 즉, 수신 TCP Window size가 0임을 알려올 때 필요한 타이머   
+      
+      - __Pesistent timer를 사용하지 않으면 발생할 수 있는 문제점__   
+         - TCP에서 ACK의 ACK은 전송하지 않기 때문에, ACK이 손실되었을 경우, 즉 수신 TCP에서 새로운 Window size를 알리는 ACK이 손실되었을 경우 문제가 발생   
+         - 수신 TCP는 송신 TCP가 세그먼트를 전송하기를 기다리고, 송신 TCP는 수정된 Window size를 알리는 ACK을 기다리게 된다.   
+         - 즉, 교착상태(deadlock)에 빠지게 된다.   
+      - __송신 TCP가 윈도우 사이즈 0인 ACK을 수신하면, persistence timer가 시작된다.   
+         - 이 타이머가 만료되면, 송신 TCP는 Windows Probe Packet이라는 특수한 세그먼트(1byte) 전송한다.   
+            - probe는 순서번호를 가지고 있지만, ACK되지 않고, 수신 TCP 순서 번호 계산에서도 무시된다.   
+            - 오직 수신 TCP으로부터 ACK 응답(rwnd)을 받기위해서 사용한다.       
+         - __Probe__   
+            - 메시지의 전달 가능성 확인 등, 네트워크의 상태에 관하여 무엇인가를 알아내기 위한 목적으로 이루어지는 행동, 또는 사용되는 객체   
+            - ex) Ping, 메시지의 도착지가 실제로 존재하는지를 알기 위해, 단순히 내용이 없는 메시지를 보내는 것을 들 수 있다.  
+      
+   - __연결유지 타이머(Keep-alive timer)__   
+      - TCP 사이에 오랜 기간 휴지(idel) 상태에 있는것을 방지하기 위해 사용되는 타이머   
+      - Server와 Client 연결간에 데이터가 오고가지 않을 경우, 서버에서 연결이 유효한지 체크하는 타이머   
+         - Server는 Client로부터 세그먼트 받을때마다 타이머 초기화한다. (보통 7200초(2시간))   
+         - 시간 내에 데이터를 받지 못할 경우 Server는 Client에게 Probe Packet을 75초 간격 9번 전송한다.   
+         - Server가 probe의 ACK을 받지 못할 경우 Client와 연결 종료   
+      
+   - __시간대기 타이머(Time-waited timer)__   
+      - 연결 종료 과정에서 2MSL(maximum segment lifetime)만큼 TIME-WAIT상태에 들어가서 대기했다가 연결을 종료하기 위해서 사용하는 타이머 
+         - 보통 4분   
+         - TCP 세그먼트 존재 시간 = 보통 2분   
+      - 이전 연결 종료 전의 어떤 패킷이 늦게, 중복지연 도착하는 것을 방지   
+      - __과정__   
+         - Client application에서 Client TCP로 Passive close(close())를 수행할 것을 알림   
+         - Client TCP에서 FIN을 Server TCP로 전송하고 FIN-WAIT-1 상태로 전이   
+         - Server TCP에 전송했던 FIN의 ACK을 받으면 FIN-WAIT-2 상태로 전이   
+         - Server TCP로 부터 FIN이 전송되면 이 FIN에 대한 ACK을 전송하고 TIME-WAIT상태로 전이하고 타이머 작동       
+         - 2MSL(maximum segment lifetime) 후에 타이머가 끝나고 연결은 종료   
+      - __타이머 사용하는 이유__   
+         - Server가 보낸 FIN에 대한 ACK이 손실(lose)되면 서버는 계속 FIN을 보내게 되는데 Client가 TIME-WAIT상태 없이 바로 종료를 하면, 이 FIN을 받지 못할 것이고, 연결은 정상적으로 종료 될 수 없다.   
+            - 그러므로 Client가 TIME-WAIT상태에서 FIN을 받으면 다시 ACK을 전송하고 이 타이머를 재가동 한다.   
+            
+         - Client가 TIME-WAIT없이 바로 종료 되면, 방금 close된 socket과 동일한 socket주소를 가지는 연결이 생길 수 있는데 Server는 이전 연결과 새로운 연결을 구분하기 힘들기 때문에 세그먼트가 꼬일 수 있다.   
+            - 그러므로 2MSL이라는 충분한 시간을 두어 새로운 client가 이전 연결과 같은 소켓주소를 못쓰게 한다.   
+            
+## GET, POST       
+
+
+## 네트워크 주소 체계   
+
+
 
 
 
