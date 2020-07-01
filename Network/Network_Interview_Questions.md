@@ -16,8 +16,8 @@
 * [TCP 타이머 종류](#tcp-타이머-종류)   
 * [GET, POST](get-post)   
 * [:star:네트워크 주소 체계 - Line, Naver](#네트워크-주소-체계)   
-* [](#)   
-* [](#)   
+* [Packet switching, Circuit switching](#packet-switching-circuit-switching)   
+* [NAT](#nat)   
 * [](#)   
 * [](#)   
 * [](#)   
@@ -1159,12 +1159,223 @@
             - 그러므로 2MSL이라는 충분한 시간을 두어 새로운 client가 이전 연결과 같은 소켓주소를 못쓰게 한다.   
             
 ## GET, POST       
-
+   - __GET__   
+      - 어떠한 정보를 가져와서 조회하기 위해서 사용되는 방식    
+         - 서버의 어떤 값이나 내용, 상태 등을 바꾸지 않는 경우에 사용된다.   
+      - URL에 변수(데이터)를 포함시켜 요청한다.   
+         - URL 뒤에 ? 마크를 통해 URL의 끝을 알리고, Key-Value의 쌍으로 인수 앞에 &을 붙여 구분하며, 글자수는 255자로 제한된다.   
+      - URL에 포함되기 때문에 HTTP 패킷의 Header(헤더)에 데이터가 포함되어 서버에 요청된다.   
+         - Body는 보통 빈 상태로 전송된다.(HTTP 패킷의 Body)    
+         - Header안에 Body의 데이터를 설명하는 Content-type 헤더 필드도 들어가지 않는다.    
+      - URL에 데이터가 노출되어 보안에 취약하다.   
+         - ex) `www.google.com/login?id=seongbeen&pw=123456` 과 같이 ?으로 URL의 끝을 알리고 id(Key)의 값(Value)을 seongbeen, pw(Key)의 값(Value)을 123456으로 전송하여 개인정보 노출    
+      - 전송하는 길이에 제한이 있다.   
+         - URL의 길이가 정해져 있기 때문이다.       
+      - 캐싱할 수 있다.   
+         - 데이터를 노출시키는 경우는 개인정보가 포함되지 않는 상황에서 캐싱을 하여 속도를 높이거나 즐겨찾기를 편리하기 위해 사용되는 경우가 많다.   
+      - 요청 후 멱등성을 가지며, 조작 대상의 자원의 상태를 변화시키지 않아 안정적이다.   
+         - 멱등성(idempotence): 연산을 여러 번 적용하더라도 결과가 달라지지 않는 성질   
+      
+   - __POST__   
+      - 값이나 상태를 추가 또는 수정하기 위해서 사용하는 방식   
+         - ex) DB에 저장/수정 시에 DB의 값이 변경되게 하는 경우에 사용된다.   
+      - URL에 데이터를 노출하지 않고 HTTP 패킷의 Body에 넣어 요청한다.
+      - 데이터를 Body(바디)에 포함시킨다.   
+         - Header안에 Body의 데이터를 설명하는 Content-type 헤더 필드도 들어가고 어떤 데이터 타입인지 명시해야 한다.    
+      - URL에 데이터가 노출되지 않아서 기본 보안은 되어있다.   
+      - 전송하는 길이에 제한이 없다.   
+         - 데이터를 Body에 포함시켜 길이에 제한은 없지만 Time out이 있어 클라이언트에서 페이지를 요청하고 기다리는 시간이 존재한다.   
+      - 캐싱할 수 없다.   
+         - URL에 데이터가 노출되지 않으므로 즐겨찾기나 캐싱이 불가능하지만 쿼리스트링(문자열)데이터 뿐만 아니라, 라디오 버튼, 텍스트 박스와 같은 객체들의 값도 전송이 가능하다.   
+      - 내부의 구분자가 각 파라미터를 구별하여 서버가 해석하므로 속도가 GET에 비해 느리다.   
+      - PUT이나 DELETE 메소드와 같은 역할 수행이 가능하다.   
+         
+   - __GET과 POST의 차이__   
+      - 보안, 전달 형식, 전달할 수 있는 데이터의 양   
+      
+   - __POST 방식이 GET 방식보다 보안 측면에서 더 좋은가?__   
+      - POST든 GET이든 보내는 데이터는 전부 클라이언트 측에서 볼 수 있다. 단지 GET 방식은 URL에 데이터가 표시되어 별다른 노력없이 볼 수 있어서지, 두 방식 전부 보안을 생각한다면 암호화 해야 한다.   
+      
+   - __GET 방식이 POST 방식보다 속도가 빠른가?__    
+      - 빠르다. 이유는 GET 방식의 요청은 캐싱 때문에 빠른 것이다.   
 
 ## 네트워크 주소 체계   
+   - __IP 주소(IPv4)__    
+      - __고유한 32bit 숫자__   
+      - __가지고 있는 문제점__   
+         - 주소 공간 부족   
+         - 보안   
+      - 8bit 4부분으로 나누어져서 각 부분이 10진수로 변환되어 255.255.255.255 처럼 마침표(.)로 구분하여 표현된다.
+      - __호스트의 들어있는 네트워크 인터페이스를 가르키는 주소__   
+      - __네트워크 인터페이스 카드를 여러 개 가질 경우 여러 개의 IP를 가질 수 있다.__    
+         - ex) 라우터   
+            - 인터페이스를 여러 개 가지고 있기 때문에 여러 개의 IP를 가진다.   
+      - __IP를 무작위로 배정하지 않는 이유__   
+         - 라우터의 forwarding 테이블이 너무 커져서 검색이 어려워질 수 있기 때문이다.   
+      - __현재 IP주소를 배정하는 방법__   
+         - __계층화__   
+            - Network(= Prefix = Subnet) 24 bit, Host 8 bit 로 나눠진다.   
+               - Network을 나타낼때는 /24로 표현한다.   
+               - ex) IP 주소: 12.34.158.5 일경우 Network: 12.34.158.0/24   
+            - IP주소는 항상 24 bit Subnet Mask와 같이 다닌다.   
+               - Subnet mask를 통해 어디까지가 Network이고 Host인지 구별할 수 있다.   
+                  - ex) IP 주소: 12.34.158.5 / Subnet mask: 255.255.255.0 를 AND 연산을 할 경우 Network 12.34.158.0만 알아낼 수 있다.   
+               - Subnet으로부터 같은 Network에 속한 호스트들을 알아낼 수 있다.   
+               - 같은 Network에 속한 호스트들은 같은 prefix를 가지기 때문에 라우터의 Forwarding 테이블이 단순해져 확장성(Scalability)이 증가된다.   
+               - 라우터를 업데이트 할 필요없이(Forwarding table entry 추가 필요 x) 같은 Prefix를 가진 새로운 호스트를 쉽게 추가할 수 있다.   
+                  - 라우터의 Forwarding table entry는 목적지 IP 주소가 매칭되는 prefix에 매핑하여 forwarding하기 때문이다.   
+
+      - __과거 Class에 따른 IP 주소 배정__   
+         - __Class A__   
+            - Network을 나타낼때는 __/8__ 로 표현한다.   
+               - Network는 8bit, Host는 24bit   
+               - 전 세계의 2^8 = 128개의 기관만이 Network주소를 가질 수 있었고 각 기관이 Host 24bit 만큼 모두 사용하지 못하여 공간이 낭비되었다.   
+         - __Class B__   
+            - Network을 나타낼때는 __/16__ 로 표현한다.   
+               - Network는 16bit, Host는 16bit   
+               - Class A과 비슷하다.   
+         - __Class C__   
+            - Network을 나타낼때는 __/24__ 로 표현한다.   
+               - Network는 24bit, Host는 8bit   
+               - 전 세계의 2^24개의 기관이 Network주소를 가질 수 있으나 Host가 8bit이기 때문에 할당할 수 있는 Host의 수가 너무 적었다.      
+      - __Subnets__   
+            - __IP 주소의 같은 Subnet(Prefix)를 가진 장치 인터페이스 집합__   
+            - __라우터를 거치지 않고 물리적으로 서로 접근이 가능한 Host들의 집합__    
+            - __IP 주소__   
+               - Subnet part - 높은 순위 bits    
+               - Host part - 낮은 순위 bits   
+            - __라우터는 여러 개의 인터페이스를 가지므로 여러 개의 IP를 가진다.__   
+               - 각 IP 주소의 prefix가 다 다르다.   
+                  - 라우터는 여러 개의 Subnet에 속하기 때문에(교집합) 다른 곳으로 가려면 라우터를 거쳐서 가야한다.   
+
+
+### 관련 내용   
+   - __Classless Inter-Domain Routing(CIDR)__   
+      - __Class가 가진 문제점을 해결하기 위해 나온 방법__   
+      - __Network를 8 bit 단위로 정하지 않고 32bit내 원하는 만큼 유연하게 __/n__ 로 정할 수 있다.__   
+         - 하나의 기관이 Class C에서 1000개의 Host를 할당하기 위해서는 Network /24를 4개 받아야 한다. Host 8bit * 4개 = 1020개   
+            - 여러 prefix를 가지기 때문에 라우터의 Forwarding table의 크기가 커진다.   
+         - 하나의 기관이 CIDR에서 1000개의 Host를 할당하기 위해서는 Network /22를 1개 받으면 된다. Host 10bit * 1개 = 1024개   
+            - 하나의 prefix만 가지기 때문에 라우터의 Forwarding table의 크기가 줄어든다.   
+
+   - __Longest Prefix Match Forwarding__   
+      - __목적지 기반 forwarding__   
+         - Packet은 목적지 IP 주소를 가진다.   
+         - __라우터는 가장 길게 매칭되는 prefix를 찾는다.__     
+         - Cute algorithm problem: very fast lookup   
+
+   - __IPv4의 문제점을 해결하기 위해 나온 방법__   
+      - __IPv6__   
+         - 1996년에 __IPv4의 주소 공간 부족 문제점을 해결__ 하기 위해서 나왔다.        
+         - __128 bit__   
+         - __IPv6 datagram 구조__    
+            - ver, priority, flow lable   
+            - payload length, next header, hop limit   
+            - source address   
+            - destination address   
+            - data   
+
+            __IPv4 -> IPv6__    
+               - __Tunneling__   
+                  - IPv4와 IPv6를 같이 사용하는 방식   
+                  - IPv6 -> IPv4에게 전송할 때 IPv4 datagram 구조에 맞춰서 전송한다.   
+                     - 즉 IPv6안에 IPv4가 들어있다.   
+
+            __IPv6를 사용하는 것이 더 좋은 방법이기 때문에 전세계에 존재하는 라우터를 IPv4에서 IPv6로 변경하는게 좋지만 IPv4의 환경이 이미 전체적으로 자리잡고 있고 라우터는 각자 소유하고 있기 때문에 모든 라우터를 변경하는 것은 현실적으로 어렵다.__   
 
 
 
+   - __개인이 인터넷을 사용하기 위해서 가지고 있어야 할 필수적인 정보__   
+      - __IP, Subnet mask, Router, DNS__   
+         - ex) __IP__ : 192.168.1.47, __Subnet mask__: 255.255.255.0, __Router__: 192.168.1.1, __DNS__: 192.168.1.1   
+
+   - __ICMP(Internet Control Message Protocol)__   
+      - __네트워크에서 일어나는 정보에 대해서 출발지에게 알려주기 위한 네트워크 자체가 만들어내는 프로토콜__   
+         - __Packet이 목적지에 도착하지 못했을 경우__    
+            - TTL이 0이 되었을 경우   
+            - 목적지의 Port가 닫혀있을 경우   
+            - IP header가 잘못됐을 경우   
+         - __Traceroute__   
+            - 목적지까지 거쳐가는 라우터의 정보를 알려준다.   
+               - TTL 1, 2, 3, 4 등 점차 늘려가면서 각 라우터 순서를 알아낸다.   
 
 
+## Packet switching, Circuit switching    
+   - __데이터 전송 방식__   
+      - __Circuit switching__   
+         - 출발지에서 목적지까지의 길을 미리 지정하고 전송   
+         - 데이터 전송 시작시점부터 종료시점까지 회선을 독점하기 때문에, 중간에 다른 데이터가 선점된 경로로 전달될 수 없다.   
+         ex) 무선 전화   
+         
+      - __Packet switching__   
+         - 출발지에서 목적지까지의 길이 변경되면서 전송   
+         - Router를 거쳐 경로를 바꿔주어 더 빨리 데이터를 전송한다.   
+            - 각 노드에서 라우팅 알고리즘을 사용하여 최단경로로 갈 수 있는 라우터를 선택한다.   
+         - 공용선을 이용하는데 링크(회선)이 바쁘다면 다른 회선을 선택한다.   
+         - 사용자가 보내는 데이터를 패킷 단위로 받아서 올바른 방향으로 전송, 모든 비트가 받아져야지만 다음 방향으로 전송   
+            - 저장 후 전달(Store and Forward transmission) 방식이다.   
+         ex) 인터넷, caravan analogy   
 
+      - __Circuit switching VS Packet switching__   
+         - 1mb/s link가 있고 각 유저가 active일 때 100kb/s를 보낸다고 가정할 경우   
+
+         - Circuit switching 사용 시 최대 10명의 유저까지 지원   
+         - Packet switching 사용 시 받는 대로 보내기 때문에 제한이 없어 일반적으로 많이 사용하지만 10명 이상이 몰릴 경우 문제가 생길 수 있다.   
+
+
+## NAT   
+   - __IPv4 with NAT__   
+      - 2015년에 NAT(Network Address Tranlation)을 사용하여 기존의 IPv4 주소 공간 문제를 해결하였다.   
+      - __NAT__   
+         - IP 주소 재사용을 가능하게 한다.   
+         - __local 네트워크는 오로지 한 개의 IP 주소만 가진다.__   
+            - 바깥 세상과으로부터 독립   
+               - 밖에 알리지 않고 local 네트워크에 있는 디바이스의 주소를 바꿀 수 있다.   
+               - local 네트워크의 주소를 바꾸지 않고 ISP를 바꿀 수 있다.   
+               - local net에 있는 디바이스는 바깥세상에 의해 명시적으로 addressable, visible하지 않는다.   
+            - 하나의 네트워크 망에서 여러 개의 디바이스들이 존재할 때, 그들 각각에게 실제 IP를 하나씩 주게 되면 IP를 너무 많이 필요로 한다.   
+               - IPv4 주소 공간이 부족하다.   
+
+         - __NAT 라우터가 하는 기능__   
+            - __Outgoing datagrams__   
+               - 내부에서 외부로 나가는 datagram의 (출발지 IP 주소, Port 번호)를 (NAT IP 주소, 새로운 Port 번호)로 대체한다.   
+            - __모든 (출발지 IP 주소, 포트 번호)->(NAT IP 주소, 새로운 포트 번호) 변환 쌍을 NAT translation table에 기록한다.__   
+            - __Incoming datagrams__      
+               - 외부에서 내부로 들어오는 datagram의 목적지 필드에 있는 (NAT IP 주소, 새로운 Port 번호)를 NAT translation table 내의 상응하는 (출발지 IP 주소, Port 번호)로 바꾼다.   
+
+         - __외부에서 보기에는 하나의 IP 주소만 있는 것처럼 보인다.__   
+         - __NAT 라우터는 ISP의 DHCP 서버로부터 IP 주소를 얻고, NAT-DHCP-라우터로 제어되는 홈 네트워크의 주소 공간에서 DHCP 서버를 실행하여 컴퓨터에게 주소를 제공__   
+         - __16bit의 port-number field__   
+            - 하나의 LAN 주소로 동시에 2^16 = 약 60,000개의 연결이 가능   
+            - Flow   
+               - [(WAN side addr) 138.76.29.7, 5001]이랑 [(LAN side addr) 10.0.0.1, 3345]를 바인딩한 것
+            - 약 60,000개의 flow를 생성할 수 있다   
+
+         - __NAT 문제점__   
+            - __end-to-end 법칙을 위반__   
+               - host가 중간 노드에서 Packet(IP 주소, Port 번호) 수정 없이 직접 통신해야 한다는 원칙 위반   
+               - 라우터는 네트워크 계층 장치이므로 네트워크 IP datagram header만 봐야하는데 header의 IP 주소도 변경하고 data 부분의 TCP header의 Port 번호(전송 계층)도 변경한다.     
+                  - 라우터는 네트워크, 데이터 링크, 물리적 계층까지만 처리해야 한다.   
+            - __라우터는 Port를 확인하면 안된다__   
+               - Port 번호의 용도는 수신자 호스트에서 프로세스를 찾을 때 사용되어야 하는데 라우터에서 호스트를 찾을 때 사용된다.   
+
+         - __NAT를 사용하는 네트워크에서는 Server를 운영할 수 없다.__   
+            - __Client는 오직 외부 IP 주소만 알 수 있다.__   
+               - 그러므로 Client가 LAN의 로컬 주소(내부 IP 주소)를 목적지 주소로 사용할 수 없다.   
+            - __Server는 Client의 요청을 기다리는 역할이므로 NAT 테이블이 만들어지지 않는다.__   
+               - NAT 내부에서 외부로 나갈 때만, 주소 변환 쌍이 NAT 테이블에 업데이트 된다.   
+               - NAT 내부에서 외부로 datagram이 나갈 때 생성된 NAT 테이블을 활용하여 외부 datagram이 내부로 들어온다.   
+            - __내부 사설 IP는 사설 인터넷 내에서만 유효하기 때문에 외부에서 접근 불가__   
+               - __해결책__   
+                  - __특정 Server를 위해 관리자가 NAT 테이블에 Server 정보를 매핑해두는 방식__   
+                     - 특정 Port로 들어오는 연결 요청을 Server로 전달(forward) 하도록 NAT을 정적으로 구성   
+                  - __Universal Plug and Play(UPnP) Internet Gateway Device(IGD) Protocol__   
+                     - UPnP 프로토콜을 사용하여 자동으로 NAT Port 매핑 테이블을 생성한다.   
+                     - 호스트가 가까운 NAT을 발견하고 동적으로 Port 매핑을 자동 설정하는 프로토콜 사용   
+                  - __Skype를 사용하여 전달(relaying)__   
+                     - NAT의 Client와 릴레이로 연결을 설정   
+                     - 외부 Client는 릴레이에 연결   
+                     - 릴레이가 두 연결 사이에 패킷을 중계   
+                     - Skype에서 사용   
+                     
+                     
