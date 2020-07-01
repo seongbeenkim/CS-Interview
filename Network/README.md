@@ -111,10 +111,16 @@ __Protocol Family__: 프로토콜 체계
 __데이터 전송 방식__   
 __1. Circuit switching__   
 - 출발지에서 목적지까지의 길을 미리 지정하고 전송   
+- 데이터 전송 시작시점부터 종료시점까지 회선을 독점하기 때문에, 중간에 다른 데이터가 선점된 경로로 전달될 수 없다.   
 ex) 무선 전화   
 
 __2. Packet switching__   
+- 출발지에서 목적지까지의 길이 변경되면서 전송   
+- Router를 거쳐 경로를 바꿔주어 더 빨리 데이터를 전송한다.   
+   - 각 노드에서 라우팅 알고리즘을 사용하여 최단경로로 갈 수 있는 라우터를 선택한다.   
+- 공용선을 이용하는데 링크(회선)이 바쁘다면 다른 회선을 선택한다.   
 - 사용자가 보내는 데이터를 패킷 단위로 받아서 올바른 방향으로 전송, 모든 비트가 받아져야지만 다음 방향으로 전송   
+   - 저장 후 전달(Store and Forward transmission) 방식이다.   
 ex) 인터넷, caravan analogy   
    
 __Circuit switching VS Packet switching__   
@@ -998,7 +1004,7 @@ __UDP__
             - Network는 24bit, Host는 8bit   
             - 전 세계의 2^24개의 기관이 Network주소를 가질 수 있으나 Host가 8bit이기 때문에 할당할 수 있는 Host의 수가 너무 적었다.      
             
-   - Classless Inter-Domain Routing(CIDR)   
+   - __Classless Inter-Domain Routing(CIDR)__   
       - __Class가 가진 문제점을 해결하기 위해 나온 방법__   
       - __Network를 8 bit 단위로 정하지 않고 32bit내 원하는 만큼 유연하게 __/n__ 로 정할 수 있다.__   
          - 하나의 기관이 Class C에서 1000개의 Host를 할당하기 위해서는 Network /24를 4개 받아야 한다. Host 8bit * 4개 = 1020개   
