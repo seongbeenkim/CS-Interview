@@ -296,6 +296,8 @@
       - 거의 모든 현대 OS는 SMP를 지원한다.   
          - ex) Windows, Linux, Mac OS X   
          
+         </br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_6_SMP_Architecture.jpg" width="400px" height="300px" style="display: block; margin: 0 auto" title="1_6_SMP_Architecture.jpg" alt="1_6_SMP_Architecture.jpg"></p>
+         
       - __Symmetric과 Asymmetric 멀티 프로세싱의 차이점__   
          - __차이점은 하드웨어 또는 소프트웨어 때문일 수 있다.__   
             __1. 특수한 하드웨어는 멀티프로세서를 구분할 수도 있다.__    
@@ -324,6 +326,8 @@
       - __하나의 칩에 2개의 코어가 있는 경우, 각 코어는 고유 레지스터와 지역 캐시를 가진다.__   
          - 이러한 멀티코어 CPU는 OS에게 N개의 일반 프로세서처럼 보인다.   
          - 이러한 특성은 OS 설계자나 앱 개발자에게 이러한 코어들을 사용하게 만드는 부담을 준다.   
+            
+      </br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_7_DualCore.jpg" width="400px" height="300px" style="display: block; margin: 0 auto" title="1_7_DualCore.jpg" alt="1_7_DualCore.jpg"></p>   
          
    - __Blade server(고밀도 서버)__    
       - 같은 chassis에 위치한 다수의 프로세서 보드, 입출력 보드, 네트워킹 보드를 가지고 최근 개발되었다.   
@@ -369,6 +373,7 @@
             - __많은 시스템을 저장공간의 저장소(pool)에 연결한다.__   
             - __앱과 앱 데이터가 SAN에 저장되어 있으면, Cluster 소프트웨어는 앱을 SAN에 붙어있는 any 호스트에서나 실행할 수 있게 할당할 수 있다.__   
             - __만약 해당 호스트가 실패 시, 다른 호스트가 넘겨받는다.__   
+            </br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_8_ClusteredSystem.jpg" width="400px" height="300px" style="display: block; margin: 0 auto" title="1_8_ClusteredSystem.jpg" alt="1_8_ClusteredSystem.jpg"></p>
    
    
 ### 1.4 Operationg-System Structure(운영체제 구조)   
@@ -385,6 +390,8 @@
             - 두 번째 job도 입출력같은 동작이 끝나기를 기다려야만 할 때, CPU는 다른 job으로 변경하고 이러한 과정을 반복한다.   
             - 결국, 첫 번째 작업이 기다리는 것을 끝내면, CPU를 다시 되찾아온다.   
             - 적어도 실행할 작업이 하나라도 있는한, CPU는 절대 idle 상태가 되지 않는다.    
+            
+            <br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_9_MemoryLayout.jpg" width="250px" height="300px" style="display: block; margin: 0 auto" title="1_9_MemoryLayout.jpg" alt="1_9_MemoryLayout.jpg"></p>
             
    - __Time sharing(Multitasking)__ :star:   
       - __멀티 프로그래밍의 논리적인 연장이다.__    
