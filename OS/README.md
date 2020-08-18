@@ -6,23 +6,23 @@
       - [1.1.2 System View(시스템 관점)](#112-system-view시스템-관점)   
       - [1.1.3 Defining Operating Systems(OS 정의)](#113-defining-operating-systemsos-정의)   
    - [1.2 Computer-System Organization](#12-computer-system-organization컴퓨터-시스템-구성)   
-      - [1.2.1 Computer-System Operation(컴퓨터 시스템 동작)](122-computer-system-operation컴퓨터-시스템-)   
-      - [1.2.2 Storage Structure(저장 장치 구조)](#122-storage-structure저장-장치-구조)   
-      - [1.2.3 I/O Structure(입출력 구조)](#123-io-structure입출력-구조)
-   - [1.3 Computer-System Architecture](#13-computer-system-architecture컴퓨터-시스템-구조)
-      - [1.3.1 Single-Processor Systems(단일 프로세서 시스템)](#131-single-processor-systems단일-프로세서-시스템)
-      - [1.3.2 Multiprocessor Systems(멀티 프로세서 시스템)](#132-multiprocessor-systems멀티-프로세서-시스템)
-      - [1.3.3 Clustered Systems(클러스터 시스템)](#133-clustered-systems클러스터-시스템)   
-   - [1.4 Operationg-System Structure](#14-operationg-system-structure운영체제-구조)    
-   - [1.5 Operationg-System Operations](#15-operationg-system-operationsos-동작)    
-      - [1.5.1 Dual-Mode and Multiple Operation(듀얼 모드와 여러 동작)](#151-dual-mode-and-multiple-operation듀얼-모드와-여러-동작)    
+      - [1.2.1 Computer-System Operation(컴퓨터 시스템 동작)](122-computer-system-operation컴퓨터-시스템-) :star:   
+      - [1.2.2 Storage Structure(저장 장치 구조)](#122-storage-structure저장-장치-구조) :star:     
+      - [1.2.3 I/O Structure(입출력 구조)](#123-io-structure입출력-구조) :star:  
+   - [1.3 Computer-System Architecture](#13-computer-system-architecture컴퓨터-시스템-구조)   
+      - [1.3.1 Single-Processor Systems(단일 프로세서 시스템)](#131-single-processor-systems단일-프로세서-시스템)   
+      - [1.3.2 Multiprocessor Systems(멀티 프로세서 시스템)](#132-multiprocessor-systems멀티-프로세서-시스템) :star:    
+      - [1.3.3 Clustered Systems(클러스터 시스템)](#133-clustered-systems클러스터-시스템) :star:       
+   - [1.4 Operationg-System Structure](#14-operationg-system-structure운영체제-구조) :star:       
+   - [1.5 Operationg-System Operations](#15-operationg-system-operationsos-동작) :star:       
+      - [1.5.1 Dual-Mode and Multiple Operation(듀얼 모드와 여러 동작)](#151-dual-mode-and-multiple-operation듀얼-모드와-여러-동작) :star:       
       - [1.5.2 Timer(타이머)](#152-timer타이머)    
    - [1.6 Process Management](#16-process-management)   
    - [1.7 Memory Management](#17-memory-management)   
    - [1.8 Storage Management](#18-storage-management)   
       - [1.8.1 File-System Management(파일 시스템 관리)](#181-file-system-management파일-시스템-관리)   
       - [1.8.2 Mass-Storage Management(거대 저장 장치 관리)](#182-mass-storage-management거대-저장-장치-관리)   
-      - [1.8.3 Caching(캐싱)](#183-caching캐싱)   
+      - [1.8.3 Caching(캐싱)](#183-caching캐싱-star) :star:   
       - [](#)
    - [](#)   
    - [](#)   
