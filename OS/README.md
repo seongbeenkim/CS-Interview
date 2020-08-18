@@ -461,7 +461,8 @@
          - mode bit를 통해 OS 또는 사용자를 위해 실행되는 작업들을 구별할 수 있게 된다.   
             - ex) 컴퓨터 시스템이 사용자 app을 위해서 실행되고 있을 경우, 시스템은 사용자 모드에 있다.   
             - 하지만 사용자 app이 시스템 호출을 통하여 OS에 서비스를 요청할 때, 시스템은 요청된 서비스를 수행하기 위해 반드시 사용자 모드에서 커널 모드로 전환해야 한다.   
-            [1.10 사용자 모드 -> 커널 모드 사진 첨부 나중에!]   
+            
+            </br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_10_UserToKernelMode.jpg" width="800px" height="200px" title="1_10_UserToKernelMode" alt="1_10_UserToKernelMode"></img></p>
          
    - __시스템 부트 시간에 하드웨어는 커널 모드에서 시작한다.__   
       - OS는 사용자 모드에서 불러와지고 사용자 app을 실행시킨다.   
