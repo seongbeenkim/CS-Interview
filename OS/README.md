@@ -25,11 +25,24 @@
       - [1.8.3 Caching(캐싱)](#183-caching캐싱-star) :star:   
       - [1.8.4 I/O Systems(입출력 시스템)](#184-io-systems입출력-시스템)
    - [1.9 Protection and Security](#19-protection-and-security)   
-   - [1.10 Kernel Data Structures](#110-kernel-data-structures)   
+   - [1.10 Kernel Data Structures](#110-kernel-data-structures) :star:      
       - [1.10.1 Lists, Stacks, and Queues(리스트, 스택, 큐)](#1101-lists-stacks-and-queues리스트-스택-큐))   
-      - [](#)   
-   - [](#)   
-      
+      - [1.10.2 Tree(트리)](#1102-tree트리)   
+      - [1.10.3 Hash Functions and Maps(해시 함수와 맵)](1103-hash-functions-and-maps해시-함수와-맵)
+      - [1.10.4 Bitmap(비트맵)](#1104-bitmap비트맵)     
+   - [1.11 Computing Environments](#111-computing-environments)   
+      - [1.11.1 Traditional Computing(전통적인 컴퓨팅)](#1111-traditional-computing전통적인-컴퓨팅)   
+      - [1.11.2 Mobile Computing(모바일 컴퓨팅)](#1112-mobile-computing모바일-컴퓨팅)   
+      - [1.11.3 Distributed Systems(분산 시스템)](#1113-distributed-systems분산-시스템)   
+      - [1.11.4 Client-Server Computing(클라이언트-서버 컴퓨팅)](#1114-client-server-computing클라이언트-서버-컴퓨팅)   
+      - [1.11.5 Peer-to-Peer Computing(Peer-to-Peer 컴퓨팅)](#1115-peer-to-peer-computingpeer-to-peer-컴퓨팅)   
+      - [1.11.6 Virtualization(가상화)](#1116-virtualization가상화)   
+      - [](#)
+      - [](#)
+   - [](#)
+      - [](#)
+      - [](#)
+      - [](#)
 * [2.](#2)   
    - [](#)   
    - [](#)   
@@ -183,7 +196,8 @@
       - 다양한 저장 시스템 사이에 주요 차이점은 속소, 비용, 크기, 휘발성에 있다.   
       
    - __저장 장치 계층__   
-      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_4_StorageDeviceHierarchy.jpg" width="450px" height="450px" title="1_4_StorageDeviceHierarchy" alt="1_4_StorageDeviceHierarchy"></img></p>     
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_4_StorageDeviceHierarchy.jpg" width="450px" height="450px" title="1_4_StorageDeviceHierarchy" alt="1_4_StorageDeviceHierarchy"></img><br><strong>1.4 저장 장치</strong> 
+      </p>     
    
       - 상위 4개의 메모리는 반도체 메모리를 사용하여 제작된다.   
       - 비싼 배터리와 백업 시스템 생성기의 존재로, 데이터는 반드시 비휘발성 저장 장치에 기록되야만 한다.   
@@ -235,7 +249,7 @@
    - __일부 최신 시스템은 버스 구조를 사용하기 보다는 스위치를 사용한다.__   
       - 이러한 시스템에서는 여러 구성요소가 공유 버스의 cycle을 경쟁하기보다는 동시에 다른 요소와 통신할 수 있다.   
       - 이러한 경우, DMA가 더 효율적이다.   
-      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_5_HowModernComputerWorks.jpg" width="450px" height="400px" style="display: block; margin: 0 auto" title="1_5_HowModernComputerWorks" alt="1_5_HowModernComputerWorks"></p>
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_5_HowModernComputerWorks.jpg" width="450px" height="400px" style="display: block; margin: 0 auto" title="1_5_HowModernComputerWorks" alt="1_5_HowModernComputerWorks"><br><strong>1.5 현대 컴퓨터가 작동하는 방식</strong></p>
    
 ### 1.3 Computer-System Architecture(컴퓨터 시스템 구조)   
 #### 1.3.1 Single-Processor Systems(단일 프로세서 시스템)    
@@ -306,7 +320,7 @@
       - 거의 모든 현대 OS는 SMP를 지원한다.   
          - ex) Windows, Linux, Mac OS X   
          
-         </br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_6_SMP_Architecture.jpg" width="400px" height="300px" style="display: block; margin: 0 auto" title="1_6_SMP_Architecture.jpg" alt="1_6_SMP_Architecture.jpg"></p>
+         </br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_6_SMP_Architecture.jpg" width="400px" height="300px" style="display: block; margin: 0 auto" title="1_6_SMP_Architecture.jpg" alt="1_6_SMP_Architecture.jpg"><br><strong>1.6 SMP 구조</strong></p>
          
       - __Symmetric과 Asymmetric 멀티 프로세싱의 차이점__   
          - __차이점은 하드웨어 또는 소프트웨어 때문일 수 있다.__   
@@ -337,7 +351,7 @@
          - 이러한 멀티코어 CPU는 OS에게 N개의 일반 프로세서처럼 보인다.   
          - 이러한 특성은 OS 설계자나 앱 개발자에게 이러한 코어들을 사용하게 만드는 부담을 준다.   
             
-      </br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_7_DualCore.jpg" width="400px" height="300px" style="display: block; margin: 0 auto" title="1_7_DualCore.jpg" alt="1_7_DualCore.jpg"></p>   
+      </br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_7_DualCore.jpg" width="400px" height="300px" style="display: block; margin: 0 auto" title="1_7_DualCore.jpg" alt="1_7_DualCore.jpg"><br><strong>1.7 하나의 칩에 두 코어를 놓은 듀얼 코어 디자인</strong></p>   
          
    - __Blade server(고밀도 서버)__    
       - 같은 chassis에 위치한 다수의 프로세서 보드, 입출력 보드, 네트워킹 보드를 가지고 최근 개발되었다.   
@@ -383,7 +397,7 @@
             - __많은 시스템을 저장공간의 저장소(pool)에 연결한다.__   
             - __앱과 앱 데이터가 SAN에 저장되어 있으면, Cluster 소프트웨어는 앱을 SAN에 붙어있는 any 호스트에서나 실행할 수 있게 할당할 수 있다.__   
             - __만약 해당 호스트가 실패 시, 다른 호스트가 넘겨받는다.__   
-            </br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_8_ClusteredSystem.jpg" width="400px" height="300px" style="display: block; margin: 0 auto" title="1_8_ClusteredSystem.jpg" alt="1_8_ClusteredSystem.jpg"></p>
+            </br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_8_ClusteredSystem.jpg" width="400px" height="300px" style="display: block; margin: 0 auto" title="1_8_ClusteredSystem.jpg" alt="1_8_ClusteredSystem.jpg"><br><strong>1.8 클러스터 시스템의 일반적인 구조</strong></p>
    
    
 ### 1.4 Operationg-System Structure(운영체제 구조)   
@@ -401,7 +415,7 @@
             - 결국, 첫 번째 작업이 기다리는 것을 끝내면, CPU를 다시 되찾아온다.   
             - 적어도 실행할 작업이 하나라도 있는한, CPU는 절대 idle 상태가 되지 않는다.    
             
-            <br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_9_MemoryLayout.jpg" width="250px" height="300px" style="display: block; margin: 0 auto" title="1_9_MemoryLayout.jpg" alt="1_9_MemoryLayout.jpg"></p>
+            <br><p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_9_MemoryLayout.jpg" width="250px" height="300px" style="display: block; margin: 0 auto" title="1_9_MemoryLayout.jpg" alt="1_9_MemoryLayout.jpg"><br><strong>1.9 멀티 프로그래밍을 위한 메모리 </strong></p>
             
    - __Time sharing(Multitasking)__ :star:   
       - __멀티 프로그래밍의 논리적인 연장이다.__    
@@ -472,7 +486,7 @@
             - ex) 컴퓨터 시스템이 사용자 app을 위해서 실행되고 있을 경우, 시스템은 사용자 모드에 있다.   
             - 하지만 사용자 app이 시스템 호출을 통하여 OS에 서비스를 요청할 때, 시스템은 요청된 서비스를 수행하기 위해 반드시 사용자 모드에서 커널 모드로 전환해야 한다.   
                
-            <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_10_UserToKernelMode.jpg" width="800px" height="200px" title="1_10_UserToKernelMode" alt="1_10_UserToKernelMode"></img></p>
+            <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_10_UserToKernelMode.jpg" width="800px" height="200px" title="1_10_UserToKernelMode" alt="1_10_UserToKernelMode"></img><br><strong>1.10 사용자 모드에서 커널 모드로 전환</strong></p>
          
    - __시스템 부트 시간에 하드웨어는 커널 모드에서 시작한다.__   
       - OS는 사용자 모드에서 불러와지고 사용자 app을 실행시킨다.   
@@ -657,7 +671,7 @@
    - __Cache는 크기가 제한되어 있기 때문에, Cache 관리는 중요한 설계 문제이다.__   
       - Cache 크기와 교체 정책의 주의 깊은 선택은 매우 향상된 성능을 가져올 수 있다.      
       
-      <p align = "center"><img src = "https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_11_StoragePerformance.jpg" width="600px" height="300px" title="1_11_StoragePerformance" alt="1_11_StoragePerformance"></img></p>
+      <p align = "center"><img src = "https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_11_StoragePerformance.jpg" width="600px" height="300px" title="1_11_StoragePerformance" alt="1_11_StoragePerformance"></img><br><strong>1.11 저장 장치 성능</strong></p>
       
    - __메인 메모리를 2차 저장 장치를 위한 빠른 Cache로 볼 수도 있다.__   
       - __2차 저장 공간에 있는 데이터는 사용을 위해 반드시 메인 메모리로 복사되어지기 때문에, 데이터는 보호를 위해 2차 저장 공간으로 옮겨지기 전에 반드시 메인 메모리에 있어야 한다.__     
@@ -677,7 +691,7 @@
          - A를 Cache와 내부 레지스터에 복사한다.   
          - A의 복사본은 내부 레지스터, Cache, 메인 메모리, 자기 디스크 등 여러 곳에서 발견된다.   
          
-         <p align = "center"><img src = "https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_12_IntegerMigration.jpg" title="1_12_IntegerMigration" alt="1_12_IntegerMigration"></img></p>   
+         <p align = "center"><img src = "https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_12_IntegerMigration.jpg" title="1_12_IntegerMigration" alt="1_12_IntegerMigration"></img><br><strong>1.12 디스크에서 레지스터로 정수 A의 이동</strong></p>   
          
          - 증가가 내부 레지스터에서 발생하면, 다양한 저장 시스템에 있는 A의 값은 다르다.   
          - A의 새로운 값이 내부 레지스터에서 자기 디스크로 다시 기록된 후에만 A의 값이 같은 값으로 변한다.   
@@ -705,7 +719,7 @@
    
    - __오직 장치 드라이버만이 장치에 할당된 특성을 안다.__   
    
-### 1.9 Protection and Security   
+### 1.9 Protection and Security    
 
    - __컴퓨터 시스템이 여러 사용자를 가지고 있고 다수의 프로세스의 동시 실행을 허락한다면 데이터에 대한 접근은 반드시 제한되야 한다.__   
       - 파일, 메모리 세그먼트, CPU 등 자원들은 반드시 OS로부터 적절한 권한을 얻은 프로세스에 의해서만 작동되는 것을 보장해야 한다.       
@@ -745,10 +759,223 @@
       - 이러한 프로세스는 추가 권한이 사라지거나 종료될 때까지 효율적인 UID로 작동한다.      
  
  ### 1.10 Kernel Data Structures         
- #### 1.10.1 Lists, Stacks, and Queues(리스트, 스택, 큐)    
+ #### 1.10.1 Lists, Stacks, and Queues(리스트, 스택, 큐)        
  
-   - ____   
-      -    
+   - __Array(배열)__   
+      - 각 요소가 직접적으로 접근될 수 있는 간단한 데이터 자료구조   
+      - ex) Main memory는 배열로 구성되어 있다.     
+      - 저장될 item의 data가 1 byte보다 클 때, 다수의 byte가 해당 item에 할당될 수 있고, 해당 item은 (item 넘버 ~ item 넘버 * item 크기) 주소를 가진다.   
+      
+   - __List(리스트)__   
+      - 각 요소가 특정 순서에 의해 접근되는 가장 기본적인 자료구조       
+      - 연속적인 데이터 값의 모음을 나타낸다.   
+      - 구현하기 위한 가장 흔한 방법은 linked list이다.   
+      <p align = "center"><img src = "https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_13_SinglyLinkedList.jpg" title = 1_13_SinglyLinkedList.jpg alter = 1_13_SinglyLinkedList.jpg></img><br><strong>1.13 단일 링크드 리스트</strong></p>   
+      - 단일 링크드 리스트는 각 아이템의 바로 뒤를 가르킨다.   
+      <p align = "center"><img src = "https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_14_DoublyLinkedList.jpg" title = 1_14_DoublyLinkedList.jpg alter = 1_14_DoublyLinkedList.jpg></img><br><strong>1.14 이중 링크드 리스트</strong></p>   
+      - 이중 링크드 리스트는 주어진 아이템의 이전이나 뒤를 참조할 수 있다.
+      <p align = "center"><img src = "https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_15_CircularlyLinkedList.jpg" title = 1_15_CircularlyLinkedList.jpg alter = 1_15_CircularlyLinkedList.jpg></img><br><strong>1.15 순환 링크드 리스트</strong></p>    
+      - 순환 링크드 리스트는 마지막 요소가 처음 요소를 가르킨다.   
+      
+      - __링크드 리스트는 다양한 크기의 아이템을 수용하고 아이템의 삽입, 삭제가 쉽다.__    
+         - 잠재적인 단점은 검색 시 시간복잡도 = O(n)    
+         - 커널 알고리즘에 의해 직접적으로 사용될 때도 가끔 있지만, 스택과 큐 같은 더 강력한 자료구조를 구성하기 위해 자주 사용된다.    
+         
+   - __Stack(스택)__   
+      - __LIFO 구조로 순차적으로 정돈된 자료구조__    
+      - Push, Pop 기능을 가지고 있다.   
+      - __주로 OS에서 함수 호출 시 스택 사용__ :star:    
+         - 함수 호출되었을 때 지역 변수, 파라미터, 반환 주소가 스택에 Push된다.   
+         - 함수 반환 시 지역 변수, 파라미터, 반환 주소를 스택에서 Pop한다.  
+         
+   - __Queue(큐)__   
+      - __FIFO 구조로 순차적으로 정돈된 자료구조__   
+      - 쇼핑몰 대기, 은행 업무 대기 등 실생활에서 많은 예가 있다.      '
+      - OS에서 프린터가 요청한 순서대로 프린트를 한다.   
+      - __이용 가능한 CPU에서 실행되기를 기다리는 작업들은 큐에 저장되어 있다.__ :star:
+
+#### 1.10.2 Tree(트리)    
+
+   - __Tree(트리)__    
+      - 계층적으로 데이터를 표현할 수 있는 자료구조   
+      - 데이터 값들은 부모, 자식 관계를 통해 연결되어 있다.   
+      - 일반적으로 트리에서는 부모가 무제한의 자식들을 가질 수도 있다.   
+      - __이진 트리에서는 부모가 최대 2개의 자식을 가질 수 있다.__      
+         - 왼쪽 자식, 오른쪽 자식   
+      - __이진 검색 트리는 왼쪽 자식 <= 오른쪽 자식 이라는 규칙을 요구한다.__ :star:   
+         - 최악의 시간복잡도는 O(n)으로 한 쪽으로 극단적으로 노드가 생길 경우이다.   
+         - __이러한 문제를 해결하기 위해 Balanced binary search tree를 만들어 사용한다.__   
+            - n 개의 아이템을 가질 경우 최대 log n 높이를 가진다.   
+            - __최악의 경우 시간복잡도 = O(log n)__    
+            - Linux에서 CPU 스케줄링 알고리즘 부분으로 Balanced binary search tree을 사용한다.   
+            
+      <p align = "center"><img src = "https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_16_BinarySearchTree.jpg" title = 1_16_BinarySearchTree.jpg alter = 1_16_BinarySearchTree.jpg></img><br><strong>1.16 이진 검색 트리</strong></p>   
+
+#### 1.10.3 Hash Functions and Maps(해시 함수와 맵)   
+
+   - __Hash Function(해시 함수)__   
+      - input으로 데이터가 필요하고 해당 데이터를 가지고 숫자 연산을 수행하고 숫자 값을 반환한다.   
+      - 반환된 숫자 값은 데이터를 빠르게 검색하기 위해 테이블(일반적으로 배열)의 인덱스로 사용될 수 있다.        
+      - __테이블에서 데이터를 검색하기 위해 Hash Function을 사용하면 최악의 경우에서도 시간복잡도 = O(1)__   
+      - 이러한 이유로 OS에서 광범위하게 사용된다.    
+      
+   - __해시 함수의 잠재적인 문제점은 두 개의 input이 같은 output 값을 가질 수 있다는 것이다. = 해시 충돌__ :star:      
+      - 두 output 값이 같은 테이블 위치에 연결되어 있다는 뜻이다.     
+      - __같은 hash값을 가지는 모든 아이템을 가지고 있는 테이블 위치에 링크드 리스트를 가지게 함으로써 이러한 hash collision을 해결할 수 있다.__     
+        
+   - __해시 함수의 사용법 중 하나는 해시 함수를 사용하여 [key, value] 쌍을 연관짓는 Hash map을 구현하는 것이다.__ :star:       
+      - ex) key : Operating 을 value : System 에 map할 수 있다.   
+         - 매핑이 성립되면, hash map으로부터 value를 얻기 위해서 hash function를 key에 적용할 수 있다.    
+      - ex) key : User id 가 value: Password가 map되었을 경우   
+         - 사용자 id, 비밀번호를 입력하면 hash function을 사용자 id에 적용하여 매핑된 비밀번호를 검색하고 검색된 비밀번호를 입력된 비밀번호와 비교한다.   
+      
+      <p align = "center"><img src = "https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_17_HashMap.jpg" title = 1_17_HashMap.jpg alter = 1_17_HashMap.jpg></img><br><strong>1.17 Hash map</strong></p>
+
+#### 1.10.4 Bitmap(비트맵)   
+
+   - __Bitmap(비트맵)__   
+      - __n개의 아이템의 상태를 나타내기 위해 사용될 수 있는 일련의 n개의 이진수이다.__   
+      - ex) 여러 개의 자원이 있을 경우, 각 자원의 이용 가능은 이진수의 값에 의해 보여진다.   
+         - 0 : 이용 가능, 1 : 이용 불가능 또는  0 : 이용 불가능, 1 : 이용 가능   
+      - __i번째 위치의 값은 i번째 자원과 관련되어 있다.__   
+         - ex) 0 0 1 0 1 1 1 0 1   
+            - 이용 가능한 자원 : 2, 4, 5, 6, 8    
+            - 이용 불가능한 자원 : 0, 1, 3, 7   
+      - __비트맵의 강점은 공간 효율성을 고려할 때 나타난다.__   
+         - 단일 비트 사용 대신 8비트 boolean 값을 사용한다면, 자료구조는 8배 커질 것이다.   
+      - __일반적으로 많은 자원들의 이용가능성을 나타낼경우 사용된다.__    
+         - ex) 디스크 드라이브   
+            - 중간 크기의 디스크 드라이브는 디스크 블록이라고 불리는 수천 개의 개별 유닛으로 나뉠 수도 있고, 비트맵은 각 디스크 블록의 이용가능 상태를 나타내는데 사용될 수 있다.   
+
+        
+### 1.11 Computing Environments    
+#### 1.11.1 Traditional Computing(전통적인 컴퓨팅)   
+
+   - __Web 기술과 증가하는 WAN 대역푝이 전통적인 컴퓨팅의 경계를 무너뜨리고 있다.__    
+      - 회사는 web 접근성을 회사 내부 서버에 제공하는 Portal을 만든다.      
+  
+   - __네트워크 컴퓨터는 유지보수가 더 쉽고 더 많은 보안이 필요한 전통적인 작업환경 대신 사용된다.__   
+      
+   - __모바일 컴퓨터는 회사 정보의 사용을 쉽게 하기 위해 PC와 동기화 된다.__   
+      - 회사의 web portal을 이용하기 위해 무선 네트워크나 무선 데이터 네트워크에 연결할 수 있다.        
+        
+   - __많은 집에서 보안 위반으로부터 네트워크를 보호하기 위해 방화벽 사용한다.__    
+   
+   - __Batch 시스템은 파일이나 다른 데이터 자원으로터 미리 결정된 입력을 가지고 대량으로 작업을 처리한다.__       
+      - Interactive 시스템은 사용자로부터 입력을 기다린다.     
+        
+   - __다수의 사용자들의 공유, 컴퓨터 자원의 사용을 최적화하기 위해서 시간 분할 시스템은 자원의 공유를 각 사용자에게 주면서 CPU를 통해 빠르게 프로세스를 순환시키기 위해 타이머와 스케줄링 알고리즘을 사용했다.__    
+      - 전통적인 시간 분할 시스템은 흔하진 않지만 같은 스케줄링 기술은 데스크탑 컴퓨터, 랩탑, 서버, 모바일 컴퓨터에서 여전히 사용된다.   
+      - 하지만 모든 프로세스는 같은 사용자에 의해서만 소유되어졌다.   
+      - 사용자 프로세스와 시스템 프로세스는 컴퓨터 시간의 일부분을 자주 얻기 위해서 관리된다.    
+      - 윈도우가 생성되어있을 경우 여러 작업을 동시에 수행하고 있을 수 있다.     
+         - 심지어 웹 브라우저도 여러 프로세스로 구성될 수 있다.   
+            - 시간 분할을 이용하여 현재 접속한 각 웹사이트에 대한 처리를 한다.   
+
+#### 1.11.2 Mobile Computing(모바일 컴퓨팅)   
+
+   - __온라인 서비스 접근 제공을 위해 모바일 장치는 보통 IEEE 표준 802.11 무선 또는 무선 데이터 네트워크 사용한다.__    
+        
+   - __PC에 비해 처리 속도와 메모리 수용량이 제한적이다.__   
+      - 모바일 장치는 전력 소모를 고려해야하고 더 작고 느리고 더 적은 코어를 가진 프로세서를 사용한다.         
+
+#### 1.11.3 Distributed Systems(분산 시스템)      
+
+   - __시스템이 유지하고 있는 다양한 자원에 대한 접근을 사용자에게 제공하기 위해 네트워크로 연결된 다차원적이고 물리적으로 분리된 컴퓨터 시스템의 종합이다.__   
+      - 공유 자원에 대한 접근은 계산 속도, 기능성, 데이터 이용가능성, 의존성을 증가시킨다.          
+        
+   - __일부 OS는 네트워크 인터페이스의 장치 드라이버에 들어있는 네트워크의 세부사항을 가지고 파일 접근의 형식으로 네트워크 접근을 일반화한다.__    
+        
+   - __다른 OS는 사용자가 네트워크 함수를 호출하게 한다.__   
+      - FTP, NFS 두 모드가 있고 시스템의 유용성과 인기의 큰 영향을 줄 수 있다.      
+      
+   - __Network__   
+      - 두 개 이상의 시스템 사이의 통신로이다.      
+      - 분산 시스템의 기능성은 네트워크에 달려있다.   
+      - 전송 매체, 노드 사이의 거리, 사용된 프로토콜에 의해 다양하다.   
+        
+   - __TCP/IP__    
+      - 가장 흔한 네트워크 프로토콜      
+      - 인터넷의 본질적인 구조를 제공한다.   
+      - 대부분의 OS는 TCP/IP를 지원한다.   
+      
+   - __LAN(Local-Area Network)__   
+      - 지역 네트워크로 캠퍼스, 건물, 방 내부의 컴퓨터 연결      
+      
+   - __WAN(Wide-Area Network)__   
+      - 전역 네트워크로 나라, 도시, 건물을 연결     
+
+   - __블루투스와 802.11 기계들은 일정거리 내에서 통신하기 위해 무선 기술 사용한다.__    
+      - 휴대폰과 헤드셋 또는 스마트폰과 PC 사이에 PAN(Personal-Area Network)를 생성하면서 통신한다.      
+    
+   - __네트워크 전달을 위한 매체__   
+      - 라디오, 마이크로웨이브 접시 안테나, 인공위성 사이에 무선 전송, 섬유가닥, 구리선을 포함한다.      
+         
+   - __컴퓨터 장치가 무선 휴대폰에 연결될 때, 네트워크를 만든다.__   
+      - 단거리 적외선 통신도 네트워크에 사용될 수 있다.       
+      - 가장 기초적인 단계에서 컴퓨터가 통신할 때마다 네트워크를 사용하거나 만든다.     
+        
+   - __Network Operating System__    
+      - 메세지를 교환하기 위해 다른 컴퓨터들에서 다른 프로세스를 허용하게 하는 통신 구조를 가지고 네트워크를 통해 파일을 공유하게 하는 특성을 제공하는 OS       
+      - 네트워크 OS를 실행시키는 컴퓨터는 네트워크를 인식하고 네트워크로 연결된 다른 컴퓨터와 통신할 수 있음에도 불구하고 네트워크에 있는 모든다른 컴퓨터들로부터 자율적으로 행동한다.      
+      
+   - __분산된 OS는 덜 자율적인 환경을 제공한다.__   
+      - 다른 컴퓨터들이 오직 하나의 OS가 네트워크를 통제한다는 착각을 가지게 할 정도로 밀접하게 통신한다.      
+
+#### 1.11.4 Client-Server Computing(클라이언트-서버 컴퓨팅)   
+
+   - __오늘날의 많은 시스템은 Client 시스템에 의해 발생된 요청을 만족시키기 위한 Server 시스템처럼 동작한다.__     
+        
+   - __Compute-Server System__    
+      - Client가 어떤 행동을 할 수 있게 요청을 보내는 인터페이스 제공한다.   
+      - Server는 해동을 수행하고 결과를 Client에 보낸다.   
+      
+   - __File-Server System__   
+      - Client가 파일을 CRUD 할 수 있는 파일 시스템 인터페이스 제공한다.   
+      
+   <p align = "center"><img src = "https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_18_ClientServer.jpg" title = 1_18_ClientServer.jpg alter = 1_18_ClientServer.jpg></img><br><strong>1.18 Client-Server 시스템의 일반적인 구조</strong></p>      
+        
+#### 1.11.5 Peer-to-Peer Computing(Peer-to-Peer 컴퓨팅)    
+
+   - __시스템 내의 모든 노드가 Peer로 고려되고 각 Peer는 서비스를 요청하는지 또는 제공하는지에 따라 Client 또는 Server로 동작한다.__    
+       
+   - __오래된 Client-Server 시스템에 이점을 제공한다.__ :star:      
+      - Client-Server 시스템에서 Server는 병목적이지만 Peer-to-Peer 시스템에서는 네트워크를 통해 분산된 여러 노드에 의해 서비스가 제공될 수 있다.      
+       
+   - __Peer-to-Peer 시스템에 참여하기 위해서는 노드가 먼저 네트워크에 연결해야 한다.__   
+      - 노드가 네트워크에 연결되면, 네트워크에 다른 노드들로부터 서비스 제공과 요청을 시작할 수 있다.      
+        
+   - __어떤 Service가 이용가능한지 알아내는 2가지 방법__    
+      - __첫 번째 방법__
+         - 노드가 네트워크에 연결될 때, 노드는 네트워크에 있는 중앙 검색 서비스에 자신의 서비스를 등록한다.   
+         - 특정 서비스를 원하는 노드는 먼저 어느 노드가 서비스를 제공하는지 알아내기 위해 중앙 검색 서비스에 연락한다.   
+         - 통신의 나머지는 Client와 서비스 제공자 사이에서 발생한다.   
+         - ex) Napster 시스템 for 파일 공유 서비스
+         
+      - __두 번째 방법__    
+         - 중앙 검색 서비스를 사용하지 않는다.   
+         - Client로 동작하는 Peer는 네트워크에 있는 다른 모든 노드에 원하는 서비스에 대한 요청을 broadcast 함으로써 어떤 노드가 원하는 서비스를 제공하는지 알아내야 한다.   
+         - 해당 서비스를 제공하는 노드들은 요청을 한 Peer에 응답한다.   
+         - 이러한 방식을 제공하기 위해서, peer가 네트워크에 있는 다른 peer에 의해 제공되는 서비스를 발견하게 할 수 있는 discovery protocol가 반드시 제공되야 한다.    
+         - ex) Gnutella 시스템 for 파일 공유 서비스
+         
+   - __대표적인 Peer-to-Peer 컴퓨팅은 Skype다__    
+      - Voice over IP(VoIP)를 사용하여 인터넷을 통해 통화, 메세지 가능하다.   
+      - 중앙 집권화된 로그인 서버와 분권화된 peer를 포함하며 두 peer가 통신할 수 있게 하는 hybrid peer-to-peer 방식을 사용한다.    
+
+#### 1.11.6 Virtualization(가상화)   
+
+   - __Virtualization__    
+      - OS를 다른 OS내에서 app처럼 실행할 수 있게 하는 기술   
+      - emulation을 포함하는 소프트웨어 클래스의 하나의 일부이다.   
+      
+   - __Emulation__ :star:      
+      - CPU 타입이 목표 CPU 타입과 다를 때 사용된다.       
+      - ex) Apple이 데스크탑, 랩탑 컴퓨터를 IMB Power CPU에서 Intel x86 CPU로 바꿨을 때   
+         - IBM CPU를 위해 컴파일된 app을 Intel CPU에서도 작동시키게 하는 "Rosetta" 라고 불리는 emulation facility가 Intel CPU에 포함되어 있다.   
+        
+   - __이러한 emulation 개념은 하나의 플랫폼을 위해 쓰여진 전체 OS를 다른 플랫폼에서 실행시키게 허용하는 것으로 확대될 수 있다.__    
+      -     
       -   
    - ____   
       -   
@@ -756,9 +983,28 @@
    - ____   
       -   
       -   
+        
+###
+   - ____    
+      -   
+      -   
    - ____   
       -   
       -   
+   - ____   
+      -   
+      -   
+        
+   - ____    
+      -   
+      -   
+   - ____   
+      -   
+      -   
+   - ____   
+      -   
+      -   
+        
    - ____    
       -   
       -   
