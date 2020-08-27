@@ -1,4 +1,8 @@
 # :bookmark_tabs: Operating System Concepts 9th edition      
+## 1장 Introduction   
+__중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용이 있던 챕터에는 :star: 표시를 해놓았고    
+해당 챕터안에 중요 개념 옆에 :star: 표시 해놓습니다.   
+혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 해주시거나 알려주시면 감사하겠습니다.:bow:__   
 
 * [1.Introduction](#1-introduction)   
    - [1.1 What Operating Systems do](#11-what-operating-systems-doos가-하는-일)   
@@ -36,18 +40,15 @@
       - [1.11.3 Distributed Systems(분산 시스템)](#1113-distributed-systems분산-시스템)   
       - [1.11.4 Client-Server Computing(클라이언트-서버 컴퓨팅)](#1114-client-server-computing클라이언트-서버-컴퓨팅)   
       - [1.11.5 Peer-to-Peer Computing(Peer-to-Peer 컴퓨팅)](#1115-peer-to-peer-computingpeer-to-peer-컴퓨팅)   
-      - [1.11.6 Virtualization(가상화)](#1116-virtualization가상화)   
-      - [](#)
-      - [](#)
-   - [](#)
-      - [](#)
-      - [](#)
-      - [](#)
-* [2.](#2)   
-   - [](#)   
-   - [](#)   
-   - [](#)   
-   - [](#)   
+      - [1.11.6 Virtualization(가상화)](#1116-virtualization가상화) :star:      
+      - [1.17.7 Cloud Computing(클라우드 컴퓨팅)](#1177-cloud-computing클라우드-컴퓨팅) :star:   
+      - [1.11.8 Real-Time Embedded Systems(실시간 임베디드 시스템)](#1118-real-time-embedded-systems실시간-임베디드-시스템)
+   - [1.12 Open-Source Operating System](#112-open-source-operating-system)   
+      - [1.12.1 History(역사)](#1121-history역사)
+      - [1.12.2 Linux(리눅스)](#1122-linux리눅스)
+      - [1.12.3 BSD UNIX](#1123-bsd-unix)   
+      - [1.12.4 Solaris(솔라리스)](#1124-solaris솔라리스)   
+      - [1.12.5 Open-Source Systems as Learning Tools(배우는 도구로서의 오픈 소스 시스템)](#1125-open-source-systems-as-learning-tools배우는-도구로서의-오픈-소스-시스템)   
    
    
 ## 1. Introduction   
@@ -970,48 +971,137 @@
       - emulation을 포함하는 소프트웨어 클래스의 하나의 일부이다.   
       
    - __Emulation__ :star:      
-      - CPU 타입이 목표 CPU 타입과 다를 때 사용된다.       
+      - 소스 CPU 타입이 타켓 CPU 타입과 다를 때 사용된다.       
       - ex) Apple이 데스크탑, 랩탑 컴퓨터를 IMB Power CPU에서 Intel x86 CPU로 바꿨을 때   
          - IBM CPU를 위해 컴파일된 app을 Intel CPU에서도 작동시키게 하는 "Rosetta" 라고 불리는 emulation facility가 Intel CPU에 포함되어 있다.   
         
    - __이러한 emulation 개념은 하나의 플랫폼을 위해 쓰여진 전체 OS를 다른 플랫폼에서 실행시키게 허용하는 것으로 확대될 수 있다.__    
-      -     
-      -   
-   - ____   
-      -   
-      -   
-   - ____   
-      -   
-      -   
+      - 소스 시스템에서 자연스럽게 실행되는 모든 머신 레벨 명령어는 반드시 타겟 시스템에서 동등한 기능으로 번역되야 한다.           
+      - 소스, 타겟 CPU가 비슷한 성능을 가질 경우, emulated된 코드는 native 코드보다 훨씬 느리게 작동할 수 있다.      
+      - __Interpretation__ :star:      
+         - high-level 언어 코드가 native CPU 명령어로 번역되는 emulation의 유형   
+            - CPU를 emulating 하는 것이 아니라 해당 언어가 native하게 작동할 수 있는 이론적인 가상 머신을 emulating 하는 것이다.       
+            - ex) Java 프로그램을 Java 가상 머신에서 작동시킬 수 있고, 이러한 가상 머신은 Java emulator이다.   
+         - 일부 언어는 컴파일 되거나 interpreted 될 수 있다. ex) Basic   
+         - Java는 항상 interpreted 된다.   
+
+   - __반면에, 가상화의 같은 경우, 특정 CPU 구조를 위해 native하게 컴파일된 OS는 다른 OS내에서 작동되고 해당 CPU에 native하다.__   
+      
+   - __가상화는 다수의 사용자가 작업들 병행 수행할 수 있게 하는 방법으로서 IBM mainframe에서 처음 발생했다.__   
+      - 다수의 가상 머신을 실행하는 것은 많은 사용자들이 하나의 사용자를 위해 설계된 시스템에서 작업들을 수행할 수 있게 한다.     
+   
+   - __Intel x86 CPU에서 다수의 윈도우 XP 응용 프로그램을 실행시키는 문제에 대응하기 위해서 Vmware가 XP에서 실행되는 응용 프로그램 형태의 새로운 가상화 기술을 만들었다.__    
+      - 해당 app은 하나 이상의 다른 native x86 OS나 Window 복사본을 실행시켰고, 각각 OS는 자신 고유의 app을 실행시킬 수 있었다.   
+      - Window는 Host OS, Vmware는 VMM   
+         - VMM은 guest OS를 실행시키고 해당 OS 자원 사용을 관리하고 다른 guest OS로부터 각 guest OS를 보호한다.   
+         
+   - __다양한 OS를 위해 SW를 개발하는 회사는 하나의 물리적 서버에서 가상화를 사용하여 모든 OS를 실행시켜 개발, 테스트, 디버깅을 한다.__   
+   <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_20_VMware.jpg" width="450px" height="400px" title="1_20_VMware" alt="1_20_VMware"></img><br><strong>1.20 VMware</strong> 
+      </p>
+      
+#### 1.17.7 Cloud Computing(클라우드 컴퓨팅)      
+
+   - __Cloud Computing(클라우드 컴퓨팅)__
+      - 네트워크를 가로지르는 서비스로 App, Storage, Computing을 전달하는 Computing 종류   
+      - 기능성을 위한 기반으로 가상화를 사용하기 때문에, 가상화의 논리적인 연장으로 볼 수 있다.      
+      - ex) AWS EC2는 인터넷에서 누구나 사용할 수 있게 Peta byte 저장 공간, 수백만 개의 가상 머신, 수천 개의 서버를 가지고 있다.   
+      
+   - __Clouding Computing 종류__ :star:   
+   
+      - __Public cloud__   
+         - 서비스를 위해 대가를 지불할 수 있는 사용자를 위한 인터넷을 통해 사용 가능한 cloud    
+      - __Private cloud__    
+         - 회사 고유 사용을 위한 회사에 의해 작동하는 cloud   
+      - __Hybrid cloud__   
+         - public, private 둘다 포함하는 cloud    
+      - __Saas(Software as a Service)__   
+         - 인터넷을 통해 사용 가능한 하나 이상의 app 
+         - ex) 워드프로세서, 스프레드 시트   
+      - __Paas(Platform as a Service)__   
+         - 인터넷을 통한 app 사용을 위해 준비된 software stack   
+         - ex) DB 서버   
+      - __Iaas(Infrastructure as a Service)__   
+         - 인터넷을 통해 사용 가능한 서버 또는 저장 공간   
+         - ex) AWS EC2   
+          
+   - __Cloud infrastructure의 많은 유형내에는 전통적인 OS들이 들어있다.__   
+      - 이러한 OS들은 사용자 프로세스가 실행되는 가상 머신을 관리하는 VMM이다.      
+      - high-level에서 VMM은 cloud 관리 툴에 의해 관리된다.   
+         - ex) Vware vCloud Director   
+      - 이러한 툴은 주어진 cloud 내의 자원을 관리하고 cloud 구성 요소에 인터페이스를 제공한다.   
+     
+   - __cloud 서비스와 사용자 인터페이스는 모두 방화벽에 의해 보호된다.__    
+   
+   <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/1_21_CloudComputing.jpg" width="450px" height="400px" title="1_21_CloudComputing" alt="1_21_CloudComputing"></img><br><strong>1.21 Cloud Computing</strong> 
+      </p>   
+      
+#### 1.11.8 Real-Time Embedded Systems(실시간 임베디드 시스템)    
+
+   - __Embedded Computer(임베디드 컴퓨터)__   
+      - 가장 일반적인 형태의 컴퓨터   
+         - ex) 차 엔진, 전자레인지, DVD 제조 로봇 등  
+      - 일반적으로 사용자 인터페이스가 없거나 거의 없고, 자동 엔진, 로봇 팔 같은 하드웨어 장치를 관리하고 감독하는 역할을 한다.      
+      
+   - __임베디드 시스템 종류__   
+      - 일반용 컴퓨터 
+         - 기능을 구현하기 위한 특수 목적용 app을 가진 Linux 같은 표준 OS를 실행시킨다.      
+      - 원하는 기능을 제공하기 위한 특수 목적 임베디드 OS를 가진 하드웨어 장치   
+      - OS없이 작업을 수행하는 ASICs(Applcation-Specific integrated Circuits)을 가진 하드웨어 장치   
         
-###
-   - ____    
-      -   
-      -   
-   - ____   
-      -   
-      -   
-   - ____   
-      -   
-      -   
+   - __이러한 임베디드 시스템을 사용하여 집 온도, 빛, 알람 시스템 등을 web, network를 통해 통제할 수 있다._
+   
+   - __임베디드 시스템은 거의 항상 실시간 OS를 작동시킨다.__   
+      - 실시간 시스템은 데이터의 흐름이나 프로세서의 동작에서 엄격한 시간 요건이 필요할 때 사용되고 특정 app에서 장치를 조종할 때 사용된다.        
+         - ex) 일부 자동차 연로 주입 시스템, 가전제품 컨트롤러, 무기 시스템   
+         - 1. 센서는 데이터를 컴퓨터로 가져옴, 2. 컴퓨터는 데이터를 분석하고 센서 입력을 조정하기 위해 컨트롤을 조절한다.       
+
         
-   - ____    
-      -   
-      -   
-   - ____   
-      -   
-      -   
-   - ____   
-      -   
-      -   
-        
-   - ____    
-      -   
-      -   
-   - ____   
-      -   
-      -   
-   - ____   
-      -   
-      -   
-        
+   - __처리는 반드시 정의된 제한 시간내에 끝내져야 한다.__    
+      - 제한 시간내에 정확한 결과를 반환해야지만 실시간 시스템은 정확하게 기능한다.   
+      - 하지만, 이러한 제한이 없을 수도 있다.   
+      
+### 1.12 Open-Source Operating System   
+
+   - __컴파일된 binary code가 아닌 source code에서 이용이 가능하다.__    
+      - ex) Linux   
+      - Window는 Closed-source code 방식        
+      - Max OS X와 ios OS는 hybrid 방식    
+         - Darwin 이라는 Open-source 커널과 Closed-source 요소를 포함한다.   
+      
+   - __Source code로 시작하는 것은 프로그래머가 시스템에서 실행될 수 있는 이진 코드를 생산할 수 있게 해준다.__   
+
+   - __Source code를 binary code로 Reverse engineering하는 것은 상당히 큰 작업이고 절대 복구할 수 없는 comments와 같은 유용한 아이템이다.__   
+      
+   - __Open-source code는 더 많은 사람들이 보기 때문에 Closed-source code보다 더 안전하다.__   
+      - 코드를 사용하는 사람들이 버그를 발견하고 고치기 때문이다.   
+      
+#### 1.12.1 History(역사)   
+
+   - __소스 코드로부터 컴파일된 이진 파일을 배포함으로써 목표 달성은 물론 코드, 아이디어를 보호할 수 있다.__   
+   - __돈을 지불하는 사용자와 권한을 얻은 컴퓨터에서만 소프트웨어를 사용할 수 있게 만들었고 관련하여 저작권 문제가 발생했다.__   
+      - 1985년 Richard stallman은 GNU 프로젝트 시작(Unix 상용 OS)   
+         - 모든 소프트웨어는 무료고 Open-source여야 한다.   
+      
+#### 1.12.2 Linux(리눅스)   
+
+   - __Open-source OS의 예인 GNU는 컴파일러, 에디터, 유틸리티를 포함하는 Unix 상용 툴은 만들었지만 커널은 배포하지 못했다__   
+      - 1991년 핀란드 학생 Linus Torvalds가 GNU 컴파일러, 툴, 세계에서 받은 기여를 이용하여 Unix-like 커널을 배포했다.   
+         - 인터넷의 출현은 누구나 소스 코드를 다운받고 수정하고 변화를 Torvalds에게 제출할 수 있게 했다.   
+         - 매주 업데이트를 배포하는 것은 이러한 Linux OS가 빠르게 성장하게 했고 수천 명의 프로그래머에 의해 강화됐다.   
+
+#### 1.12.3 BSD UNIX   
+
+   - __Linux보다 더 길고 복잡한 역사를 가진다.__   
+      - 소스 코드는 /usr/src/, 커널 소스 코드는 /usr/src/sys에 있다.     
+      
+   - __MAC OS X의 핵심 커널 요소인 Darwin은 BSD UNIX 기반이고 오픈 소스다.__
+   
+#### 1.12.4 Solaris(솔라리스)      
+
+   - __Sun Microsystem의 상업용 UNIX 기반 OS__   
+      - 2005년 대부분의 Solaris 코드를 오픈 소스로 만들었고 2009년에 회사가 Oracle에 인수되어 마무리 짓지 못한 상태로 남겨졌다.     
+
+#### 1.12.5 Open-Source Systems as Learning Tools(배우는 도구로서의 오픈 소스 시스템)   
+
+   - __Open-source 프로젝트는 학생들이 배움의 도구로서 소스 코드를 사용할 수 있게 한다.__   
+      - 프로그램을 수정하고 테스트하고 버그를 발견하고 수정할 수 있다.   
