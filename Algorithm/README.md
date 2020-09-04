@@ -10,7 +10,7 @@
 * [이분 탐색](#이분-탐색)   
 * [문자열 알고리즘](#문자열-알고리즘)  
   - [KMP(Knuth, Morris, Prett)](#kmpknuth-morris-prett)   
-  - [Trie])(#trie)   
+  - [Trie](#trie)   
 
 ## Dynamic Programming   
 - __큰 문제를 작은 문제로 나눠서 푸는 알고리즘__   
