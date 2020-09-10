@@ -9,8 +9,8 @@
   - [MST](#minimum-spanning-tree)   
   - [최단 경로](#최단-경로)   
     - [Bellman-Ford](#bellman-ford)   
-    - [](#)   
-    - [](#)   
+    - [Dijkstra](#dijkstra)   
+    - [Floyd-Warshall](#floyd-warshall)    
 * [Union Find](#union-find)   
 * [Greedy](#그리디-알고리즘)   
 * [분할 정복](#분할-정복)   
@@ -245,8 +245,88 @@
           
     - __즉, 벨말포드는 음수 사이클이 있는 지 확인 할 수 있고, 가중치가 음수일 경우에도 최단 거리를 구할 수 있는 알고리즘이다.__   
       - 하지만, 문제에서 음수가 존재하는 경우는 거의 없고 O(V*E)는 느리기 때문에 거의 사용하지 않는다.   
+    - __예시__   
+      ```python3
+      for _ in range(m):
+        start,end,cost = map(int,sys.stdin.readline().split())
+        a.append((start,end,cost))
 
+      is_negative= False
+      for i in range(1,n+1):
+        for start, end, cost in a:
+            if dist[start] != maximum and dist[end] > dist[start] + cost:
+                dist[end] = dist[start] + cost
+                if i == n:
+                    is_negative = True
+      ```
 
+### Dijkstra    
+  - __Dijkstra__   
+    - __순서__   
+      - __검사하지 않은 정점 중에서 dist의 값이 가장 작은 정점 v를 선택한다.__   
+        - __우선 순위 큐 또는 최소 힙을 사용하여 보기 중 가장 작은 정점을 선택하도록 한다.__
+      - v와 연결된 모든 정점을 검사한다.   
+        - 간선은 (from, to, cost)라고 할 때    
+        - dist[to] > dist[from] + cost 이면 갱신한다.   
+      - 위의 두 단계를 모든 정점을 검사할 때 까지 계속한다.   
+    - __dist[i] = 시작점에서 i까지의 최단 거리__   
+    - __check[i] = i를 검사했는지 확인__   
+      - 단방향일 경우에는 다시 돌아올 경우가 없기 때문에, check를 해줄 필요가 없다.   
+    - __시간복잡도 O(ElogE)__   
+      - __모든 간선 검사 O(E) * 간선을 우선 순위 큐 또는 최소 힙에 넣고 빼는 연산 O(logE)__   
+    - __예시__   
+      ```python3
+
+      for i in range(m):
+          start,end,cost = map(int,sys.stdin.readline().split())
+          a[start].append([cost,end])
+      start, end = map(int,sys.stdin.readline().split())
+
+      dist[start] = 0
+      q = []
+      heapq.heappush(q,[0,start])
+      while q:
+          c, s = heapq.heappop(q)
+          if dist[s] < c:
+              continue
+          if check[s] == False:
+              for e, t in a[s]:
+                  if dist[s] != INF and dist[e] > dist[s] + t:
+                      dist[e] = dist[s] + t
+                      heapq.heappush(q,[dist[e],e])
+                      check[s] = True
+      print(dist[end])
+      ```   
+      
+### Floyd-Warshall   
+  - __Floyd-Warshall__   
+    - __모든 쌍의 최단 경로 구하는 알고리즘__   
+    - __1~N 정점이 있을 때__   
+      - __d[k][i][j] = i -> j 로 이동하는 최단 경로__    
+        - k == 0일 때, d[k][i][j] = a[i][j]   
+        - k >= 1일 때, d[k][i][j] = min(d[k-1][i][j], d[k-1][i][k] + d[k-1][k][j])   
+      - __이 때, 중간에 방문할 수 있는 정점은 {1, 2, ..., k}__   
+      
+      - __k가 경로에 없는 경우__   
+        - __d[k-1][i][j]__
+        
+      - __k가 경로에 있는 경우__   
+        - __d[k-1][i][k] + d[k-1][k][j]__       
+      
+      - __시간복잡도 O(n^3)__   
+      
+      - __예시__   
+        ```python3
+        for k in range(1,n+1): # 거쳐가는 정점
+          for i in range(1,n+1): # 출발하는 정점
+            for j in range(1,n+1): # 도착하는 정점
+              if (d[i][j] > d[i][k] + d[k][j]) {
+                      d[i][j] = d[i][k] + d[k][j];
+                  }
+        ```
+        
+    
+    
 ## Union Find   
   - __Union Find__   
     - 상호배타적 집합(Disjoint-set)이라고 한다.   
