@@ -100,6 +100,9 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
       - 외부로부터 시스템 보안은 각 사용자가 시스템 자원 접근 권한을 얻기 위해 비밀번호와 같은 수단으로 자신을 시스템에 인증하는 것이다.       
       - 칩입을 감지하기 위해 모든 연결을 기록하고 부적절한 접근 시도로부터 네트워크 아답터를 포함한 외부 입출력 장치들을 보호하는 것까지 확대된다.      
       - 시스템이 안전하고 보호되려면, 예방조치가 시스템을 전체에 도입되어야 한다.       
+      
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/2_1_OS_Services.jpg"  title="2_1_OS_Services" alt="2_1_OS_Services"></img><br><strong>2.1 OS 서비스 뷰</strong> 
+      </p>   
 
 ### 2.2 User and Operating-System Interface   
 #### 2.2.1 Command Interpreters(명령어 해석기)   
@@ -174,6 +177,8 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
       - 각 읽기와 쓰기는 반드시 발생가능한 에러 조건 관련한 상태 정보를 반환해야 한다.   
       - 입력에서는 파일의 끝에 도달했거나 읽기에서 하드웨어 실패(parity 에러)같은 것을 발견할 수 있고, 출력에서는 출력 장치에 따른 다양한 에러(디스크 공간 부족 등)를 마주할 수 있다.   
       - 모든 파일이 복사된 후, 프로그램은 두 파일을 종료(시스템 호출)하고 윈도우나 콘솔에 메세지를 작성(시스템 호출)하고 마지막으로 정상적으로 종료(시스템 호출)시킨다.   
+      
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/2_6_Open%20system%20call.jpg" width = 800px height = 300px title="2_6_Open() system call" alt="2_6_Open() system call"></img><br><strong>2.6 사용자 프로그램의 open() 시스템 호출 처리 과정</strong></p>   
     
   - __간단한 프로그램이 OS를 많이 사용하게 만들수도 있다.__   
     - 시스템은 초당 수천 개의 시스템 호출을 실행한다.      
@@ -204,6 +209,9 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
     __3. 스택__   
       - 매개변수는 프로그램에 의해 스택에 push되고 OS에 의해 pop된다.   
       - 일부 OS에서는 전달되는 매개변수의 수나 길이의 제한이 없는 블록 또는 스택 방법을 선호한다.   
+      
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/2_7_PassingParameters.jpg"  title="2_7_PassingParameters" alt="2_7_PassingParameters"></img><br><strong>2.7 파라미터 전달</strong> 
+      </p>   
     
 ### 2.4 Types of System Calls   
 
@@ -266,6 +274,9 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
         - 위의 행동을 따르면서, overwrite되지 않은 명령어 해석기의 작은 부분은 실행을 재개한다.  
         - 첫 작업은 디스크로부터 명령어 해석기의 나머지 부분을 재적재하는 것이다.   
         - 명령어 해석기는 다음 프로그램이나 사용자가 이전 에러코드를 사용가능하게 해준다.   
+        
+        <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/2_9_DOS_Execution.jpg"  title="2_9_MS-DOS_Execution" alt="2_9_MS-DOS_Execution"></img><br><strong>2.9 MS-DOS 실행</strong><br>(a) 시스템 시작 시 (b) 프로그램 실행 시 
+      </p>   
   
   - __Multi-tasking 시스템__   
     - FreeBSD(Berkeley UNIX에서 파생)가 대표적인 예     
@@ -282,6 +293,8 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
         - 사용자는 shell에게 다른 프로그램을 실행시키는 것, 실행되는 프로세스의 진행상태를 지켜보는 것, 프로그램의 우선순위를 변경하는 것 등을 자유롭게 물어볼 수 있다.   
         - 프로세스가 완료되면, 0이 아닌 에러 코드나 0의 프로세스 상태 코드를 반환하면서, 종료를 하기 위해 exit() 시스템 호출을 실행한다.   
         - 이러한 상태나 에러 코드는 shell이나 다른 프로그램에서 이용가능하다.   
+        <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/2_10_FreeBSD_Memory.jpg"  title="2_10_FreeBSD_Memory" alt="2_10_FreeBSD_Memory"></img><br><strong>2.10 여러 프로그램을 실행하는 FreeBSD</strong>
+      </p>
         
 #### 2.4.2 File Management(파일 관리)   
 
@@ -484,6 +497,9 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
         - 응용 프로그램이 기본 입/출력 루틴을 통하여 디스플레이와 디스크 드라이브에 직접 쓰기가 가능 하다.   
         - 이런 자유는 프로그램을 취약하게 만들었다. 따라서 사용자 프로그램이 고장나면 시스템 전체가 고장나게 된다.   
       - MS-DOS는 시작부터 하드웨어의 기능에 제한적이었으며 Intel 8088이 이중 모드와 하드웨어 보호 기능을 제공하지 않기 때문에 MS-DOS의 설계자들은 기본 하드웨어를 접근하도록 하용 할 수 밖에 없었다.   
+      
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/2_11_DOS_Structure.jpg"  title="2_11_DOS_Structure" alt="2_11_DOS_Structure"></img><br><strong>2.11 MS-DOS 계층 구조</strong>
+      </p>
     
     - __UNIX__   
       - 처음에는 하드웨어 기능에 의해 제한 받는 시스템 구조였다.   
@@ -493,6 +509,9 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
         - 시스템 호출을 통해 파일 시스템, CPU 스케줄링, 메모리 관리 그리고 다른 운영체제의 기능을 제공 한다.   
         - 이러한 단일(Monolithic)구조는 구현하기 어렵고 유지보수하기도 어렵다.   
           - 하지만 커널내에서 통신 또는 시스템 호출 인터페이스 내 아주 조금의 오버헤드가 있기 때문에 성능에 이점이 있다.   
+          
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/2_12_UNIX_Structure.jpg"  title="2_12_UNIX_Structure" alt="2_12_UNIX_Structure"></img><br><strong>2.12 UNIX 계층 구조</strong>
+      </p>
           
 #### 2.7.2 Layered Approach(계층적 접근)   
 
@@ -504,6 +523,9 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
   - __계층적 접근 방식은 운영체제가 여러 개의 계층으로 나누어 진다.__   
     - 최하위 계층 0은 하드웨어   
     - 최상위 계층 N은 사용자 인터페이스   
+    
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/2_13_Layered_OS.jpg" width =300px height = 300px title="2_13_Layered_OS" alt="2_13_Layered_OS"></img><br><strong>2.13 계층화된 OS</strong>
+      </p>
     
   - __OS 계층은 데이터를 조작할 수 있는 동작과 데이터로 구성된 추상적 객체의 구현이다.__   
     - 높은 계층에 의해 야기되는 작업의 집합과 자료구조로 구성된 계층 M은 낮은 계층에서 작업을 일으킬 수 있다.   
@@ -528,6 +550,7 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
     - 각 계층은 시스템 호출에 오버헤드를 추가하기 떄문에 계층적 구조가 아닌 시스템에서보다 더 오래 걸리는 시스템 호출을 가지게 된다.   
     - 이러한 제한으로 작은 backlash를 야기하지만 개선되고 있다.   
     
+    
 #### 2.7.3 Microkernels(마이크로커널)   
 
   - __커널로부터 불필요한 구성 요소를 제거하고 커널을 시스템 및 사용자 수준 프로그램으로 구현하여 운영체제를 구성하였다.__   
@@ -547,6 +570,9 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
   
   - __단점__   
     - 가중된 시스텡 기능 오버헤드 때문에 성능이 감소된다.   
+    
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/2_14_microkernelArchitecture.jpg"  title="2_14_microkernelArchitecture" alt="2_14_microkernelArchitecture"></img><br><strong>2.14 마이크로커널 구조</strong>
+      </p>
    
 #### 2.7.4 Modules(모듈)   
   
