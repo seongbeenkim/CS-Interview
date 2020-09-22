@@ -10,7 +10,7 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
       - [1.1.2 System View(시스템 관점)](#112-system-view시스템-관점)   
       - [1.1.3 Defining Operating Systems(OS 정의)](#113-defining-operating-systemsos-정의)   
    - [1.2 Computer-System Organization](#12-computer-system-organization컴퓨터-시스템-구성)   
-      - [1.2.1 Computer-System Operation(컴퓨터 시스템 동작)](121-computer-system-operation컴퓨터-시스템-동작) :star:   
+      - [1.2.1 Computer-System Operation(컴퓨터 시스템 동작)](#121-computer-system-operation컴퓨터-시스템-동작) :star:   
       - [1.2.2 Storage Structure(저장 장치 구조)](#122-storage-structure저장-장치-구조) :star:     
       - [1.2.3 I/O Structure(입출력 구조)](#123-io-structure입출력-구조) :star:  
    - [1.3 Computer-System Architecture](#13-computer-system-architecture컴퓨터-시스템-구조)   
