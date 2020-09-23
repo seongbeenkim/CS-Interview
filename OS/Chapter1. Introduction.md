@@ -1,8 +1,10 @@
 # :bookmark_tabs: Operating System Concepts 9th edition      
 ## 1장 Introduction   
-__중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용이 있던 챕터에는 :star: 표시를 해놓았고    
-해당 챕터안에 중요 개념 옆에 :star: 표시 해놓습니다.   
-혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 해주시거나 알려주시면 감사하겠습니다.:bow:__   
+__중요하다고 생각되는 목차에는 :star: 표시해놓았습니다.__   
+__:star:되어 있는 목차를 클릭하시면 클릭하신 목차의 내용이 있는 페이지로 넘어가며__   
+__해당 페이지 내에 있는 중요 개념 옆에 :star: 표시해놓았습니다.__   
+
+__혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 해주시거나 알려주시면 감사하겠습니다.:bow:__   
 
 * [1.Introduction](#1-introduction)   
    - [1.1 What Operating Systems do](#11-what-operating-systems-doos가-하는-일)   
@@ -30,9 +32,9 @@ __중요하다고 생각되거나 알고 있으면 좋을 것 같다는 내용�
       - [1.8.4 I/O Systems(입출력 시스템)](#184-io-systems입출력-시스템)
    - [1.9 Protection and Security](#19-protection-and-security)   
    - [1.10 Kernel Data Structures](#110-kernel-data-structures) :star:      
-      - [1.10.1 Lists, Stacks, and Queues(리스트, 스택, 큐)](#1101-lists-stacks-and-queues리스트-스택-큐))   
-      - [1.10.2 Tree(트리)](#1102-tree트리)   
-      - [1.10.3 Hash Functions and Maps(해시 함수와 맵)](1103-hash-functions-and-maps해시-함수와-맵)
+      - [1.10.1 Lists, Stacks, and Queues(리스트, 스택, 큐)](#1101-lists-stacks-and-queues리스트-스택-큐) :star:   
+      - [1.10.2 Tree(트리)](#1102-tree트리) :star:   
+      - [1.10.3 Hash Functions and Maps(해시 함수와 맵)](1103-hash-functions-and-maps해시-함수와-맵) :star:
       - [1.10.4 Bitmap(비트맵)](#1104-bitmap비트맵)     
    - [1.11 Computing Environments](#111-computing-environments)   
       - [1.11.1 Traditional Computing(전통적인 컴퓨팅)](#1111-traditional-computing전통적인-컴퓨팅)   
