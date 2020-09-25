@@ -4,10 +4,11 @@ __CS 공부를 하면서 각 주제별로 정리한 내용 및 면접에 대비�
 개인적으로 공부하면서 작성한 것이기 때문에 틀리거나 표현이 어색한 부분이 있을 경우 말씀해주시거나 `Pull Request` 나 `Issue` 해주시면 감사하겠습니다.:bow:__   
 
 ## :bookmark_tabs: 목차   
-  - __:one: 운영체제__   
-    - [Operating System Concepts 9th 1장 Introduction 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter1.%20Introduction.md)   
-    - [Operating System Concepts 9th 2장 System Structures 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter2.%20System%20Structures.md)   
-    - [Operating System Concepts 9th 3장 Process Concept 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter3.%20Process%20Concept.md)   
+  - __:one: 운영체제(Operating System Concepts 9th)__   
+    - [1장 Introduction 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter1.%20Introduction.md)   
+    - [2장 System Structures 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter2.%20System%20Structures.md)   
+    - [3장 Process Concept 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter3.%20Process%20Concept.md)   
+    - [4장 Multithreaded Programming 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter4.%20Multithreaded%20Programming.md)   
   - __:two: 네트워크__   
     - [네트워크 개념 정리](https://github.com/seongbeenkim/CS-Interview/tree/master/Network)   
     - [네트워크 면접 질문](https://github.com/seongbeenkim/CS-Interview/blob/master/Network/Network_Interview_Questions.md)    
