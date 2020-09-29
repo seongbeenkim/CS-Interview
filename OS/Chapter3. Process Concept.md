@@ -69,7 +69,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
          - Process 실행 동안 동적으로 할당된 메모리   
       - __Text__   
          - Program code   
-      #### 프로세스 메모리 이미지   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/3_1_Process_Memory.jpg" height = 300px title="3_1_Process_Memory" alt="3_1_Process_Memory"></img><br><strong>3.1 프로세스의 메모리 구조</strong></p>  
       
    - __Program = 수동적 개체__   
       - ex) 디스크에 저장된 명령어 목록을 가진 파일 (= 실행가능한 파일)   
@@ -105,14 +105,14 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
       - __Terminated__   
          - Process의 실행이 종료된 상태   
       
-      #### 프로세스 상태 이미지   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/3_2_ProcessState.jpg" width = 600px height = 250px title="3_2_ProcessState" alt="3_2_ProcessState"></img><br><strong>3.2 프로세스 상태</strong></p>  
       
 #### 3.1.3 Process Control Block(프로세스 제어 블록)   
 
    - __각 Process는 PCB에 의해서 OS안에 표현된다.__   
       - PCB를 Task Control Block이라고도 한다.   
       
-      #### PCB 이미지   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/3_3_PCB.jpg" height = 250px title="3_3_PCB" alt="3_3_PCB"></img><br><strong>3.3 프로세스 제어 블록</strong></p>  
       
    - __PCB가 가진 정보__ :star:   
       - __프로세스 상태(Process state)__   
@@ -132,7 +132,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
       - __입출력 상태 정보(I/O status information)__   
          - 프로세스에 할당된 일출력 장치들과 열린 파일의 목록 등을 포함   
       
-      #### CPU 스위칭 이미지    
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/3_4_ProcessSwitch.jpg" height = 500px title="3_4_ProcessSwitch" alt="3_4_ProcessSwitch"></img><br><strong>3.4 프로세스간 CPU 전환</strong></p>    
 
 #### 3.1.4 Thread(스레드)   
    
@@ -171,7 +171,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
          - 특정 입출력 장치를 위해 기다리고 있는 프로세스들의 목록    
          - 각 장치는 자신 고유의 장치 큐를 가진다.   
          
-      #### 3.5 각 큐 이미지 
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/3_5_Queues.jpg" height = 500px title="3_5_Queues" alt="3_5_Queues"></img><br><strong>3.5 준비 큐와 다양한 입출력 장치 큐</strong></p>     
       
    - __새로운 프로세스는 초기에 ready queue에 넣어지고 실행을 위해 선택되기 전 또는 dispatched 될 때까지 대기한다.__   
       - __dispatch__ :star:   
@@ -184,9 +184,11 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
       __3. 인터럽트의 결과로 CPU로부터 강제적으로 제거되고 ready queue에 다시 놓여진다.__   
       
       - __1~2는 프로세스가 결국 Wait -> ready 상태로 바뀌고 ready queue에 다시 놓여진다.__   
-      - __프로세스는 종료될 때까지 이러한 cycle을 계속한다.   
+      - __프로세스는 종료될 때까지 이러한 cycle을 계속한다.__   
          - 프로세스가 모든 queue로부터 제거되고 각 PCB와 자원이 해제되는 순간 종료된다.   
-         
+      
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/3_6_QueueingDiagram.jpg" title="3_6_QueueingDiagram" alt="3_6_QueueingDiagram"></img><br><strong>3.6 큐잉 다이어그램을 통한 프로세스 스케줄링 표현 </strong></p>   
+      
 #### 3.2.2 Schedulers(스케줄러)   
 
    - __batch 시스템의 경우, 즉시 실행될 수 있는 프로세스보다 더 많은 프로세스가 요청 되어진다.__   
@@ -243,6 +245,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
          - 메모리에서 프로세스들을 제거한 다음 차후 실행 시 다시 메모리에 프로세스를 불러와서 중단되었던 시점부터 실행을 재개한다.   
          - 프로세스 중기 스케줄러에 의해 swap out, swap in 된다.   
          - 스와핑은 프로세스 조합을 향상시키거나 메모리 요구 사항에서의 변화가 이용가능한 메모리보다 초과할당했을 때 필수적일 수 있다.   
+         
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/3_6_QueueingDiagram.jpg" title="3_7_QueueingDiagram2" alt="3_7_QueueingDiagram2"></img><br><strong>3.7 큐잉 다이어그램에 중기 스케줄러 추가</strong></p>   
          
 #### 3.2.3 Context Switching(문맥 교환)   
    
@@ -319,6 +323,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
    
    - __자식 프로세스는 부모 프로세스로부터 권한, 스케줄링 속성을 상속받는다.__   
    
+   <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/3_10_ProcessCreation.jpg" title="3_10_ProcessCreation" alt="3_10_ProcessCreation"></img><br><strong>3.10 fork()를 사용한 프로세스 생성 </strong></p>   
+   
 #### 3.3.2 Process Termination(프로세스 종료)   
 
    - __프로세스는 마지막 명령문을 마칠 때 종료되고 exit() 시스템 호출을 사용하여 OS에게 프로세스 삭제를 요청한다.__   
@@ -384,6 +390,9 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
          
       - __메세지 전달(Message passing)__   
          - 협동하는 프로세스 사이에서 교환된 메세지에 의해 통신이 발생한다.   
+         
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/3_12_CommunicationsModels.jpg" title="3_12_CommunicationsModels" alt="3_12_CommunicationsModels"></img><br><strong>3.12 통신 모델 </strong><br>(a) 메시지 전달 (b) 공유 메모리 
+      </p>   
          
    - __많은 OS에서 공유 메모리, 메세지 전달 두 가지 모두 사용한다.__   
       - 메세지 전달은 어떠한 충돌도 회피할 필요가 없기 때문에, 작은 양의 데이터를 교환하는 데 유용하다. 그리고 분산 시스템에서 더 쉽게 구현될 수 있다.    
@@ -577,6 +586,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
          - Client 프로세스가 연결을 위한 요청을 할 때 host 컴퓨터에 의해 포트가 할당된다.   
             - 1024 보다 큰 포트번호가 임의로 할당된다.   
             - ex) IP : 146.86.5.20를 가진 host x의 Client가 Web Server: 161.25.19.8:80에 연결하기를 원한다면 host x는 포트번호 1625를 할당받아 Client 소켓 - 146.86.5.20:1625, Server 소켓 - 161.25.19.8:80 소켓 한 쌍이 연결된다.   
+            
+            <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/3_20_Sockets.jpg" title="3_20_Sockets" alt="3_20_Sockets"></img><br><strong>3.20 소켓을 사용한 통신</strong><br></p>   
          
       - 호스트 사이에 패킷 트레블링은 종착 포트 넘버를 기반으로 하여 적절한 프로세스로 전달된다.   
       - 모든 연결은 고유하다.   
@@ -695,7 +706,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
          - 사용하지 않는 파이프의 끝을 닫아야 한다.   
             - ex) 부모는 read-end, 자식은 write-end 쪽을 닫는다.   
          - 파이프로부터 읽는 프로세스는 쓰는 프로세스가 파이프의 끝을 닫았을 때 EOF(read() 가 0 반환)를 탐지할 수 있도록 보장해야 한다.   
-
+         <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/3_22_PipeFileDescriptors.jpg" title="3_22_PipeFileDescriptors" alt="3_22_PipeFileDescriptors"></img><br><strong>3.22 일반 파이프의 파일디스크립터</strong><br></p>   
+         
    - __일반 파이프는 프로세스들이 서로 통신하는 동안만 존재하고 프로세스가 통신을 끝내고 종료하면 파이프도 소멸한다.__   
 
    - __Windows와 UNIX에서는 통신하는 프로세스 사이에 부모 자식 관계가 필요하다.__   
