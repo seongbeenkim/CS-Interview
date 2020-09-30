@@ -38,7 +38,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - CPU 사용의 기본 단위   
     - 스레드 id, 프로그램 카운터, 레지스터 집합, 스택으로 구성   
     - 동일 프로세스에 속한 다른 스레드와 코드, 데이터 영역, OS 자원(열린 파일, 신호)를 공유한다.   
-    #### 4.1 멀티 스레드 이미지    
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/4_1_ThreadDiagram.jpg" width = 500px height = 250px title="4_1_ThreadDiagram" alt="4_1_ThreadDiagram"></img><br><strong>4.1 프로세스 메모리</strong></p>    
     
 #### 4.1.1 Motivation(동기)   
 
@@ -55,7 +55,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
           
       - __2. 스레드 생성__   
         - __서버는 클라이언트 요청을 듣는 별도의 스레드를 생성하고, 요청을 받을 시 서비스를 제공할 스레드를 생성한다.__   
-        #### 4.2 멀티 스레드 서버    
+        <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/4_2_MultithreadedArchitecture.jpg" title="4_2_MultithreadedArchitecture" alt="4_2_MultithreadedArchitecture"></img><br><strong>4.2 멀티 스레드 서버 구조</strong></p>    
         
     - __스레드는 RPC에서 중요한 역할을 한다__   
       - 일반적으로 RPC 서버는 멀티스레드이다.   
@@ -87,7 +87,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
       - 단일 스레드는 CPU가 많다고 하더라도 단지 한 CPU에서만 실행된다.   
         - 다중 CPU에서 다중 쓰레딩을 하면 병렬성이 증가 된다.   
         
-        #### 4.3, 4.4 단일 코어, 멀티 코어 이미지   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/4_3_ConcurrentSingleCore.jpg" title="4_3_ConcurrentSingleCore" alt="4_3_ConcurrentSingleCore"></img><br><strong>4.3 단일 코어 병행 수행</strong></p>    
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/4_4_ParralelMulticore.jpg" title="4_4_ParralelMulticore" alt="4_4_ParralelMulticore"></img><br><strong>4.4 멀티 코어 병렬 수행</strong></p>    
         
 ### 4.2 Multicore Programming    
   
@@ -153,7 +154,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - 한 번에 오직 하나의 스레드가 커널에 접근할 수 있기 때문에 다수의 스레드는 멀티 코어 시스템에서 병렬로 수행될 수 없다.    
     - 멀티 프로세싱 코어의 장점을 불능으로 만들기 때문에 대다수 OS가 사용하지 않는다.   
       - ex) Solaris를 위한 Green thread 스레드 라이브러리는 다대일 모델을 사용했다.     
-      #### 4.5 다대일 모델
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/4_5_ManyToOne.jpg" height = 250px title="4_5_ManyToOne" alt="4_5_ManyToOne"></img><br><strong>4.5 다대일 모델</strong></p>
     
 #### 4.3.2 One-to-One Model(일대일 모델)    
 
@@ -164,7 +165,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - 유일한 결점은 사용자 수준 스레드 생성 시, 대응되는 커널 스레드를 생성해야 한다는 것이다.   
       - 커널 스레드 생성의 오버헤드는 app의 수행에 부담을 줄 수 있기 때문에, 이 모델의 대부분의 구현은 시스템에 의해 지원되는 스레드의 수를 제한한다.   
         - ex) Linux, Windows는 일대일 모델을 구현    
-        #### 4.6 일대일 모델   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/4_6_OneToOne.jpg" height = 250px title="4_6_OneToOne" alt="4_6_OneToOne"></img><br><strong>4.6 일대일 모델</strong></p>   
         
 #### 4.3.3 Many-to-Many Model(다대다 모델)    
   
@@ -173,11 +174,12 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
       - 개발자는 필요한 만큼 많은 사용자 수준 스레드를 생성할 수 있으며 그에 상응하는 커널 스레드가 멀티 코어 프로세서에서 병렬로 수행된다.   
     - 스레드가 긴 작업등의 호출을 발생 시켰을 때 커널이 다른 스레드의 작업을 스케줄링 한다.   
     - 스레드가 blocking 시스템 호출을 할 때, 커널은 실행을 위한 다른 스레드를 스케줄링 한다.   
-    ### 4.7 다대다 모델
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/4_7_ManyToMany.jpg" height = 250px title="4_7_ManyToMany" alt="4_7_ManyToMany"></img><br><strong>4.7 다대다 모델</strong></p>   
+    
   - __Two-level model(두 단계 모델)__   
     - 다대다 모델의 변형   
     - 다대다 모델의 특성도 가지고 있지만, 하나의 사용자 스레드가 하나의 커널 스레드에 종속되는 것도 허용한다.   
-    ### 4.8 두 단계 모델    
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/4_8_TwoLevel.jpg" height = 250px title="4_8_TwoLevel" alt="4_8_TwoLevel"></img><br><strong>4.8 두 단계 모델</strong></p>    
 
 ### 4.4 Thread Libraries   
   
@@ -460,6 +462,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - __app에서 가상 프로세서로 보이는 LWP는 실행시킬 사용자 스레드를 스케줄한다.__   
     - __커널 스레드가 block(입출력 작업이 완료되기를 기다리는 경우)되면 LWP도 block된다.__    
        - LWP에 연결된 사용자 스레드도 block된다.   
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/4_13_Lightweight.jpg" title="4_13_Lightweight" alt="4_13_Lightweight"></img><br><strong>4.13 경량 프로세스(LWP)</strong></p>
        
   - __app은 효율적으로 실행하기 위해서 다수의 LWP가 필요할 수도 있다.__    
     - 단일 프로세서에서 실행되는 CPU 중심 app일 경우, 한 번에 하나의 스레드만 실행되기 때문에 LWP 하나면 충분하다.   
@@ -470,13 +473,13 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
         - 프로세스가 4개의 LWP만 가지고 있다면, 다섯번째 요청은 LWP 중 하나가 커널로부터 돌아올 때까지 기다려야만 한다.   
         
   - __Scheduler Activations__   
-    - 사용자 스레드 라이브러리와 커널 사이의 통신을 위한 스키마   
-    - 커널은 가상 처리기(LWP) 집합을 제공하고 app은 사용자 스레드를 이용가능한 가상 처리기에 스케줄 할 수 있다.   
-      - 커널은 app에게 반드시 특정 event에 대해 알려주어야 한다.    
+    - __사용자 스레드 라이브러리와 커널 사이의 통신을 위한 스키마__   
+    - __커널은 가상 처리기(LWP) 집합을 제공하고 app은 사용자 스레드를 이용가능한 가상 처리기에 스케줄 할 수 있다.__   
+      - __커널은 app에게 반드시 특정 event에 대해 알려주어야 한다.__    
         - 이러한 절차를 upcall 이라고 한다.   
-      - upcall은 스레드 라이브러리의 upcall 처리기에 의해 처리된다.   
+      - __upcall은 스레드 라이브러리의 upcall 처리기에 의해 처리된다.__   
         - upcall 처리기는 반드시 가상 처리기(LWP)에서 실행되어야 한다.   
-      - app 스레드가 block되려고 할 때, upcall을 발동시키는 event가 발생한다.   
+      - __app 스레드가 block되려고 할 때, upcall을 발동시키는 event가 발생한다.__   
         - 커널은 app에게 어떤 스레드가 block이 되려고하는지 알리기 위해서 upcall을 만든다.   
         - 커널은 app에게 새로운 가상 처리기(LWP)를 할당한다.   
         - app은 이 새로운 가상 처리기에서 upcall 처리기를 실행시켜 upcall 처리기는 blocking된 스레드의 상태를 저장하고, blocking된 스레드가 실행되고 있는 가상 처리기를 반환한다.   
