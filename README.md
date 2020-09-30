@@ -9,6 +9,7 @@ __CS 공부를 하면서 각 주제별로 정리한 내용 및 면접에 대비�
     - [2장 System Structures 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter2.%20System%20Structures.md)   
     - [3장 Process Concept 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter3.%20Process%20Concept.md)   
     - [4장 Multithreaded Programming 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter4.%20Multithreaded%20Programming.md)   
+    - [5장 Process Scheduling 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter5.%20Process%20Scheduling.md)   
   - __:two: 네트워크__   
     - [네트워크 개념 정리](https://github.com/seongbeenkim/CS-Interview/tree/master/Network)   
     - [네트워크 면접 질문](https://github.com/seongbeenkim/CS-Interview/blob/master/Network/Network_Interview_Questions.md)    
