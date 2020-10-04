@@ -8,7 +8,7 @@ __OS 공부를 하면서 각 챕터별로 정리해놓은 Repository입니다.
   - __:two: [System Structures](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter2.%20System%20Structures.md)__   
   - __:three: [Process Concepts](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter3.%20Process%20Concept.md)__     
   - __:four: [Multithreaded Programming](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter4.%20Multithreaded%20Programming.md)__   
-  - __:five: [Process Scheduling](https://github.com/seongbeenkim/CS-Interview/tree/master/Network)__   
+  - __:five: [Process Scheduling](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter5.%20Process%20Scheduling.md)__   
   - __:six: [Synchronization](https://github.com/seongbeenkim/CS-Interview/tree/master/Network)__   
   - __:seven: [Deadlocks](https://github.com/seongbeenkim/CS-Interview/tree/master/Network)__   
   - __:eight: [Memory-Management Strategies](https://github.com/seongbeenkim/CS-Interview/tree/master/Network)__   
