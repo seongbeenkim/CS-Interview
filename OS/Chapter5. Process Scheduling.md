@@ -54,6 +54,9 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - 프로세스들은 두 상태 사이에서 변경된다.   
     - 프로세스 실행은 CPU 버스트로 시작하고 입출력 버스트 - > CPU 버스트 -> 입출력 버스트 순으로 계속된다.   
       - 마지막 CPU 버스트는 실행 종료를 위한 시스템 요청과 함께 끝난다.   
+      
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_1_CPU_BurstCycle.jpg" height = 400px title="5_1_CPU_BurstCycle" alt="5_1_CPU_BurstCycle"></img><br><strong>5.1 CPU, 입출력 버스트의 연속적인 변경</strong> </p>   
+      
     - 입출력 중심 프로그램은 짧은 CPU 버스트를 많이 가진다.   
     - CPU 중심 프로그램은 다수의 긴 CPU 버스트를 가진다.   
     - 이러한 버스트의 분포는 CPU 스케줄링 알고리즘을 선택하는데 매우 중요하다.   
@@ -169,6 +172,33 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
         - 프로세스가 종료되거나 입출력 요청함으로써 CPU를 해제할 때까지 CPU를 점유한다.   
         - 시분할 시스템에서 부적절하다.   
           - 시분할 시스템에서는 각 사용자가 규칙적인 간격으로 CPU의 몫을 얻는 것이 매우 중요하기 때문이다.   
+   
+        <table align="center">
+          <thead>
+            <tr>
+              <th>프로세스</th>
+              <th>버스트 시간</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>P1</td>
+              <td>24</td>
+            </tr>
+            <tr>
+              <td>P2</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>P3</td>
+              <td>3</td>
+            </tr>
+          </tbody>
+        </table>   
+        
+        <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_FCFS_Chart1.jpg"  title="5_FCFS_Chart1" alt="5_FCFS_Chart1"></img><br><strong> P1, P2, P3 순서로 도착했을 때</strong><br> 평균 대기시간 : (0 + 24 + 27) / 3 = 17 </p>   
+        
+        <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_FCFS_Chart2.jpg"  title="5_FCFS_Chart2" alt="5_FCFS_Chart2"></img><br><strong> P2, P3, P1 순서로 도착했을 때</strong><br> 평균 대기시간 : (6 + 0 + 3) / 3 = 3 </p>   
 
 #### 5.3.2 Shortest-Job-First Scheduling(최단 작업 우선 스케줄링)   
 
@@ -182,18 +212,83 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
           - 값이 낮을 수록 빠른 응답 속도를 나타내기 때문이다.   
           - 하지만 너무 작은 값은 시간 초과 오류를 일으키고 재실행이 필요하다.   
           - 일반적으로 장기 스케줄링에서 자주 사용된다.   
-
+          
+          <table align="center">
+            <thead>
+              <tr>
+                <th>프로세스</th>
+                <th>버스트 시간</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>P1</td>
+                <td>6</td>
+              </tr>
+              <tr>
+                <td>P2</td>
+                <td>8</td>
+              </tr>
+              <tr>
+                <td>P3</td>
+                <td>7</td>
+              </tr>
+              <tr>
+                <td>P4</td>
+                <td>3</td>
+              </tr>
+            </tbody>
+          </table>   
+          <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_SJF_Chart.jpg"  title="5_SJF_Chart" alt="5_SJF_Chart"></img><br><strong> SJF</strong><br> 평균 대기시간 : (3 + 6 + 9 + 0) / 4 = 7 </p>   
+        
       - __단기 스케줄링에서는 구현될 수 없다.__   
         - 단기 스케줄링에서 다음 CPU 버스트 길이를 알 방법이 없다.   
         - 하지만 이러한 길이를 예상할 수 있는 방법이 있다.   
           - 다음 CPU 버스트는 이전 CPU 버스트와 비슷할 것이라고 예측한다.   
           - 다음 CPU 버스트의 길이의 근사값을 계산해 가장 짧다고 예상된 CPU 버스트를 가진 프로세르를 선택할 수 있다.   
           - 일반적으로 다음 CPU 버스트는 이전 CPU 버스트들의 측정된 길이의 지수 평균으로 예상되어진다.    
+          
+          <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_3_BurstPrediction.jpg"  height = 400psx title="5_3_BurstPrediction" alt="5_3_BurstPrediction"></img><br><strong>5.3 다음 CPU 버스트 길이 예측</strong><br></p>   
 
       - __선점형 또는 비선점형__   
         - 이전 프로세스가 계속 실행되는 동안 ready queue에 새로운 프로세스가 도착할 경우 선택이 발생한다.   
         - __선점 - 새로운 프로세스의 다음 CPU 버스트가 현재 실행되고 있는 프로세스의 남은 CPU 버스트보다 작을 경우 선점한다.__   
           - 최소 잔여 시간 우선(shortest-remaining-time-first) 스케줄링이라고 불린다.   
+          
+          <table align="center">
+            <thead>
+              <tr>
+                <th>프로세스</th>
+                <th>도착 시간</th>
+                <th>버스트 시간</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>P1</td>
+                <td>0</td>
+                <td>8</td>
+              </tr>
+              <tr>
+                <td>P2</td>
+                <td>1</td>
+                <td>4</td>
+              </tr>
+              <tr>
+                <td>P3</td>
+                <td>2</td>
+                <td>9</td>
+              </tr>
+              <tr>
+                <td>P4</td>
+                <td>3</td>
+                <td>5</td>
+              </tr>
+            </tbody>
+          </table>   
+          
+          <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_PreemptiveSJF_Chart.jpg"  title="5_PreemptiveSJF_Chart" alt="5_PreemptiveSJF_Chart"></img><br><strong> 선점 SJF</strong><br> 평균 대기시간 : {(10-1) + (1-1) + (17-2) + (5-3)} / 4 = 6.5 </p>   
+          
         - __비선점 - 현재 실행하는 프로세스를 종료하고 새로운 프로세스에 CPU를 할당한다.__   
       
 #### 5.3.3 Priority Scheduling(우선순위 스케줄링)   
@@ -206,6 +301,44 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
   
   - __0이 가장 높은 우선순위일 수 있고 가장 낮은 우선순위일 수 있다__   
     - 아래의 내용부터는 값이 낮을수록 높은 우선순위로 가정   
+    
+    <table align="center">
+      <thead>
+        <tr>
+          <th>프로세스</th>
+          <th>버스트 시간</th>
+          <th>우선순위</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>P1</td>
+          <td>10</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>P2</td>
+          <td>1</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td>P3</td>
+          <td>2</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>P4</td>
+          <td>1</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>P5</td>
+          <td>5</td>
+          <td>2</td>
+        </tr>
+      </tbody>
+    </table>   
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_PriorityChart.jpg"  title="5_PriorityChart" alt="5_PriorityChart"></img><br><strong> 우선순위 스케줄링</strong><br> 평균 대기시간 : 8.2 </p>   
     
   - __우선순위는 내부적 또는 외부적으로 정의될 수 있다.__   
     - __내부적__   
@@ -245,6 +378,31 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
       - 프로세스의 CPU 버스트가 1 time quantum보다 클 경우   
         - 타이머를 울려 OS에 인터럽트를 야기한다.   
         - 문맥교환이 일어나고 프로세스는 ready queue의 끝에 추가되며 ready queue에 있는 다음 프로세스를 실행시킨다.   
+        
+        <table align="center">
+          <thead>
+            <tr>
+              <th>프로세스</th>
+              <th>버스트 시간</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>P1</td>
+              <td>24</td>
+            </tr>
+            <tr>
+              <td>P2</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>P3</td>
+              <td>3</td>
+            </tr>
+          </tbody>
+        </table>   
+        
+        <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_RoundRobinChart.jpg"  title="5_RoundRobinChart" alt="5_RoundRobinChart"></img><br><strong> RR </strong><br> 평균 대기시간 : {(10-4) + (4) + (7)} / 3 = 5.66 </p>   
       
     - __평균 대기시간이 길다.__   
       - 각 프로세스는 자신의 다음 시간 할당까지 (n-1) * q(시간 할당량) 시간 이상 기다리지 않는다.   
@@ -254,8 +412,11 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
         - 대부분의 현대 시스템은 시간 할당의 범위를 10 ~ 100ms로 설정한다.   
         - 문맥교환을 위한 시간을 10ms보다 작고 문맥교환 시간은 시간 할당량의 작은 일부이다.   
         
+        <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_4_quantums.jpg"  title="5_4_quantums" alt="5_4_quantums"></img><br><strong>5.4 시간 할당량(quantum)에 따른 문맥 교환 증가 </strong><br></p>   
+        
     - __반환 시간은 시간 할당량의 크기에 달려있다.__   
-      - 평균 반환 시간은 시간 할당량의 크기가 증가한다고 향상되지 않는다.   
+      - 평균 반환 시간은 시간 할당량의 크기가 증가한다고 향상될 필요는 없다.   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_5_TurnaroundTime.jpg" height = 450px  title="5_5_TurnaroundTime" alt="5_5_TurnaroundTime"></img><br><strong>5.5 시간 할당량(quantum)에 따른 평균 반환시간의 변화 </strong><br></p>   
       - __단일 시간 할당량 시간보다 다음 CPU 버스트가 적을 경우에는 향상 될 수 있다.__   
       - 평균 반환 시간은 더 작은 시간 할당량을 가질 수록 더 증가한다.   
         - 더 많은 문맥교환이 일어나기 때문이다.   
@@ -277,12 +438,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - __queue 사이에도 스케줄링 알고리즘 필요하다.__   
       - 고정된 우선순위 선점 스케줄링   
         - ex ) 5가지 queue를 가진 다단계 큐 스케줄링 알고리즘의 예    
-          - 높은 우선순위에서 낮은 우선순위 순   
-          - 1. System process
-          - 2. Interactive process   
-          - 3. Interactive editing process   
-          - 4. Batch process   
-          - 5. Student process   
+          <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_6_MultilevelQueueScheduling.jpg" height = 450px  title="5_6_MultilevelQueueScheduling" alt="5_6_MultilevelQueueScheduling"></img><br><strong>5.6 다단계 큐 스케줄링 </strong><br></p>   
         - 각각의 queue는 하위 우선수위 queue보다 절대적으로 높은 우선순위를 가진다.   
         
       - queue들 사이에 time slice를 할 수도 있다.   
@@ -305,6 +461,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
           - queue 0에 있던 프로세스가 시간 할당량 8ms을 초과하면 queue 1의 끝에 추가된다.   
           - queue 0이 비고, queue 1에 있는 프로세스가 시간 할당량 16ms을 초과하면 queue 2의 끝에 추가된다.   
           - queue 0, 1이 비어있다면, queue 2에 있는 프로세스는 FCFS에 기반하여 실행된다.   
+          <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_7_MultilevelFeedbackQueues.jpg" title="5_7_MultilevelFeedbackQueues" alt="5_7_MultilevelFeedbackQueues"></img><br><strong>5.7 다단계 피드백 큐</strong><br></p>   
+          
           
       - __다단계 피드백 큐가 정의되는 파라미터__   
         - 큐의 수   
@@ -395,6 +553,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
       - CPU와 메모리가 결합된 보드를 포함하는 시스템에서 발생한다.   
       - 보드에 있는 CPU는 다른 보드에 있는 메모리에 접근하는 것보다 같은 보드에 있는 메모리에 더 빠르게 접근할 수 있다.   
       - OS의 CPU 스케줄러와 메모리 관리 알고리즘이 함께 동작한다면, 특정 CPU에 친화성이 할당된 프로세스는 CPU가 존재하는 보드에 있는 메모리에 할당될 수도 있다.   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_9_NUMA_CPU_Scheduling.jpg" title="5_9_NUMA_CPU_Scheduling" alt="5_9_NUMA_CPU_Scheduling"></img><br><strong>5.9 NUMA와 CPU 스케줄링</strong><br></p>   
       
 #### 5.5.3 Load Balancing(부하 분산)   
 
@@ -431,12 +590,11 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - __프로세서가 메모리에 접근할 때 데이터가 이용가능할 때까지 상당히 큰 시간 동안 기다리는 것을 의미한다.__   
       - ex) cache miss(접근하는 데이터가 캐시 메모리에 없다)와 같은 여러 이유로 인해 Memory stall이 발생할 수 있다.   
       
-    - 5.10    
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_10_MemoryStall.jpg" title="5_10_MemoryStall" alt="5_10_MemoryStall"></img><br><strong>5.10 Memory stall</strong><br></p>    
       - 프로세서는 데이터가 메모리로부터 이용가능할 때까지 자신의 시간의 50%를 기다리는 데 소비할 수 있다.   
-        - 이러한 상황을 해결하기 위해서, 두 개 이상의 하드웨어 스레드가 각 코어에 할당되는 멀티스레드 프로세서 코어를 구현한 하드웨어가 필요하다.   
-      
-    - 5.11   
+        - 이러한 상황을 해결하기 위해서, 두 개 이상의 하드웨어 스레드가 각 코어에 할당되는 멀티스레드 프로세서 코어를 구현한 하드웨어가 필요하다.         
       - 하나의 스레드가 메모리를 기다리는 동안 stall하면, 코어는 다른 스레드로 전환한다.   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_11_MultithreadedMulticore.jpg" title="5_11_MultithreadedMulticore" alt="5_11_MultithreadedMulticore"></img><br><strong>5.11 멀티스레드 멀티코어 시스템</strong><br></p>   
       
   - __OS의 관점에서 각 하드웨어 스레드는 소프트웨어 스레드를 실행하는데 이용가능한 논리적 프로세서이다.__   
     - ex) dual thread, dual core 시스템에서 4개의 논리적인 프로세서가 OS에 표시된다.   
@@ -479,6 +637,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     
   - __Event latency__   
     - event가 발생한 시점부터 서비스 될 때까지 경과한 시간    
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_12_EventLatency.jpg" title="5_12_EventLatency" alt="5_12_EventLatency"></img><br><strong>5.12 Event latency</strong><br></p>   
     
   - __실시간 시스템의 성능에 영향을 미치는 2가지 지연__ :star:    
     - __1. 인터럽트 지연(Interrupt latency)__   
@@ -490,6 +649,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
         - Hard real-time system에서는 엄격한 규칙도 충족해야만 한다.    
       - __인터럽트 지연에 기여하는 중요한 한 요소는 커널 자료구조가 갱신되고 있는 동안 인터럽트가 disable될 수 있는 시간의 양이다.__   
         - 실시간 OS는 아주 짧은 시간동안 인터럽트를 disable 해야한다.   
+        <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_13_InterruptLatency.jpg" height = 450px title="5_13_InterruptLatency" alt="5_13_InterruptLatency"></img><br><strong>5.13 인터럽트 지연</strong><br></p>   
 
     - __2. 디스패처 지연(Dispatcher latency)__    
       - __디스패처가 하나의 프로세스를 중단하고 다른 프로세스를 시작하는데 걸리는 시간__   
@@ -499,6 +659,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
         - __1. 커널에서 실행되는 프로세스를 선점__   
         - __2. 높은 우선순위 프로세스에 의해 요구되는 자원을 낮은 우선순위 프로세스가 해제__   
           - ex) Solaris에서 선점이 disable 됐을 경우 디스패치 지연은 100ms 이상, enable 됐을 경우 디스패치 지연은 1ms 이하   
+        <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_14_DsipatchLatency.jpg" height = 450px title="5_14_DsipatchLatency" alt="5_14_DsipatchLatency"></img><br><strong>5.14 디스패치 지연</strong><br></p>   
           
 #### 5.6.2 Priority-Based Scheduling(우선순위-기반 스케줄링)   
 
@@ -514,6 +675,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
       - t, d, p의 관계는 0 <= t <= d <= p 로 표현된다.   
       - 주기적인 작업률은 1/p이다.   
       - 스케줄러는 이러한 특성을 이용할 수 있고 프로세스 deadline 또는 요구되는 프로세스 rate에 따라 우선순위를 할당한다.   
+      
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_15_PeriodicTask.jpg" title="5_15_PeriodicTask" alt="5_15_PeriodicTask"></img><br><strong>5.15 주기적 프로세스</strong><br></p>   
       
   - __이러한 스케줄링 형식의 특이한 것은 프로세스가 스케줄러에게 자신의 deadline을 알려야만 할 수도 있다는 것이다.__   
     - 이러한 기술을 사용하는 것은 admission-control 알고리즘이라고 한다.   
@@ -531,10 +694,13 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
         - ex) P1 = 50, P2 = 100, T1= 20, T2 = 35일 경우   P: 프로세스 주기, T: 프로세스 처리 시간   
           - 각 프로세스의 CPU 이용률은 T1/P1 = 0.4, T2,P2 = 0.35로 총 CPU 이용률은 0.4 + 0.35 = 0.75   
           - 두 프로세스 모두 자신의 deadline을 충족하고 CPU를 이용가능한 cycle에 놓는 방식에서 이러한 작업을 스케줄 할 수 있다.   
-        - ex) 5.16 P2가 P1보다 높은 우선순위를 가질 경우   
+        <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_16_SchedulingTasks.jpg" title="5_16_SchedulingTasks" alt="5_16_SchedulingTasks"></img><br><strong>5.16 P2가 P1보다 높은 우선순위를 가질 경우</strong><br></p>     
+           
           - P2가 35에 완료되고 P1이 55에 완료될 것 같지만 P1의 첫 번째 deadline이 50이었기 때문에 스케줄러는 P1이 자신의 deadline을 놓쳤다고 생각한다.    
+          
         - Rate-Monotonic Scheduling을 사용하면 P1의 주기가 더 짧기 때문에 P2보다 더 높은 우선순위를 할당한다.   
-          - ex) 5.17 
+          <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_17_RateMonotonicScheduling.jpg" title="5_17_RateMonotonicScheduling" alt="5_17_RateMonotonicScheduling"></img><br><strong>5.17 비율-단조 스케줄링</strong><br></p>     
+          
             - P1은 먼저 시작하고 자신의 CPU 버스트를 20에 완료한다 그러므로 자신의 deadline을 충족시킨다.   
             - P2는 20에 시작하고 50까지 실행한다.   
               - P2의 CPU 버스트가 5 남았음에도 불구하고 50에 P1이 선점한다.   
@@ -562,7 +728,9 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - 프로세스가 실행가능한 상태가 될 때, 시스템에 deadline 사항을 알려야만 한다.   
     - 우선순위는 새롭게 실행가능한 프로세스의 deadline을 반영하여 조정될 수 있다.   
     - 우선순위가 고정된 비율 단조 스케줄링과 다르다.   
-      - ex) 5.19 
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_18_MissingDeadlines.jpg" title="5_18_MissingDeadlines" alt="5_18_MissingDeadlines"></img><br><strong>5.18 비율-단조 스케줄링시 deadline 놓침</strong><br></p>     
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_19_EarliestDeadlineFirstScheduling.jpg" title="5_19_EarliestDeadlineFirstScheduling" alt="5_19_EarliestDeadlineFirstScheduling"></img><br><strong>5.19 최단 마감 우선 스케줄링</strong><br></p>     
+
         - P1이 가장 가까운 deadline을 가진다 그러므로 가장 높은 우선순위가 할당된다.   
         - P2는 P1의 CPU 버스트가 끝나는 시점에 실행을 시작한다.   
           - 비율 단조 스케줄링은 P1이 P2를 50에 선점할 수 있게 하였지만 EDF는 P2가 계속해서 실행할 수 있게 한다.   
@@ -653,6 +821,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - 빈도 분포는 각 사건의 인스턴스가 얼마나 많이 발생하는지만 나타내고 발생의 순서에 관해서는 나타내지 않는다.
     - 이러한 문제를 바로잡기 위해서, trace tape을 사용할 수 있다.   
       - 실제 시스템을 모니터하고 실제 연속적인 사건을 기록함으로써 trace tape를 생성한다.   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/5_25_SchedulerSimulation.jpg" height = 400px title="5_25_SchedulerSimulation" alt="5_25_SchedulerSimulation"></img><br><strong>5.25 시뮬레이션에 의한 CPU 스케줄러 평가</strong><br></p>     
+      
       - trace tape은 실제 입력의 정확히 같은 집합에 기반한 두 알고리즘을 비교할 수 있는 좋은 방법을 제공한다.  
       - 입력에 대한 정확한 결과를 만들어 낼 수 있다.   
   
