@@ -16,7 +16,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - [6.6.1 Semaphore Usage(세마포어 사용)](#661-semaphore-usage세마포어-사용) :star:   
     - [6.6.2 Semaphore Implementation(세마포어 구현)](#662-semaphore-implementation세마포어-구현) :star:   
     - [6.6.3 Deadlocks and Starvation(데드락과 기아 현상)](#663-deadlocks-and-starvation데드락과-기아-현상) :star:   
-    - [6.6.4 Priority Inversion(우선순위 도치)](#664-priority-inversion우선순위-도치)   
+    - [6.6.4 Priority Inversion(우선순위 역전)](#664-priority-inversion우선순위-역전)   
   - [](#)   
   - [](#)   
   - [](#)   
@@ -320,11 +320,12 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
 
 #### 6.6.3 Deadlocks and Starvation(데드락과 기아 현상)   
 
-  - ____   
-    - 
-    -
+  - __대기 큐를 사용한 세마포어의 구현은 두 개 이상의 프로세스가 기다리는 프로세스 중 하나에 의해서만 일어나는 사건을 무기한으로 기다리는 상황을 낳는다.__   
+    - 이렇게 무기한으로 기다리게 되는 프로세스를 교착 상태에 빠졌다고 이야기한다.   
+    - 교착 상태와 관련된 또 다른 문제는 무한 blocking 또는 기아 현상이다.   
+      - 무한 blocking은 세마포어와 관련된 LIFO 구조의 프로세스 리스트로부터 프로세스를 제거할 경우 발생할 수 있다.   
     
-#### 6.6.4 Priority Inversion(우선순위 도치)   
+#### 6.6.4 Priority Inversion(우선순위 역전)   
 
   - ____   
     - 
