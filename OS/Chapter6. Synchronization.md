@@ -22,12 +22,11 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - [6.7.2 The Readers-Writers Problem(저자-독자 문제)](#672-the-readers-writers-problem저자-독자-문제)      
     - [6.7.3 The Dining-Philosophers Problem(철학자들의 만찬)](#673-the-dining-philosophers-problem철학자들의-만찬)   
   - [6.8 Monitors](#68-monitors)      
-    - [6.8.1 Monitor Usage(모니터 사용)](#681-monitor-usage모니터-사용)   
-    - [6.8.2 Dining-Philosophers Solution Using Monitor(모니터를 사용한 철학자들의 만찬 해결법)](#)   
-  - [](#)   
-  - [](#)   
-  - [](#)   
-  - [](#)   
+    - [6.8.1 Monitor Usage(모니터 사용)](#681-monitor-usage모니터-사용)  
+  - [6.10 Alternative Approaches](#610-alternative-approaches)      
+    - [6.10.1 Transactional Memory(트랜잭션 메모리)](#6101-transactional-memory트랜잭션-메모리) :star:   
+    - [6.10.2 OpenMP](#6102-openmp)   
+    - [6.10.3 Functional Programming Language(실용적인 프로그래밍 언어)](#6103-functional-programming-language실용적인-프로그래밍-언어)   
   - [](#)   
   - [](#)   
   
@@ -503,4 +502,46 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
               - P가 이미 모니터에서 실행되고 있었기 때문에, 2번의 방법이 더 합리적인 것처럼 보인다.   
               - __두 방법의 절충안은 Pascal 언어에서 채택되었고, P가 signal하면 즉시 모니터를 벗어나고 Q가 즉시 재개된다.__    
                 
-#### 6.8.2 Dining-Philosophers Solution Using Monitor(모니터를 사용한 철학자들의 만찬 해결법)   
+### 6.10 Alternative Approaches   
+#### 6.10.1 Transactional Memory(트랜잭션 메모리)    
+  
+  - __메모리 트랜잭션__ :star:      
+    - __일련의 메모리 읽기-쓰기 연산__   
+    - __트랜잭션 내 모든 연산이 완료되어야만, 메모리 트랜잭션이 커밋된다.__    
+      - 그렇지 않을 경우, 중단(abort) 되거나 이전으로 roll back 된다.   
+    - 트랜잭션 메모리의 이점은 프로그래밍 언어에 추가된 특성들을 통해서 얻어질 수 있다.   
+    - __개발자나 트랜잭션 메모리 시스템이 원자성을 보장해야할 필요가 없다.__   
+    - __어떠한 lock도 관련되지 않기 때문에, deadlock이 발생할 가능성이 없다.__   
+    - 원자성 block안에 있는 어떤 명령문이 병행하게 실행될 수 있을 지 확인할 수 있게 해준다.   
+      - ex) 공유 변수에 대한 병행 읽기 접근   
+      - 프로그래머가 이러한 상황을 알 수 있게 해주며 독자-저자 lock을 사용할 수 있게 해준다.   
+        - 하지만, app내의 스레드의 수가 증가할수록 작업은 훨씬 어려워지게 된다.   
+    
+  - __트랜잭션 메모리 구현 방법__   
+    - __1. Softwar Transactional Memory(STM)__   
+      - __특수한 하드웨어의 도움없이 소프트웨어만으로 트랜잭션 메모리를 구현한다.__   
+      - __트랜잭션 block내에 instrmentation 코드를 삽입함으로써 STM이 수행된다.__   
+      - 코드는 컴파일러에 의해 삽입되고 어느 명령문이 병행하게 실행할 수 있을지, 어떤 low-level locking이 요구되는지를 검사함으로써 각 트랜잭션을 관리한다.   
+    
+    - __2. Hardware Transactional Memory(HTM)__   
+      - __하드웨어 캐시 계층 구조와 캐시 일관성 프로토콜을 사용하여 별도의 프로세서 캐시에 존재하는 공유 데이터와 관련된 문제들을 해결하고 관리한다.__   
+      - 특별한 코드 instrmentation이 필요하지 않아 STM보다 오버헤드가 적다.   
+        - 하지만, 트랜잭션 메모리를 지원할 수 있게 수정된 캐시 일관성 프로토콜, 캐시 계층 구조가 필요하다.   
+
+#### 6.10.2 OpenMP   
+
+  - __OpenMP는 컴파일러 지시자와 API를 포함한다.__   
+    - OpenMP의 장점으로는 스레드 생성과 관리가 OpenMP 라이브러리에 의해 다뤄져 개발자의 부담이 없다.   
+ 
+  - __OpenMP는 스레드가 경쟁 상태를 발생시키지 않는 것을 보장한다.__    
+    - #pragma omp critical은 한 번에 하나의 스레드만 실행되는 임계 영역 명령어 코드 영역를 나타낸다.   
+    
+  - __표준 mutex lock보다 사용하기 더 쉽지만 단점으로는 개발자가 반드시 발생가능한 경쟁 상태를 확인해야 하고, 컴파일러 명령어를 사용하여 공유 데이터를 적절하게 보호해야 한다.__    
+    - 임계 영역 명령어는 mutex lock처럼 행동하기 때문에, 두 개 이상의 임계 영역이 확인 될 때 deadlock이 발생할 가능성이 있다.    
+    
+#### 6.10.3 Functional Programming Language(실용적인 프로그래밍 언어)   
+
+  - __기능적인 프로그래밍 언어는 상태를 유지하지 않는다.__   
+    - 변수가 한번 정의되고 값이 할당되면, 값을 더 이상 변경할 수 없다.   
+    - 기능적인 프로그래밍 언어는 변경가능한 상태를 허락하지 않기 때문에, 경쟁 상태와 deadlock과 같은 문제들을 고려할 필요가 없다.   
+      - ex) Erlang, Scala   
