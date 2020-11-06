@@ -12,6 +12,7 @@ __CS 공부를 하면서 각 주제별로 정리한 내용 및 면접에 대비�
     - [5장 Process Scheduling 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter5.%20Process%20Scheduling.md)   
     - [6장 Synchronization 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter6.%20Synchronization.md)   
     - [7장 Deadlocks 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter7.%20Deadlocks.md)   
+    - [8장 Memory-Management Strategies 정리](https://github.com/seongbeenkim/CS-Interview/blob/master/OS/Chapter8.%20Memory-Management%20Strategies.md)   
   - __:two: 네트워크__   
     - [네트워크 개념 정리](https://github.com/seongbeenkim/CS-Interview/tree/master/Network)   
     - [네트워크 면접 질문](https://github.com/seongbeenkim/CS-Interview/blob/master/Network/Network_Interview_Questions.md)    
