@@ -85,13 +85,15 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
       - 사이클은 Deadlock의 발생에 대한 필요 충분 조건이다.   
       - Deadlock이 발생한다면 사이클에 관련된 모든 프로세스는 deadlock 상태가 된다.   
     
-  - #### 7.1 자원 할당 그래프   
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/7_1_ResourceAllocation.jpg" height = 300px title="7_1_ResourceAllocation" alt="7_1_ResourceAllocation"></img><br><strong>7.1 자원-할당 그래프</strong> </p>
+  
     - `P1`이 `R2`의 자원 하나를 점유하고, `R1`의 자원 하나를 기다리고 있다.   
     - `P2`가 `R1`과 `R2`의 자원 하나를 점유하고, `R3`의 자원 하나를 기다리고 있다.   
     - `P3`가 `R3`의 자원을 점유하고 있다.   
     - __`P3`가 `R3`의 사용을 마치고 해제하면 `P2`가 `R3`를 할당받고 `R1`의 사용을 마치고 해제하면, `P1`이 `R1`을 할당받아 사용할 수 있으므로 deadlock이 발생하지 않는다.__   
     
-  - #### 7.2 Deadlock 자원 할당 그래프   
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/7_2_ResourceAllocationWithDeadlock.jpg" height = 300px title="7_2_ResourceAllocationWithDeadlock" alt="7_2_ResourceAllocationWithDeadlock"></img><br><strong>7.2 교착 상태의 자원-할당 그래프</strong> </p> 
+    
     - 7.1 그림에서 `P3 -> R2`를 추가한 그래프   
     - __최소 2개의 사이클이 존재한다.__    
       - `P1 -> R1 -> P2 -> R3 -> P3 -> R2 -> P1`    
@@ -100,7 +102,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
       - `P2`는 P3가 점유하고 있는 `R3`를 기다리고 있고, `P3`는 `P1` 또는 `P2`가 `R2`를 해제하기를 기다린다.   
       - `P1`은 `P2`가 `R1`을 해제하기를 기다린다.   
       
-  - #### 7.3 사이클이지만 Deadlock이 발생하지 않는 자원 할당 그래프   
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/7_3_CycleNoDeadlock.jpg" height = 300px title="7_3_CycleNoDeadlock" alt="7_3_CycleNoDeadlock"></img><br><strong>7.3 사이클이 존재하지만 교착 상태가 발생하지 않는 자원-할당 그래프</strong> </p> 
+    
     - __사이클이 존재하지만 Deadlock이 발생하지 않는다.__   
       - `P1 -> R1 -> P3 -> R2 -> P1`    
       - `P4`가 `R2`를 해제하게 되면 `P3`가 `R2`를 할당받으면서 사이클이 없어지게 된다.   
@@ -216,13 +219,16 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - FreeBSD와 같은 UNIX의 BSD 버전에서 사용된다.    
     - witness는 임계 영역을 보호하기 위해 상호 배제 lock을 사용한다.   
     - 시스템에서 lock 순서의 관계를 동적으로 관리함으로써 작동한다.   
-      #### 7.4 교착상태 예시
-      - ex) thread_one이 lock을 얻는 첫 번째이고 first_mutex, second_mutex 순서로 작동한다.   
-        - witness는 first_mutex가 반드시 second_mutex 전에 얻어져야 한다고 관계를 기록한다.   
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/7_4_DeadlockExample.png" height = 500px title="7_4_DeadlockExample" alt="7_4_DeadlockExample"></img><br><strong>7.4 교착 상태 예시 코드</strong> </p> 
+
+      - __thread_one이 lock을 얻는 첫 번째이고 `first_mutex, second_mutex` 순서로 작동한다.__   
+        - witness는 `first_mutex`가 반드시 `second_mutex` 전에 얻어져야 한다고 관계를 기록한다.   
         - thread_two가 나중에 순서를 벗어난 lock을 얻을 경우, witness가 시스템 콘솔에 경고 메세지를 발생시킨다.    
         
     - __lock이 동적으로 얻어질 수 있다면, lock 순서를 부과하는 것이 교착 상태 예방을 보장하지 않는다.__   
-      #### 7.5 교착상태 예시
+    <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/7_5_DeadlockWithLockOrdering.png" width = 600px height = 300px title="7_5_DeadlockWithLockOrdering" alt="7_5_DeadlockWithLockOrdering"></img><br><strong>7.5 lock 순서를 가진 교착 상태 예시 코드</strong> </p>   
+    
+    
       - ex) 두 계좌 사이에 예금 거래   
         - 경쟁 상태를 예방하기 위해 각 계좌는 `get_lock()`함수로부터 얻어지는 mutex lock을 가진다.   
         - 두 스레드가 동시에 `transaction()` 함수를 호출하면 교착 상태가 발생할 수 있다.   
@@ -260,7 +266,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
   - __Safe state는 deadlock state가 아니다.__   
     - 역으로, deadlock state는 unsafe state이다.   
       - 하지만, 모든 unsafe state가 deadlock이라고 할 수는 없다.   
-      #### 7.6 상태 공간   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/7_6_StateSpaces.jpg" height = 300px title="7_6_StateSpaces" alt="7_6_StateSpaces"></img><br><strong>7.6 상태 공간</strong> </p>   
+      
       - 상태가 safe 하는 한, OS는 deadlock을 회피할 수 있다.   
       - unsafe 상태일 경우, OS는 프로세스가 deadlock을 발생시키는 방식으로 자원 요청하는 것을 막을 수 없다.   
         - 프로세스의 행동이 unsafe 상태를 통제한다.   
@@ -286,7 +293,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
       - 사이클이 있다면, 자원의 할당은 시스템을 unsafe 상태에 있게 한다.   
         - 이 경우, 프로세스 Pi는 자신의 요청이 만족될 때까지 기다려야만 한다.   
         
-      #### 7.7 자원 할당 그래프   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/7_7_DeadlockAvoidance.jpg" title="7_7_DeadlockAvoidance" alt="7_7_DeadlockAvoidance"></img> <img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/7_8_UnsafeState.jpg" title="7_8_UnsafeState" alt="7_8_UnsafeState"></img><br><strong>7.7 교착 상태 회피 자원-할당 그래프 / 7.8 unsafe 상태의 자원-할당 그래프</strong></p>   
+      
         - P2가 R2를 요청한다고 가정하면, R2가 현재 이용가능하지만 이러한 할당이 그래프에서 사이클을 형성할 것이기 때문에 P2에 할당할 수 없게 된다.   
           - unsafe 상태에 있게 될 것이다.   
         - P1이 R2를 요청하고 P2는 R1을 요청하면, 교착 상태가 발생한다.   
@@ -337,7 +345,8 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - 자원 할당 그래프에서 자원 노드를 제거하고 적절한 간선을 붕괴시킴으로써 대기 그래프를 얻을 수 있다.   
     - __Pi -> Pj 는 Pi가 필요로 하는 자원을 Pj가 해제하기를 기다리는 것을 나타낸다.__   
       - 대응되는 자원 할당 그래프가 Pi -> Rq 와 Rq -> Pj 두 간선을 포함하고 있을 경우에만 대기 그래프에서 Pi -> Pj 간선이 존재한다.   
-      #### 7.9 그래프   
+      <p align="center"><img src="https://github.com/seongbeenkim/CS-Interview/blob/master/OS/image/7_9_TwoGraphs.jpg" height = 300px title="7_9_TwoGraphs" alt="7_9_TwoGraphs"></img><br><strong>7.9 (a) 자원-할당 그래프      (b) 대응되는 대기 그래프</strong> </p>   
+      
       - __대기 그래프에서 사이클이 있을 경우에만 시스템에 교착 상태가 발생한다.__   
       - 교착 상태를 탐지하기 위해서, 시스템은 대기 그래프를 유지해야하고 주기적으로 그래프에서 사이클을 찾기 위한 알고리즘을 호출해야 한다.   
       - 그래프에서 사이클을 탐지하는 알고리즘은 n^2의 연산이 필요하다.(그래프에서 정점의 수 n)   
@@ -415,7 +424,7 @@ __혹시 잘못된 내용이 있거나 보완해야할 점이 있으면 `issue` 
     - 프로세스가 파일 업데이트 도중에 중지된다면 파일은 부정확한 상태로 남아있을 것이다.   
     - 프로세스가 프린터에서 데이터를 출력하는 도중에 중지된다면 시스템은 반드시 다음 작업을 출력하기전에 프린터를 올바른 상태로 reset해야 한다.   
     
-  - __부분적인 종료 방법이 사용된다면, 반드시 어느 교착 상태 프로세스 또는 일반 프로세스가 종료되었는 지 확인해야만 한다.   
+  - __부분적인 종료 방법이 사용된다면, 반드시 어느 교착 상태 프로세스 또는 일반 프로세스가 종료되었는 지 확인해야만 한다.__   
     - 이러한 확인은 CPU 스케줄링 결정과 유사한 정책 결정에 달려 있다.   
     - 기본적으로 비용이 핵심이다.   
     - __최소 비용을 초래하는 프로세스를 중지시켜야 한다.__   
